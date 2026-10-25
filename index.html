@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مغامرة جدول الضرب - فارس الرياضيات</title>
+  
+  <!-- خطوط عربية ولاتينية احترافية -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- مكتبة Tailwind CSS للتصميم المتجاوب والفاخر -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- مكتبات Firebase لتسجيل الدخول السحابي وقاعدة البيانات Firestore -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#3b82f6', 600: '#2563eb' },
+            gold: '#f59e0b',
+            gem: '#06b6d4'
+          }
+        }
+      },
+      plugins: [
+        // تفعيل خيار light: لاستخدامه في الكلاسات مباشرة للوضع النهاري
+        function({ addVariant }) {
+          addVariant('light', '.light &');
+        }
+      ]
+    };
+  </script>
+
+  <style>
+    :root {
+      --font-family: 'Cairo', sans-serif;
+      --bg-primary: #030712;
+      --bg-secondary: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --border-main: #334155;
+    }
+
+    html.light {
+      --bg-primary: #f1f5f9;
+      --bg-secondary: #ffffff;
+      --card-bg: #f8fafc;
+      --text-main: #0f172a;
+      --border-main: #cbd5e1;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    html[dir="ltr"] {
+      --font-family: 'Inter', sans-serif;
+    }
+
+    @keyframes damageFloat {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-45px) scale(1.3); }
+    }
+    .damage-indicator {
+      animation: damageFloat 0.8s ease-out forwards;
+    }
+
+    @keyframes shakeFx {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px) rotate(-1.5deg); }
+      40% { transform: translateX(6px) rotate(1.5deg); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .shake-target {
+      animation: shakeFx 0.35s ease-in-out;
+    }
+
+    .lava-flow {
+      animation: lavaAnim 4s ease-in-out infinite alternate;
+    }
+    @keyframes lavaAnim {
+      0% { opacity: 0.7; transform: scaleY(1); }
+      100% { opacity: 1; transform: scaleY(1.08); }
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 9999px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- إشعار التوست -->
+  <div id="toastNotification" class="fixed top-5 left-1/2 -translate-x-1/2 z-[150] transition-all duration-300 transform -translate-y-28 opacity-0 pointer-events-none flex items-center gap-3 px-6 py-3.5 rounded-2xl shadow-2xl backdrop-blur-md border border-slate-700 bg-slate-900/95 text-white max-w-md w-11/12">
+    <span id="toastIcon" class="text-2xl">⚡</span>
+    <span id="toastMessage" class="flex-1 text-sm md:text-base font-bold"></span>
+  </div>
+
+  <!-- نافذة المصادقة (Auth Gate Modal) -->
+  <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl relative text-slate-100">
+      
+      <div class="text-center mb-5">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 mb-3 shadow-lg shadow-blue-500/20 text-3xl">
+          ⚔️
+        </div>
+        <h2 class="text-2xl font-black" data-i18n="login_title">بوابة الفرسان</h2>
+        <p class="text-slate-400 text-xs mt-1" data-i18n="login_subtitle">اختر طريقة الدخول لبدء التحدي</p>
+      </div>
+
+      <button onclick="triggerGoogleSignIn()" class="w-full py-3 px-4 bg-white hover:bg-slate-100 text-slate-900 font-bold rounded-2xl flex items-center justify-center gap-3 shadow-lg transition-transform active:scale-95 mb-4 border border-slate-200">
+        <svg class="w-5 h-5" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span data-i18n="login_google_btn">دخول سريع بحساب Google</span>
+      </button>
+
+      <div class="flex items-center gap-2 my-4">
+        <div class="h-px bg-slate-800 flex-1"></div>
+        <span class="text-[11px] text-slate-500 font-bold uppercase" data-i18n="or_divider">أو</span>
+        <div class="h-px bg-slate-800 flex-1"></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 bg-slate-800/80 p-1 rounded-xl mb-4">
+        <button id="tabManualBtn" onclick="switchLoginMode('manual')" class="py-2 rounded-lg text-xs font-bold bg-blue-600 text-white transition-all" data-i18n="tab_manual">تسجيل يدوي</button>
+        <button id="tabGuestBtn" onclick="switchLoginMode('guest')" class="py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all" data-i18n="tab_guest">دخول ضيف</button>
+      </div>
+
+      <div id="manualLoginSection" class="space-y-3">
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1 font-bold" data-i18n="label_knight_name">اسم الفارس</label>
+          <input type="text" id="manualNameInput" placeholder="مثال: الفارس الأسطوري" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 font-bold">
+        </div>
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1 font-bold" data-i18n="label_email">البريد الإلكتروني (Gmail)</label>
+          <input type="email" id="manualEmailInput" placeholder="your-email@gmail.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 font-bold" dir="ltr">
+        </div>
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1 font-bold" data-i18n="label_pass">كلمة المرور المشفرة</label>
+          <input type="password" id="manualPassInput" placeholder="••••••••" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 font-bold" dir="ltr">
+        </div>
+
+        <div class="flex justify-between items-center text-[11px]">
+          <button type="button" onclick="openResetPasswordModal()" class="text-blue-400 hover:underline font-bold" data-i18n="forgot_pass_btn">نسيت كلمة المرور؟</button>
+          <span class="text-slate-500" data-i18n="pass_encrypted_tag">🔒 تشفير محلي آمن</span>
+        </div>
+
+        <button onclick="handleManualAuth()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl text-xs transition active:scale-95 shadow-md" data-i18n="save_and_play">حفظ وبدء اللعب</button>
+      </div>
+
+      <div id="guestLoginSection" class="space-y-3 hidden">
+        <div class="p-3 bg-amber-950/30 border border-amber-600/40 rounded-xl text-[11px] text-amber-200 leading-relaxed" data-i18n="guest_notice">
+          ℹ️ سيتم حفظ تقدمك في سجل المتصفح الحالي فقط. لن تظهر في قائمة المتصدرين العالمية إلا بإنشاء حساب مسجل.
+        </div>
+        <button onclick="loginAsGuest()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold rounded-xl text-xs border border-slate-700 transition active:scale-95" data-i18n="guest_btn">متابعة كضيف</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- نافذة استعادة كلمة المرور -->
+  <div id="resetPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-6 text-slate-100 shadow-2xl">
+      <div class="text-center mb-4">
+        <span class="text-3xl">📧</span>
+        <h3 class="text-base font-black mt-2" data-i18n="reset_pass_title">استعادة كلمة المرور عبر Gmail</h3>
+        <p class="text-[11px] text-slate-400 mt-1" data-i18n="reset_pass_desc">أدخل بريدك الإلكتروني المسجل لإرسال رمز التحقق وإعادة التعيين.</p>
+      </div>
+
+      <div class="space-y-3" id="resetStep1">
+        <input type="email" id="resetEmailField" placeholder="example@gmail.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white" dir="ltr">
+        <button onclick="sendResetVerificationCode()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs" data-i18n="send_code_btn">إرسال كود التحقق</button>
+      </div>
+
+      <div class="space-y-3 hidden" id="resetStep2">
+        <div class="p-2.5 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-[11px] text-emerald-300 hidden" id="resetCodeHint">
+          كود التحقق التجريبي (لأن السيرفر مغلق): <strong id="generatedCodeDisplay" class="font-mono text-white"></strong>
+        </div>
+        <input type="text" id="resetCodeInput" placeholder="أدخل كود التحقق..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white text-center" dir="ltr">
+        <input type="password" id="resetNewPassInput" placeholder="كلمة المرور الجديدة" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white" dir="ltr">
+        <!-- حقل تأكيد كلمة المرور تمت إضافته هنا -->
+        <input type="password" id="resetConfirmPassInput" placeholder="تأكيد كلمة المرور الجديدة" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white" dir="ltr">
+        
+        <button onclick="applyNewPassword()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs" data-i18n="confirm_new_pass">تأكيد وتغيير كلمة المرور</button>
+      </div>
+
+      <button onclick="closeResetPasswordModal()" class="w-full mt-3 py-1.5 text-slate-400 hover:text-white text-xs font-bold" data-i18n="close_btn">إلغاء</button>
+    </div>
+  </div>
+
+  <!-- الشريط العلوي -->
+  <header class="bg-slate-900/90 dark:bg-slate-900/95 light:bg-white light:border-slate-200 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md px-3 md:px-6 py-2.5 transition-colors">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+      
+      <div class="flex items-center gap-2.5 cursor-pointer" onclick="showScreen('profileView')">
+        <div class="w-11 h-11 rounded-2xl overflow-hidden bg-slate-800 flex items-center justify-center p-0.5 border border-slate-700 relative" id="headerAvatarBox">
+          <img id="headerAvatarImg" src="" alt="Avatar" class="w-full h-full object-cover rounded-xl">
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span id="headerKnightName" class="font-black text-sm text-slate-100 dark:text-slate-100 light:text-slate-900">فارس الحساب</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-blue-900/60 light:bg-blue-100 light:text-blue-800 text-blue-300 border border-blue-700/50">
+              <span data-i18n="lvl_short">مستوى</span> <span id="headerLevel">1</span>
+            </span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-1">
+            <div class="w-20 md:w-28 h-1.5 bg-slate-800 light:bg-slate-200 rounded-full overflow-hidden border border-slate-700 light:border-slate-300">
+              <div id="headerXpFill" class="h-full bg-blue-500 rounded-full" style="width: 10%;"></div>
+            </div>
+            <span id="headerXpText" class="text-[9px] text-slate-400 font-bold">10/100</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1 bg-slate-800/80 light:bg-slate-100 light:text-amber-600 border border-slate-700 light:border-slate-300 px-2.5 py-1 rounded-xl font-black text-xs text-amber-400">
+          <span>🪙</span>
+          <span id="headerGold">0</span>
+        </div>
+        <div class="flex items-center gap-1 bg-slate-800/80 light:bg-slate-100 light:text-cyan-600 border border-slate-700 light:border-slate-300 px-2.5 py-1 rounded-xl font-black text-xs text-cyan-400">
+          <span>💎</span>
+          <span id="headerGems">0</span>
+        </div>
+        <button onclick="openTowerModal()" class="flex items-center gap-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold px-2.5 py-1 rounded-xl text-xs shadow transition active:scale-95">
+          <span>📡</span>
+          <span data-i18n="tower_nav">البرج</span>
+          <span id="towerNoticePing" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse hidden"></span>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <button onclick="showScreen('homeView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="الرئيسية">🏠</button>
+        <button onclick="showScreen('shopView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="المتجر">🛒</button>
+        <button onclick="showScreen('leaderboardView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="المتصدرين">🏆</button>
+        <button onclick="showScreen('badgesView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="الشارات">🎖️</button>
+        <button onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-amber-300" id="quickThemeBtn" title="المظهر">🌓</button>
+        <button onclick="openSettingsModal()" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="الإعدادات">⚙️</button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-5xl w-full mx-auto p-3 md:p-6 flex flex-col justify-center items-center">
+
+    <!-- شاشة الرئيسية -->
+    <div id="homeView" class="view-screen active w-full space-y-4">
+      <div class="bg-slate-900/80 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <span class="text-[11px] font-black px-2.5 py-0.5 rounded-md bg-blue-500/20 text-blue-400 border border-blue-500/30" data-i18n="tag_mode">نظام الـ 10 مستويات وتصاعد الوحوش</span>
+          <h2 class="text-xl md:text-2xl font-black mt-2 text-slate-100 light:text-slate-900" data-i18n="home_title">ميدان قتال الجداول</h2>
+          <p class="text-xs text-slate-400 mt-1 max-w-lg" data-i18n="home_desc">10 مستويات لكل جدول. الوحوش تقوى تدريجياً، والمستوى 5 فما فوق يضم وحوشاً وزعماء أشداء مع جوائز ختم كبرى!</p>
+        </div>
+        <div class="flex items-center gap-2 bg-slate-950/60 light:bg-slate-100 p-3 rounded-2xl border border-slate-800 light:border-slate-300 text-xs">
+          <span>👑</span>
+          <span class="text-slate-300 light:text-slate-700" data-i18n="rule_hint">كل مستوى 5 جولات. عند ختم 10 مستويات تحصل على مكافأة الختم الكبرى!</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4" id="tableCardsGrid">
+      </div>
+    </div>
+
+    <!-- شاشة المعركة -->
+    <div id="battleView" class="view-screen hidden w-full space-y-3">
+      <div class="flex items-center justify-between bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 px-4 py-2.5 rounded-2xl text-xs md:text-sm font-bold shadow-md">
+        <button onclick="fleeBattle()" class="text-rose-400 hover:text-rose-300 flex items-center gap-1 px-3 py-1 rounded-xl bg-rose-950/40 border border-rose-900/50 transition">
+          <span>🏳️</span>
+          <span data-i18n="flee_btn">انسحاب</span>
+        </button>
+        <div class="flex items-center gap-2">
+          <span class="text-blue-400 font-black" id="battleTableText">جدول 2</span>
+          <span class="text-slate-600">•</span>
+          <span class="text-amber-400 font-black" id="battleStageText">مستوى 1</span>
+          <span class="text-slate-600">•</span>
+          <span class="text-white light:text-slate-800 bg-slate-800 light:bg-slate-100 px-2.5 py-0.5 rounded-lg border border-slate-700 light:border-slate-300">
+            <span data-i18n="wave_text">الجولة</span>: <strong id="battleWaveNum" class="text-emerald-400 font-mono">1</strong> / <span id="battleTotalWaves" class="font-mono">5</span>
+          </span>
+        </div>
+      </div>
+
+      <div id="arenaBox" class="relative w-full h-72 md:h-80 rounded-3xl overflow-hidden border-2 border-slate-800 light:border-slate-300 shadow-2xl flex justify-between items-end p-6 md:p-8 bg-slate-900">
+        <div id="arenaBackdropLayer" class="absolute inset-0 pointer-events-none z-0"></div>
+
+        <div id="knightFighterBox" class="relative z-10 flex flex-col items-center">
+          <div class="w-28 md:w-32 bg-slate-950/85 border border-slate-700/80 rounded-xl p-1.5 mb-2 text-center shadow-lg">
+            <span id="arenaKnightLabel" class="text-xs font-black text-white block truncate">الفارس</span>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mt-1 border border-slate-700">
+              <div id="knightHpFill" class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: 100%;"></div>
+            </div>
+            <span id="knightHpText" class="text-[9px] text-slate-300 font-bold block mt-0.5">100 / 100</span>
+          </div>
+
+          <div class="relative w-20 h-20 md:w-24 md:h-24 flex items-center justify-center">
+            <img id="arenaKnightImg" src="" alt="Knight" class="w-16 h-16 md:w-20 md:h-20 rounded-2xl object-cover border-2 border-amber-400 shadow-lg bg-slate-800">
+            <div id="arenaFrameSvgLayer" class="absolute inset-0 pointer-events-none"></div>
+          </div>
+        </div>
+
+        <div id="monsterFighterBox" class="relative z-10 flex flex-col items-center">
+          <div class="w-28 md:w-32 bg-slate-950/85 border border-slate-700/80 rounded-xl p-1.5 mb-2 text-center shadow-lg">
+            <span id="arenaMonsterLabel" class="text-xs font-black text-rose-400 block truncate">وحش الجولة</span>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mt-1 border border-slate-700">
+              <div id="monsterHpFill" class="h-full bg-rose-500 rounded-full transition-all duration-300" style="width: 100%;"></div>
+            </div>
+            <span id="monsterHpText" class="text-[9px] text-slate-300 font-bold block mt-0.5">30 / 30</span>
+          </div>
+
+          <div id="arenaMonsterSvg" class="w-20 h-20 md:w-24 md:h-24 flex items-center justify-center filter drop-shadow-xl"></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 shadow-xl flex flex-col items-center">
+        <div id="mathEquationBox" class="text-4xl md:text-5xl font-black text-blue-500 tracking-wider mb-5">
+          ٢ × ٣ = ؟
+        </div>
+        <div id="answersGridBox" class="grid grid-cols-2 gap-3 w-full max-w-md"></div>
+      </div>
+    </div>
+
+    <!-- شاشة المتجر -->
+    <div id="shopView" class="view-screen hidden w-full space-y-4">
+      <div class="bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <h2 class="text-xl font-black text-slate-100 light:text-slate-900" data-i18n="shop_title">المتجر الحربي</h2>
+            <p class="text-xs text-slate-400" data-i18n="shop_desc">عتاد متطور يبدأ بأقل سعر 100 ذهب للأسلحة و 80 للإطارات مع وظيفة كل عنصر.</p>
+          </div>
+          <button onclick="showScreen('homeView')" class="px-3 py-1.5 rounded-xl bg-slate-800 light:bg-slate-100 text-xs font-bold text-slate-300 light:text-slate-700 border border-slate-700 light:border-slate-300" data-i18n="back_home">عودة ↩</button>
+        </div>
+
+        <div class="flex gap-2 overflow-x-auto pb-2 border-b border-slate-800 light:border-slate-200" id="shopTabs">
+          <button onclick="switchShopCategory('weapons', this)" class="shop-tab active px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-blue-600 text-white" data-i18n="tab_wep">⚔️ الأسلحة</button>
+          <button onclick="switchShopCategory('armors', this)" class="shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-700" data-i18n="tab_arm">🛡️ الدروع</button>
+          <button onclick="switchShopCategory('knights', this)" class="shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-700" data-i18n="tab_knt">👤 الفرسان</button>
+          <button onclick="switchShopCategory('frames', this)" class="shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-700" data-i18n="tab_frm">🖼️ الإطارات</button>
+          <button onclick="switchShopCategory('arenas', this)" class="shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-700" data-i18n="tab_arn">🌄 الخلفيات</button>
+        </div>
+
+        <div id="shopGridBox" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mt-4"></div>
+      </div>
+    </div>
+
+    <!-- شاشة قائمة المتصدرين السحابية -->
+    <div id="leaderboardView" class="view-screen hidden w-full space-y-4">
+      <div class="bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <h2 class="text-xl font-black text-slate-100 light:text-slate-900" data-i18n="leaderboard_title">قائمة المتصدرين الحقيقية</h2>
+            <p class="text-xs text-slate-400" data-i18n="leaderboard_desc">مرتبة وفق نقاط الخبرة الإجمالية (XP). تقتصر على الحسابات المسجلة فقط ولا تدرج الضيوف.</p>
+          </div>
+          <button onclick="showScreen('homeView')" class="px-3 py-1.5 rounded-xl bg-slate-800 light:bg-slate-100 text-xs font-bold text-slate-300 light:text-slate-700 border border-slate-700 light:border-slate-300" data-i18n="back_home">عودة ↩</button>
+        </div>
+
+        <div id="leaderboardListBox" class="space-y-2.5"></div>
+      </div>
+    </div>
+
+    <!-- شاشة الشارات -->
+    <div id="badgesView" class="view-screen hidden w-full space-y-4">
+      <div class="bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <h2 class="text-xl font-black text-slate-100 light:text-slate-900" data-i18n="badges_title">شارات البطولة والإنجازات</h2>
+            <p class="text-xs text-slate-400" data-i18n="badges_desc">شملت شارات المستويات الأولى، خبير الجداول، وختم الجداول مع مكافآت الجواهر.</p>
+          </div>
+          <button onclick="showScreen('homeView')" class="px-3 py-1.5 rounded-xl bg-slate-800 light:bg-slate-100 text-xs font-bold text-slate-300 light:text-slate-700 border border-slate-700 light:border-slate-300" data-i18n="back_home">عودة ↩</button>
+        </div>
+        <div id="badgesGridBox" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+      </div>
+    </div>
+
+    <!-- شاشة الملف الشخصي -->
+    <div id="profileView" class="view-screen hidden w-full space-y-4">
+      <div class="bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <h2 class="text-xl font-black text-slate-100 light:text-slate-900" data-i18n="profile_title">الملف الشخصي وحساب الفارس</h2>
+          <button onclick="showScreen('homeView')" class="px-3 py-1.5 rounded-xl bg-slate-800 light:bg-slate-100 text-xs font-bold text-slate-300 light:text-slate-700 border border-slate-700 light:border-slate-300" data-i18n="back_home">عودة ↩</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 bg-slate-950/60 light:bg-slate-100 rounded-2xl border border-slate-800 light:border-slate-200 space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-16 h-16 rounded-2xl overflow-hidden border border-amber-400/80 bg-slate-800 flex items-center justify-center">
+                <img id="profilePreviewImg" src="" alt="Avatar" class="w-full h-full object-cover">
+              </div>
+              <div class="space-y-1">
+                <input type="file" id="avatarFileInput" accept="image/*" class="hidden" onchange="handleCustomAvatarUpload(event)">
+                <button onclick="document.getElementById('avatarFileInput').click()" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow" data-i18n="upload_img">📷 رفع صورة خاصة</button>
+                <button onclick="resetAvatarToDefault()" class="px-3 py-1.5 rounded-xl bg-slate-800 light:bg-white text-slate-300 light:text-slate-800 font-bold text-xs block border border-slate-700 light:border-slate-300" data-i18n="default_img">🔄 الصورة الأصلية</button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 light:text-slate-600 mb-1" data-i18n="knight_name_lbl">اسم الفارس</label>
+              <div class="flex gap-2">
+                <input type="text" id="profileNameBox" class="flex-1 bg-slate-800 light:bg-white border border-slate-700 light:border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 light:text-slate-900 focus:outline-none focus:border-blue-500">
+                <button onclick="saveCustomName()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow" data-i18n="save_btn">حفظ</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 bg-slate-950/60 light:bg-slate-100 rounded-2xl border border-slate-800 light:border-slate-200 space-y-2 text-xs">
+            <div class="flex justify-between p-2.5 bg-slate-900 light:bg-white rounded-xl border border-slate-800 light:border-slate-200">
+              <span class="text-slate-400 light:text-slate-600" data-i18n="stat_account">نوع الحساب</span>
+              <span id="profileAccountType" class="font-bold text-emerald-400">Google</span>
+            </div>
+            <div class="flex justify-between p-2.5 bg-slate-900 light:bg-white rounded-xl border border-slate-800 light:border-slate-200">
+              <span class="text-slate-400 light:text-slate-600" data-i18n="stat_completed_tables">الجداول المكتملة كلياً (10/10)</span>
+              <span id="profileCompletedTablesCount" class="font-bold text-amber-400 font-mono">0 / 12</span>
+            </div>
+            <div class="flex justify-between p-2.5 bg-slate-900 light:bg-white rounded-xl border border-slate-800 light:border-slate-200">
+              <span class="text-slate-400 light:text-slate-600" data-i18n="stat_total_stages">المستويات المكتملة</span>
+              <span id="profileCompletedStagesCount" class="font-bold text-cyan-400 font-mono">0</span>
+            </div>
+            <div class="flex justify-between p-2.5 bg-slate-900 light:bg-white rounded-xl border border-slate-800 light:border-slate-200">
+              <span class="text-slate-400 light:text-slate-600" data-i18n="stat_weapon">السلاح الحالي</span>
+              <span id="profileWeaponLabel" class="font-bold text-amber-300">سيف خشبي</span>
+            </div>
+            <div class="flex justify-between p-2.5 bg-slate-900 light:bg-white rounded-xl border border-slate-800 light:border-slate-200">
+              <span class="text-slate-400 light:text-slate-600" data-i18n="stat_armor">الدرع الحالي</span>
+              <span id="profileArmorLabel" class="font-bold text-cyan-300">سترة قماش</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- نافذة برج الجواهر -->
+  <div id="towerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
+    <div class="bg-slate-900 border border-cyan-500/40 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl relative text-slate-100">
+      <div class="w-14 h-14 rounded-2xl bg-cyan-950 border border-cyan-500/50 mx-auto flex items-center justify-center text-3xl mb-3 shadow-lg">
+        📡
+      </div>
+      <h3 class="text-lg font-black" data-i18n="tower_title">برج المكافآت التفاعلي</h3>
+      <p class="text-xs text-slate-300 mt-1 mb-4" data-i18n="tower_desc">يعمل أثناء وجودك في اللعبة فقط ويزيد من وقت وجائزة المكافأة تصاعدياً.</p>
+
+      <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-2xl mb-4">
+        <div class="text-[11px] font-bold text-slate-400 mb-1" data-i18n="tower_status">حالة الجائزة التالية</div>
+        <div id="towerNextRewardText" class="text-xs font-black text-amber-300 mb-1">🪙 30 ذهب + 💎 1 جوهرة</div>
+        <div id="towerTimerBox" class="text-xl font-black text-cyan-400 font-mono">03:00</div>
+      </div>
+
+      <div class="flex gap-2">
+        <button id="towerClaimBtn" onclick="claimTowerReward()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-black text-xs shadow transition active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed" data-i18n="claim_btn">
+          استلام المكافأة
+        </button>
+        <button onclick="closeTowerModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700" data-i18n="close_btn">
+          إغلاق
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة الإعدادات الشاملة -->
+  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl text-slate-100">
+      <h3 class="text-lg font-black mb-4" data-i18n="settings_title">إعدادات اللعبة</h3>
+
+      <div class="space-y-3 mb-5 text-right">
+        <div class="flex items-center justify-between p-3 bg-slate-950/70 border border-slate-800 rounded-xl">
+          <span class="text-xs font-bold text-slate-300" data-i18n="setting_lang">اللغة والأرقام</span>
+          <div class="flex gap-1.5">
+            <button onclick="setGameLang('ar')" class="px-3 py-1 rounded-lg text-xs font-bold border transition" id="langArBtn">العربية (١٢٣)</button>
+            <button onclick="setGameLang('en')" class="px-3 py-1 rounded-lg text-xs font-bold border transition" id="langEnBtn">English (123)</button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between p-3 bg-slate-950/70 border border-slate-800 rounded-xl">
+          <span class="text-xs font-bold text-slate-300" data-i18n="setting_theme">مظهر اللعبة</span>
+          <button onclick="toggleTheme()" id="themeSettingBtn" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-800 border border-slate-600 text-amber-300">
+            داكن 🌙
+          </button>
+        </div>
+
+        <div class="flex items-center justify-between p-3 bg-slate-950/70 border border-slate-800 rounded-xl">
+          <span class="text-xs font-bold text-slate-300" data-i18n="setting_sound">المؤثرات الصوتية</span>
+          <button onclick="toggleAudio()" id="settingAudioBtn" class="px-3 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white">مفعل 🔊</button>
+        </div>
+
+        <div class="flex items-center justify-between p-3 bg-slate-950/70 border border-slate-800 rounded-xl">
+          <span class="text-xs font-bold text-slate-300" data-i18n="setting_logout">الحساب</span>
+          <button onclick="logoutToAuthModal()" class="px-3 py-1 rounded-lg text-xs font-bold bg-rose-950 text-rose-300 border border-rose-800" data-i18n="switch_account">تبديل / خروج</button>
+        </div>
+      </div>
+
+      <button onclick="closeSettingsModal()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs" data-i18n="close_btn">
+        إغلاق
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. القاموس والترجمة الشاملة والأرقام (العربية المشرقية / اللاتينية)
+       ========================================================================= */
+    let currentLang = localStorage.getItem('mk_lang') || 'ar';
+    let currentTheme = localStorage.getItem('mk_theme') || 'dark';
+
+    const I18N = {
+      ar: {
+        login_title: "بوابة الفرسان",
+        login_subtitle: "اختر طريقة الدخول لبدء التحدي",
+        login_google_btn: "دخول سريع بحساب Google",
+        or_divider: "أو",
+        tab_manual: "تسجيل يدوي",
+        tab_guest: "دخول ضيف",
+        label_knight_name: "اسم الفارس",
+        label_email: "البريد الإلكتروني (Gmail)",
+        label_pass: "كلمة المرور المشفرة",
+        forgot_pass_btn: "نسيت كلمة المرور؟",
+        pass_encrypted_tag: "🔒 تشفير محلي آمن",
+        save_and_play: "حفظ وبدء اللعب",
+        guest_notice: "ℹ️ سيتم حفظ تقدمك في سجل المتصفح الحالي فقط. لن تظهر في قائمة المتصدرين العالمية إلا بإنشاء حساب مسجل.",
+        guest_btn: "متابعة كضيف",
+        reset_pass_title: "استعادة كلمة المرور عبر Gmail",
+        reset_pass_desc: "أدخل بريدك الإلكتروني المسجل لإرسال رمز التحقق وإعادة التعيين.",
+        send_code_btn: "إرسال كود التحقق",
+        confirm_new_pass: "تأكيد وتغيير كلمة المرور",
+        lvl_short: "مستوى",
+        tower_nav: "البرج",
+        tag_mode: "نظام الـ 10 مستويات وتصاعد الوحوش",
+        home_title: "ميدان قتال الجداول",
+        home_desc: "10 مستويات لكل جدول. الوحوش تقوى تدريجياً، والمستوى 5 فما فوق يضم وحوشاً وزعماء أشداء مع جوائز ختم كبرى!",
+        rule_hint: "كل مستوى 5 جولات. عند ختم 10 مستويات تحصل على مكافأة الختم الكبرى!",
+        stage_prefix: "مستوى",
+        flee_btn: "انسحاب",
+        wave_text: "الجولة",
+        shop_title: "المتجر الحربي",
+        shop_desc: "عتاد متطور يبدأ بأقل سعر 100 ذهب للأسلحة و 80 للإطارات مع وظيفة كل عنصر.",
+        back_home: "عودة ↩",
+        tab_wep: "⚔️ الأسلحة",
+        tab_arm: "🛡️ الدروع",
+        tab_knt: "👤 الفرسان",
+        tab_frm: "🖼️ الإطارات",
+        tab_arn: "🌄 الخلفيات",
+        leaderboard_title: "قائمة المتصدرين الحقيقية",
+        leaderboard_desc: "مرتبة وفق نقاط الخبرة الإجمالية (XP). تقتصر على الحسابات المسجلة فقط ولا تدرج الضيوف.",
+        badges_title: "شارات البطولة والإنجازات",
+        badges_desc: "شملت شارات المستويات الأولى، خبير الجداول، وختم الجداول مع مكافآت الجواهر.",
+        profile_title: "الملف الشخصي وحساب الفارس",
+        upload_img: "📷 رفع صورة خاصة",
+        default_img: "🔄 الصورة الأصلية",
+        knight_name_lbl: "اسم الفارس",
+        save_btn: "حفظ",
+        stat_account: "نوع الحساب",
+        stat_completed_tables: "الجداول المكتملة كلياً (10/10)",
+        stat_total_stages: "المستويات المكتملة",
+        stat_weapon: "السلاح الحالي",
+        stat_armor: "الدرع الحالي",
+        tower_title: "برج المكافآت التفاعلي",
+        tower_desc: "يعمل أثناء وجودك في اللعبة فقط ويزيد من وقت وجائزة المكافأة تصاعدياً.",
+        tower_status: "حالة الجائزة التالية",
+        claim_btn: "استلام المكافأة",
+        close_btn: "إغلاق",
+        settings_title: "إعدادات اللعبة",
+        setting_lang: "اللغة والأرقام",
+        setting_theme: "مظهر اللعبة",
+        setting_sound: "المؤثرات الصوتية",
+        setting_logout: "الحساب",
+        switch_account: "تبديل / خروج",
+        buy: "شراء",
+        equipped: "مجهز ✓",
+        equip: "تجهيز",
+        owned: "مملوك",
+        completed: "مكتمل ✅",
+        locked: "قيد التقدم 🔒",
+        table_label: "جدول",
+        waves_completed: "جولات قتالية",
+        max_stage_done: "ختم كامل 👑",
+        guest_text: "ضيف"
+      },
+      en: {
+        login_title: "Knights Portal",
+        login_subtitle: "Choose login method to start",
+        login_google_btn: "Quick Sign in with Google",
+        or_divider: "OR",
+        tab_manual: "Manual Entry",
+        tab_guest: "Guest Mode",
+        label_knight_name: "Knight Name",
+        label_email: "Gmail Address",
+        label_pass: "Encrypted Password",
+        forgot_pass_btn: "Forgot Password?",
+        pass_encrypted_tag: "🔒 Local Hash Secure",
+        save_and_play: "Save & Start",
+        guest_notice: "ℹ️ Your progress is saved in this browser history only. Guest accounts do not qualify for the global leaderboard.",
+        guest_btn: "Continue as Guest",
+        reset_pass_title: "Reset Password via Gmail",
+        reset_pass_desc: "Enter your registered Gmail to receive the verification code.",
+        send_code_btn: "Send Verification Code",
+        confirm_new_pass: "Confirm New Password",
+        lvl_short: "Lvl",
+        tower_nav: "Tower",
+        tag_mode: "10 Levels System & Scaling Monsters",
+        home_title: "Multiplication Arena",
+        home_desc: "10 progressive levels per table. Scaling monster HP with epic bosses at level 5+ and grand completion rewards!",
+        rule_hint: "5 waves per level. Clear all 10 levels to earn grand completion rewards!",
+        stage_prefix: "Level",
+        flee_btn: "Flee",
+        wave_text: "Wave",
+        shop_title: "Armory Shop",
+        shop_desc: "Advanced gear starting at 100 gold for weapons and 80 for frames with specific stats.",
+        back_home: "Back ↩",
+        tab_wep: "⚔️ Weapons",
+        tab_arm: "🛡️ Armors",
+        tab_knt: "👤 Knights",
+        tab_frm: "🖼️ Frames",
+        tab_arn: "🌄 Arenas",
+        leaderboard_title: "True Leaderboard",
+        leaderboard_desc: "Ranked by Total XP. Strictly for registered accounts (Guests excluded).",
+        badges_title: "Heroic Badges & Milestones",
+        badges_desc: "Includes beginner milestones, table masteries, and table clears with gem rewards.",
+        profile_title: "Knight Profile & Account",
+        upload_img: "📷 Upload Avatar",
+        default_img: "🔄 Default Avatar",
+        knight_name_lbl: "Knight Name",
+        save_btn: "Save",
+        stat_account: "Account Type",
+        stat_completed_tables: "Fully Cleared Tables (10/10)",
+        stat_total_stages: "Total Levels Completed",
+        stat_weapon: "Current Weapon",
+        stat_armor: "Current Armor",
+        tower_title: "Online Reward Tower",
+        tower_desc: "Ticks only while you are actively in game with ascending timer and rewards.",
+        tower_status: "Next Reward Status",
+        claim_btn: "Claim Reward",
+        close_btn: "Close",
+        settings_title: "Game Settings",
+        setting_lang: "Language & Numbers",
+        setting_theme: "Theme",
+        setting_sound: "Sound FX",
+        setting_logout: "Account",
+        switch_account: "Switch / Logout",
+        buy: "Buy",
+        equipped: "Equipped ✓",
+        equip: "Equip",
+        owned: "Owned",
+        completed: "Done ✅",
+        locked: "Locked 🔒",
+        table_label: "Table",
+        waves_completed: "Combat Waves",
+        max_stage_done: "Grand Master 👑",
+        guest_text: "Guest"
+      }
+    };
+
+    function formatNum(num) {
+      if (num === null || num === undefined) return '';
+      const str = num.toString();
+      if (currentLang !== 'ar') return str;
+      const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+      return str.replace(/[0-9]/g, d => arabicDigits[parseInt(d)]);
+    }
+
+    function applyLanguageAndTheme() {
+      const root = document.documentElement;
+      root.setAttribute('lang', currentLang);
+      root.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+
+      if (currentTheme === 'light') {
+        root.classList.add('light');
+        root.classList.remove('dark');
+        document.getElementById('themeSettingBtn').innerText = currentLang === 'ar' ? 'فاتح ☀️' : 'Light ☀️';
+        document.getElementById('quickThemeBtn').innerText = '☀️';
+      } else {
+        root.classList.add('dark');
+        root.classList.remove('light');
+        document.getElementById('themeSettingBtn').innerText = currentLang === 'ar' ? 'داكن 🌙' : 'Dark 🌙';
+        document.getElementById('quickThemeBtn').innerText = '🌙';
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (I18N[currentLang][k]) el.innerText = I18N[currentLang][k];
+      });
+
+      const arBtn = document.getElementById('langArBtn');
+      const enBtn = document.getElementById('langEnBtn');
+      if (currentLang === 'ar') {
+        arBtn.className = "px-3 py-1 rounded-lg text-xs font-bold border border-blue-500 bg-blue-600 text-white";
+        enBtn.className = "px-3 py-1 rounded-lg text-xs font-bold border border-slate-700 bg-slate-800 text-slate-300";
+      } else {
+        enBtn.className = "px-3 py-1 rounded-lg text-xs font-bold border border-blue-500 bg-blue-600 text-white";
+        arBtn.className = "px-3 py-1 rounded-lg text-xs font-bold border border-slate-700 bg-slate-800 text-slate-300";
+      }
+
+      updateHeaderUI();
+      renderTableCards();
+      renderShopItems();
+      renderBadges();
+      renderLeaderboard();
+      updateTowerUI();
+    }
+
+    function setGameLang(l) {
+      currentLang = l;
+      localStorage.setItem('mk_lang', currentLang);
+      applyLanguageAndTheme();
+    }
+
+    function toggleTheme() {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('mk_theme', currentTheme);
+      applyLanguageAndTheme();
+    }
+
+    /* =========================================================================
+       2. المؤثرات الصوتية الاصطناعية (Web Audio API)
+       ========================================================================= */
+    let audioContext = null;
+    let isSoundMuted = false;
+
+    function playAudio(type) {
+      if (isSoundMuted) return;
+      try {
+        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === 'suspended') audioContext.resume();
+
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        const t = audioContext.currentTime;
+
+        if (type === 'hit') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(320, t);
+          osc.frequency.exponentialRampToValueAtTime(70, t + 0.12);
+          gain.gain.setValueAtTime(0.25, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.12);
+          osc.start(t);
+          osc.stop(t + 0.12);
+        } else if (type === 'hurt') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(130, t);
+          osc.frequency.linearRampToValueAtTime(45, t + 0.2);
+          gain.gain.setValueAtTime(0.35, t);
+          gain.gain.linearRampToValueAtTime(0.01, t + 0.2);
+          osc.start(t);
+          osc.stop(t + 0.2);
+        } else if (type === 'coin') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(800, t);
+          osc.frequency.setValueAtTime(1200, t + 0.08);
+          gain.gain.setValueAtTime(0.2, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+          osc.start(t);
+          osc.stop(t + 0.2);
+        } else if (type === 'gem') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(950, t);
+          osc.frequency.exponentialRampToValueAtTime(1600, t + 0.28);
+          gain.gain.setValueAtTime(0.25, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.28);
+          osc.start(t);
+          osc.stop(t + 0.28);
+        }
+      } catch (e) {}
+    }
+
+    function toggleAudio() {
+      isSoundMuted = !isSoundMuted;
+      document.getElementById('settingAudioBtn').innerText = isSoundMuted ? (currentLang === 'ar' ? 'مكتوم 🔇' : 'Muted 🔇') : (currentLang === 'ar' ? 'مفعل 🔊' : 'Active 🔊');
+      document.getElementById('settingAudioBtn').className = isSoundMuted ? "px-3 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-400" : "px-3 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white";
+    }
+
+    /* =========================================================================
+       3. بيانات اللعبة والمتجر والشارات
+       ========================================================================= */
+    const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%231e3a8a'/><path d='M22 78 Q50 42 78 78' fill='%2394a3b8'/><circle cx='50' cy='42' r='18' fill='%23f59e0b'/><rect x='42' y='38' width='16' height='4' rx='2' fill='%230f172a'/></svg>";
+    const GOOGLE_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23ea4335'/><circle cx='50' cy='40' r='18' fill='%23fff'/><path d='M25 80 Q50 50 75 80' fill='%23fff'/></svg>";
+
+    const SHOP_DATA = {
+      weapons: [
+        { id: "wood_sword", name_ar: "سيف خشبي تدريبي", name_en: "Training Wood Sword", desc_ar: "سلاح المبتدئ، يوجه ضربات أساسية بمقدار +5 ضرر", desc_en: "Beginner blade dealing +5 base damage", dmg: 5, priceGold: 0, priceGem: 0, icon: "🗡️" },
+        { id: "bronze_dagger", name_ar: "خنجر البرونز الخفيف", name_en: "Bronze Dagger", desc_ar: "خنجر خفيف وسريع، يرفع قوة الضربة بمقدار +6 ضرر", desc_en: "Light swift dagger adding +6 damage", dmg: 6, priceGold: 100, priceGem: 0, icon: "🗡️" },
+        { id: "iron_sword", name_ar: "سيف الحديد المصقول", name_en: "Polished Iron Sword", desc_ar: "نصل حديدي قوي يزيد الهجوم بمقدار +7 ضرر", desc_en: "Sturdy iron edge dealing +7 damage", dmg: 7, priceGold: 140, priceGem: 0, icon: "⚔️" },
+        { id: "steel_scimitar", name_ar: "سيف الفولاذ المقسى", name_en: "Steel Scimitar", desc_ar: "سيف منحني حاد يلحق +8 ضرر بالوحوش", desc_en: "Curved sharp scimitar dealing +8 damage", dmg: 8, priceGold: 190, priceGem: 1, icon: "⚔️" },
+        { id: "thunder_mace", name_ar: "صولجان الرعد", name_en: "Thunder Mace", desc_ar: "سلاح ثقيل يوجه ضربات قاصمة بمقدار +10 ضرر", desc_en: "Heavy shocking mace with +10 damage", dmg: 10, priceGold: 260, priceGem: 2, icon: "🔨" },
+        { id: "frost_rapier", name_ar: "سيف الصقيع الحاد", name_en: "Frost Rapier", desc_ar: "نصل ثلجي مدبب يزيد من حسم المعارك بمقدار +12 ضرر", desc_en: "Freezing thrust rapier dealing +12 damage", dmg: 12, priceGold: 360, priceGem: 3, icon: "❄️" },
+        { id: "lightning_blade", name_ar: "سيف الصاعقة البنفسجي", name_en: "Lightning Blade", desc_ar: "سلاح نخبوي خارق للدروع يمنح +15 ضرر مباشر", desc_en: "Shock blade dealing +15 piercing damage", dmg: 15, priceGold: 500, priceGem: 5, icon: "⚡" },
+        { id: "dragon_slayer", name_ar: "قاطع التنانين الناري", name_en: "Dragon Slayer", desc_ar: "سيف عملاق مشتعل يمزق الزعماء بمقدار +20 ضرر", desc_en: "Massive flaming blade dealing +20 damage", dmg: 20, priceGold: 850, priceGem: 8, icon: "🔥" },
+        { id: "cosmic_blade", name_ar: "سيف الحكمة الكوني", name_en: "Cosmic Blade", desc_ar: "سلاح أسطوري يفتك بأقوى الوحوش بضرر جبار +28", desc_en: "Legendary weapon dealing massive +28 damage", dmg: 28, priceGold: 1600, priceGem: 15, icon: "🌌" }
+      ],
+      armors: [
+        { id: "cloth_tunic", name_ar: "سترة قماشية", name_en: "Cloth Tunic", desc_ar: "ملابس قماشية عادية لا توفر تقليلاً للضرر", desc_en: "Basic clothes without damage reduction", def: 0, priceGold: 0, priceGem: 0, icon: "🥋" },
+        { id: "leather_armor", name_ar: "درع جلدي مقوى", name_en: "Leather Armor", desc_ar: "يمتص 8% من ضربات الوحش عند الإجابة الخاطئة", desc_en: "Absorbs 8% damage from wrong answers", def: 0.08, priceGold: 120, priceGem: 0, icon: "🛡️" },
+        { id: "chain_armor", name_ar: "درع الحلقات المتشابكة", name_en: "Chainmail Armor", desc_ar: "درع معدني يمتص 15% من ضرر الوحوش", desc_en: "Metal mail absorbing 15% incoming damage", def: 0.15, priceGold: 240, priceGem: 2, icon: "🛡️" },
+        { id: "knight_plate", name_ar: "صفائح الفارس الثقيلة", name_en: "Knight Plate", desc_ar: "صفائح صلبة تمتص 24% من الأضرار الواقعة عليك", desc_en: "Solid plate absorbing 24% incoming damage", def: 0.24, priceGold: 480, priceGem: 5, icon: "🛡️" },
+        { id: "dragon_armor", name_ar: "درع قشور التنين", name_en: "Dragon Armor", desc_ar: "يمتص 34% من الضرر ويحمي من الضربات القاتلة", desc_en: "Dragon scales absorbing 34% damage", def: 0.34, priceGold: 850, priceGem: 9, icon: "🐉" },
+        { id: "cosmic_armor", name_ar: "الدرع الكوني المشع", name_en: "Cosmic Aegis", desc_ar: "درع خيالي يمتص 45% من أي ضرر في الساحة", desc_en: "Ultimate cosmic protection absorbing 45% damage", def: 0.45, priceGold: 1700, priceGem: 18, icon: "✨" }
+      ],
+      knights: [
+        { id: "default_knight", name_ar: "فارس التدريب", name_en: "Training Knight", desc_ar: "الشخصية الأساسية المتوازنة في كسب الموارد", desc_en: "Balanced starting knight character", goldBonus: 1.0, xpBonus: 1.0, priceGold: 0, priceGem: 0, icon: "👤" },
+        { id: "scout_knight", name_ar: "المستكشف السريع", name_en: "Scout Champion", desc_ar: "يزيد الذهب المكتسب بنسبة 15% والخبرة بنسبة 5%", desc_en: "+15% Gold bonus and +5% XP bonus", goldBonus: 1.15, xpBonus: 1.05, priceGold: 320, priceGem: 3, icon: "🏹" },
+        { id: "storm_knight", name_ar: "فارس العواصف", name_en: "Storm Knight", desc_ar: "يزيد الذهب بنسبة 25% ويسرع كسب الخبرة بنسبة 20%", desc_en: "+25% Gold bonus and +20% XP bonus", goldBonus: 1.25, xpBonus: 1.20, priceGold: 750, priceGem: 8, icon: "🌪️" },
+        { id: "cosmic_champion", name_ar: "البطل الكوني المتوج", name_en: "Cosmic Champion", desc_ar: "يضاعف مكاسب الخبرة والذهب في كافة المعارك (+35%)", desc_en: "+35% massive boost to all Gold and XP", goldBonus: 1.35, xpBonus: 1.35, priceGold: 1900, priceGem: 20, icon: "👑" }
+      ],
+      frames: [
+        { id: "none", name_ar: "بدون إطار", name_en: "None", desc_ar: "حدود دائرية طبيعية لصورة فارسك", desc_en: "Simple borderless profile image", priceGold: 0, priceGem: 0, icon: "⭕" },
+        { id: "silver_frame", name_ar: "إطار الفضة المصقولة", name_en: "Silver Frame", desc_ar: "إطار فضي أنيق بأقل سعر مناسب (+مظهر فقط)", desc_en: "Sleek silver border (+cosmetic only)", priceGold: 80, priceGem: 0, icon: "🥈" },
+        { id: "gold_frame", name_ar: "إطار الذهب الملكي", name_en: "Gold Frame", desc_ar: "إطار ذهبي متلألئ يبرز مكانة فارسك في الساحة", desc_en: "Shining gold prestige border", priceGold: 160, priceGem: 2, icon: "🥇" },
+        { id: "fire_frame", name_ar: "إطار اللهب الحارق", name_en: "Flame Frame", desc_ar: "هالة نارية متوهجة تحيط بصورتك في المعارك", desc_en: "Blazing animated flame border", priceGold: 320, priceGem: 4, icon: "🔥" },
+        { id: "cosmic_frame", name_ar: "إطار الفضاء الكوني", name_en: "Cosmic Glow", desc_ar: "توهج أرجواني نابض يمنحك هيبة الأبطال الكبار", desc_en: "Pulsing cosmic neon frame", priceGold: 550, priceGem: 7, icon: "✨" }
+      ],
+      arenas: [
+        { id: "meadow", name_ar: "المروج الخضراء", name_en: "Green Meadow", desc_ar: "سهول تدريب هادئة وسط الحقول والأشجار", desc_en: "Peaceful training plains", priceGold: 0, priceGem: 0, icon: "🌱" },
+        { id: "stone_castle", name_ar: "قلعة الفرسان الحجرية", name_en: "Stone Citadel", desc_ar: "أسوار حجرية وأبراج معركة حقيقية", desc_en: "Stone fortress battlefield", priceGold: 220, priceGem: 2, icon: "🏰" },
+        { id: "volcano", name_ar: "بركان الحمم المتوهج", name_en: "Lava Volcano", desc_ar: "حمم متدفقة وأجواء نارية حماسية", desc_en: "Fiery molten battlefield", priceGold: 480, priceGem: 5, icon: "🌋" },
+        { id: "cyber_void", name_ar: "الفضاء الكوني الرقمي", name_en: "Cyber Void", desc_ar: "سماء كونية مليئة بالنجوم والأبعاد الخارقة", desc_en: "Deep cosmic starry dimension", priceGold: 850, priceGem: 9, icon: "🌌" }
+      ]
+    };
+
+    const BADGES_LIST = [
+      {
+        id: "b_beginner_master",
+        name_ar: "بطل المستويات الأولى",
+        name_en: "Early Tables Champion",
+        desc_ar: "الوصول إلى المستوى 3 على الأقل في الجداول 1 و 2 و 3",
+        desc_en: "Reach Level 3+ in Tables 1, 2, and 3",
+        req: s => (s.tableProgress[1] || 1) >= 3 && (s.tableProgress[2] || 1) >= 3 && (s.tableProgress[3] || 1) >= 3,
+        gem: 2
+      },
+      {
+        id: "b_mid_master",
+        name_ar: "خبير الجداول المتوسطة",
+        name_en: "Mid Tables Master",
+        desc_ar: "الوصول إلى المستوى 4 في الجداول 4 و 5 و 6",
+        desc_en: "Reach Level 4+ in Tables 4, 5, and 6",
+        req: s => (s.tableProgress[4] || 1) >= 4 && (s.tableProgress[5] || 1) >= 4 && (s.tableProgress[6] || 1) >= 4,
+        gem: 3
+      },
+      {
+        id: "b_first_clear",
+        name_ar: "فاتح الجداول الكامل",
+        name_en: "First Table Finisher",
+        desc_ar: "ختم 10 مستويات كاملة في أي جدول ضرب",
+        desc_en: "Complete all 10 levels of any multiplication table",
+        req: s => Object.values(s.tableProgress).some(lvl => lvl > 10),
+        gem: 5
+      },
+      {
+        id: "b_gold_500",
+        name_ar: "جامع الذهب الثري",
+        name_en: "Wealthy Collector",
+        desc_ar: "امتلاك أكثر من 500 قطعة ذهبية في رصيدك",
+        desc_en: "Have 500+ Gold in your treasury",
+        req: s => s.gold >= 500,
+        gem: 3
+      },
+      {
+        id: "b_battles_25",
+        name_ar: "فارس الصمود والبطولة",
+        name_en: "Battle Veteran",
+        desc_ar: "إكمال 25 معركة حاسمة بنجاح",
+        desc_en: "Win 25 full level battles",
+        req: s => (s.totalBattles || 0) >= 25,
+        gem: 4
+      }
+    ];
+
+    const DEFAULT_GAME_DATA = {
+      name: "فارس الحساب",
+      email: "",
+      passwordHash: "",
+      avatar: DEFAULT_AVATAR,
+      isGuest: false,
+      authType: "Google",
+      level: 1,
+      xp: 0,
+      gold: 60,
+      gems: 5,
+      totalBattles: 0,
+      equipped: {
+        weapon: "wood_sword",
+        armor: "cloth_tunic",
+        knight: "default_knight",
+        frame: "none",
+        arena: "meadow"
+      },
+      inventory: ["wood_sword", "cloth_tunic", "default_knight", "none", "meadow"],
+      tableProgress: { 1:1, 2:1, 3:1, 4:1, 5:1, 6:1, 7:1, 8:1, 9:1, 10:1, 11:1, 12:1 },
+      badges: [],
+      towerStage: 1
+    };
+
+    let gameState = { ...DEFAULT_GAME_DATA };
+    let currentBattle = null;
+    let generatedResetCode = null;
+
+    /* إعدادات Firebase الحقيقية لمشروع math-rpg-dfbe1 */
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvAWMKhndanxTRCFy-vD1Q4fJX_RVaeMU",
+      authDomain: "math-rpg-dfbe1.firebaseapp.com",
+      projectId: "math-rpg-dfbe1",
+      storageBucket: "math-rpg-dfbe1.firebasestorage.app",
+      messagingSenderId: "113801707094",
+      appId: "1:113801707094:web:951d43a145a506113005f7",
+      measurementId: "G-FJFYGSSNF4"
+    };
+
+    let auth = null;
+    let db = null;
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      auth = firebase.auth();
+      db = firebase.firestore();
+    } catch (e) {
+      console.warn("Firebase Init notice:", e);
+    }
+
+    const TOWER_SCHEDULE = [
+      { min: 3, gold: 30, gems: 1 },
+      { min: 6, gold: 55, gems: 2 },
+      { min: 10, gold: 85, gems: 3 },
+      { min: 12, gold: 120, gems: 4 }
+    ];
+    let towerRemainingSec = TOWER_SCHEDULE[0].min * 60;
+    let isTowerReady = false;
+
+    // دالة تشفير بسيطة وفعالة لكلمة المرور محلياً (Hash)
+    function simpleHash(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = (hash << 5) - hash + char;
+        hash |= 0;
+      }
+      return "hash_" + Math.abs(hash).toString(36);
+    }
+
+    /* =========================================================================
+       4. دوال التشغيل الأساسية والمصادقة
+       ========================================================================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSession();
+      applyLanguageAndTheme();
+      initLiveTower();
+      initFirebaseAuthListener();
+    });
+
+    function loadSession() {
+      const saved = localStorage.getItem('mk_save_data');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.name) {
+            gameState = { ...DEFAULT_GAME_DATA, ...parsed };
+            closeAuthModal();
+            updateHeaderUI();
+            return;
+          }
+        } catch (e) {
+          console.error("خطأ في قراءة الحفظ:", e);
+        }
+      }
+      openAuthModal();
+    }
+
+    function saveGame() {
+      localStorage.setItem('mk_save_data', JSON.stringify(gameState));
+
+      if (!gameState.isGuest && gameState.email) {
+        let accounts = JSON.parse(localStorage.getItem('mk_registered_accounts') || '{}');
+        if (accounts[gameState.email]) {
+          accounts[gameState.email].data = { ...gameState };
+          localStorage.setItem('mk_registered_accounts', JSON.stringify(accounts));
+        }
+      }
+
+      if (!gameState.isGuest) {
+        syncCloudLeaderboard();
+      }
+    }
+
+    function openAuthModal() {
+      document.getElementById('authModal').classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+
+    function switchLoginMode(mode) {
+      const manBtn = document.getElementById('tabManualBtn');
+      const gstBtn = document.getElementById('tabGuestBtn');
+      const manSec = document.getElementById('manualLoginSection');
+      const gstSec = document.getElementById('guestLoginSection');
+
+      if (mode === 'manual') {
+        manBtn.className = "py-2 rounded-lg text-xs font-bold bg-blue-600 text-white transition-all";
+        gstBtn.className = "py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all";
+        manSec.classList.remove('hidden');
+        gstSec.classList.add('hidden');
+      } else {
+        gstBtn.className = "py-2 rounded-lg text-xs font-bold bg-amber-600 text-white transition-all";
+        manBtn.className = "py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all";
+        gstSec.classList.remove('hidden');
+        manSec.classList.add('hidden');
+      }
+    }
+
+    function handleManualAuth() {
+      const name = document.getElementById('manualNameInput').value.trim();
+      const email = document.getElementById('manualEmailInput').value.trim().toLowerCase();
+      const pass = document.getElementById('manualPassInput').value.trim();
+
+      if (!email || !email.includes('@')) {
+        showToast(currentLang === 'ar' ? "يرجى كتابة بريد إلكتروني صحيح!" : "Valid email required!", "⚠️");
+        return;
+      }
+      if (!pass || pass.length < 4) {
+        showToast(currentLang === 'ar' ? "كلمة المرور يجب أن تكون 4 خانات على الأقل!" : "Password too short!", "⚠️");
+        return;
+      }
+
+      let accounts = JSON.parse(localStorage.getItem('mk_registered_accounts') || '{}');
+      const inputHash = simpleHash(pass);
+
+      if (accounts[email]) {
+        if (accounts[email].passwordHash !== inputHash) {
+          showToast(currentLang === 'ar' ? "كلمة المرور غير صحيحة لهذا الحساب! ❌" : "Incorrect password! ❌", "⛔");
+          playAudio('hurt');
+          return;
+        }
+
+        gameState = { ...DEFAULT_GAME_DATA, ...accounts[email].data };
+        showToast(currentLang === 'ar' ? `مرحباً بعودتك يا ${gameState.name}! ⚔️` : `Welcome back ${gameState.name}!`, "✅");
+      } 
+      else {
+        if (!name) {
+          showToast(currentLang === 'ar' ? "يرجى كتابة اسم الفارس لإنشاء الحساب!" : "Knight name required!", "⚠️");
+          return;
+        }
+
+        gameState.name = name;
+        gameState.email = email;
+        gameState.passwordHash = inputHash;
+        gameState.isGuest = false;
+        gameState.authType = "Manual";
+
+        accounts[email] = {
+          name: name,
+          passwordHash: inputHash,
+          data: { ...gameState }
+        };
+        localStorage.setItem('mk_registered_accounts', JSON.stringify(accounts));
+        showToast(currentLang === 'ar' ? "تم إنشاء الحساب وتأمينه بكلمة المرور بنجاح! 🛡️" : "Account created & secured!", "🎉");
+      }
+
+      saveGame();
+      closeAuthModal();
+      updateHeaderUI();
+      renderLeaderboard();
+    }
+
+    function loginAsGuest() {
+      gameState.name = currentLang === 'ar' ? "فارس ضيف" : "Guest Knight";
+      gameState.isGuest = true;
+      gameState.authType = "Guest";
+      gameState.avatar = DEFAULT_AVATAR;
+
+      saveGame();
+      closeAuthModal();
+      updateHeaderUI();
+      renderLeaderboard();
+      showToast(currentLang === 'ar' ? "تم الدخول كضيف (تم الحفظ في السجل المحلي)" : "Guest mode active (Saved locally)", "ℹ️");
+    }
+
+    function initFirebaseAuthListener() {
+      if (!auth) return;
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          gameState.name = user.displayName || gameState.name;
+          gameState.email = user.email || gameState.email;
+          gameState.avatar = user.photoURL || gameState.avatar;
+          gameState.isGuest = false;
+          gameState.authType = "Google";
+          saveGame();
+          updateHeaderUI();
+          renderLeaderboard();
+        }
+      });
+    }
+
+    function triggerGoogleSignIn() {
+      if (!auth) {
+        mockGoogleSignIn();
+        return;
+      }
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          const user = result.user;
+          gameState.name = user.displayName || "فارس Google";
+          gameState.email = user.email || "user@gmail.com";
+          gameState.avatar = user.photoURL || GOOGLE_AVATAR;
+          gameState.isGuest = false;
+          gameState.authType = "Google";
+
+          saveGame();
+          closeAuthModal();
+          updateHeaderUI();
+          renderLeaderboard();
+          showToast(currentLang === 'ar' ? `تم تسجيل الدخول بحساب Google: ${gameState.name}` : `Google login success: ${gameState.name}`, "✅");
+        })
+        .catch((err) => {
+          console.warn("Popup blocked or error:", err);
+          if (err.code === 'auth/popup-blocked' || err.code === 'auth/unauthorized-domain') {
+            mockGoogleSignIn();
+          } else {
+            showToast(err.message, "⚠️");
+          }
+        });
+    }
+
+    function mockGoogleSignIn() {
+      gameState.name = currentLang === 'ar' ? "فارس Google" : "Google Knight";
+      gameState.email = "google.knight@gmail.com";
+      gameState.avatar = GOOGLE_AVATAR;
+      gameState.isGuest = false;
+      gameState.authType = "Google";
+
+      saveGame();
+      closeAuthModal();
+      updateHeaderUI();
+      renderLeaderboard();
+      showToast(currentLang === 'ar' ? "تم تسجيل الدخول بحساب Google بنجاح 🛡️" : "Google login connected! 🛡️", "✅");
+    }
+
+    function logoutToAuthModal() {
+      if (auth && auth.currentUser) {
+        auth.signOut();
+      }
+      localStorage.removeItem('mk_save_data');
+      closeSettingsModal();
+      openAuthModal();
+    }
+
+    /* نافذة استعادة كلمة المرور عبر Gmail */
+    function openResetPasswordModal() {
+      document.getElementById('resetPasswordModal').classList.remove('hidden');
+      document.getElementById('resetStep1').classList.remove('hidden');
+      document.getElementById('resetStep2').classList.add('hidden');
+    }
+
+    function closeResetPasswordModal() {
+      document.getElementById('resetPasswordModal').classList.add('hidden');
+    }
+
+    async function sendResetVerificationCode() {
+      let email = document.getElementById('resetEmailField').value.trim();
+      if (!email && gameState.email) {
+        email = gameState.email;
+        document.getElementById('resetEmailField').value = email;
+      }
+
+      if (!email || !email.includes('@')) {
+        showToast(currentLang === 'ar' ? "يرجى تحديد أو كتابة بريدك الإلكتروني المسجل!" : "Please provide a valid email!", "⚠️");
+        return;
+      }
+
+      generatedResetCode = Math.floor(10000 + Math.random() * 90000).toString();
+
+      showToast(currentLang === 'ar' ? "جارٍ إرسال رمز التحقق إلى بريدك... ⏳" : "Sending code... ⏳", "📧");
+
+      try {
+        const res = await fetch('http://localhost:3000/api/send-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, code: generatedResetCode })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('resetCodeHint').classList.add('hidden');
+          document.getElementById('resetStep1').classList.add('hidden');
+          document.getElementById('resetStep2').classList.remove('hidden');
+          showToast(currentLang === 'ar' ? "تم إرسال الرمز بنجاح! تفقد صندوق الوارد 📩" : "Code sent! Check your inbox 📩", "✅");
+        } else {
+          throw new Error(data.error);
+        }
+      } catch (err) {
+        console.error("فشل الاتصال بسيرفر البريد:", err);
+        document.getElementById('generatedCodeDisplay').innerText = generatedResetCode;
+        document.getElementById('resetCodeHint').classList.remove('hidden');
+        document.getElementById('resetStep1').classList.add('hidden');
+        document.getElementById('resetStep2').classList.remove('hidden');
+        showToast(currentLang === 'ar' ? "السيرفر غير متصل، تم توليد كود التحقق محلياً للتجربة" : "Local test code generated", "ℹ️");
+      }
+    }
+
+    function applyNewPassword() {
+      const enteredCode = document.getElementById('resetCodeInput').value.trim();
+      const newPass = document.getElementById('resetNewPassInput').value.trim();
+      const confirmPassEl = document.getElementById('resetConfirmPassInput');
+      const confirmPass = confirmPassEl ? confirmPassEl.value.trim() : "";
+      const email = document.getElementById('resetEmailField').value.trim().toLowerCase();
+
+      if (enteredCode !== generatedResetCode) {
+        showToast(currentLang === 'ar' ? "رمز التحقق غير صحيح!" : "Invalid verification code!", "❌");
+        return;
+      }
+      if (!newPass || newPass.length < 4) {
+        showToast(currentLang === 'ar' ? "كلمة المرور يجب أن تكون 4 أحرف على الأقل!" : "Password must be at least 4 chars!", "⚠️");
+        return;
+      }
+      if (confirmPass && newPass !== confirmPass) {
+        showToast(currentLang === 'ar' ? "كلمتا المرور غير متطابقتين!" : "Passwords do not match!", "⚠️");
+        return;
+      }
+
+      const newHash = simpleHash(newPass);
+
+      let accounts = JSON.parse(localStorage.getItem('mk_registered_accounts') || '{}');
+      if (accounts[email]) {
+        accounts[email].passwordHash = newHash;
+        localStorage.setItem('mk_registered_accounts', JSON.stringify(accounts));
+      }
+
+      gameState.passwordHash = newHash;
+      saveGame();
+      closeResetPasswordModal();
+      showToast(currentLang === 'ar' ? "تم تعيين كلمة المرور الجديدة بنجاح! 🔑" : "Password reset successfully!", "✅");
+    }
+
+    /* =========================================================================
+       5. المتصدرين وقاعدة بيانات السحابة (Firestore)
+       ========================================================================= */
+    function syncCloudLeaderboard() {
+      if (!db || gameState.isGuest) return;
+      const uid = (auth && auth.currentUser) ? auth.currentUser.uid : ("user_" + simpleHash(gameState.email || gameState.name));
+      db.collection("leaderboard").doc(uid).set({
+        name: gameState.name,
+        xp: gameState.xp,
+        level: gameState.level,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true }).catch(err => console.warn("Firestore sync deferred:", err));
+    }
+
+    function renderLeaderboard() {
+      const container = document.getElementById('leaderboardListBox');
+      if (!container) return;
+      
+      container.innerHTML = `
+        <div class="text-center py-6 text-slate-400 text-xs font-bold">
+          ${currentLang === 'ar' ? 'جارٍ تحميل الأبطال الحقيقيين من السحابة... ⏳' : 'Loading real heroes from cloud... ⏳'}
+        </div>
+      `;
+
+      if (!db) {
+         container.innerHTML = `
+          <div class="text-center py-6 text-slate-400 text-xs font-bold">
+            ${currentLang === 'ar' ? 'السحابة غير متصلة.' : 'Cloud offline.'}
+          </div>
+         `;
+         return;
+      }
+
+      db.collection("leaderboard")
+        .orderBy("xp", "desc")
+        .limit(10)
+        .get()
+        .then((snapshot) => {
+          container.innerHTML = '';
+
+          if (snapshot.empty) {
+            container.innerHTML = `
+              <div class="text-center py-8 text-slate-500 text-xs">
+                ${currentLang === 'ar' ? 'لا يوجد لاعبون مسجلون بعد. كن أول بطل يتصدر القائمة! 🏆' : 'No players yet. Be the first champion! 🏆'}
+              </div>
+            `;
+            return;
+          }
+
+          let rank = 1;
+          snapshot.forEach((doc) => {
+            const entry = doc.data();
+            const currentUid = (auth && auth.currentUser) ? auth.currentUser.uid : ("user_" + simpleHash(gameState.email || gameState.name));
+            const isCurrent = !gameState.isGuest && (doc.id === currentUid || entry.name === gameState.name);
+            
+            const row = document.createElement('div');
+            row.className = `flex items-center justify-between p-3 rounded-2xl border transition ${
+              isCurrent 
+                ? 'bg-blue-950/40 border-blue-500 shadow-md ring-1 ring-blue-500/50' 
+                : 'bg-slate-950/60 light:bg-slate-50 border-slate-800 light:border-slate-200'
+            }`;
+
+            const rankBadge = rank === 1 ? "🥇" : (rank === 2 ? "🥈" : (rank === 3 ? "🥉" : `#${formatNum(rank)}`));
+
+            row.innerHTML = `
+              <div class="flex items-center gap-3">
+                <span class="font-black text-sm text-amber-400 w-7 text-center font-mono">${rankBadge}</span>
+                <div>
+                  <div class="font-bold text-xs text-slate-100 light:text-slate-900 flex items-center gap-1.5">
+                    <span>${entry.name}</span>
+                    ${isCurrent ? '<span class="text-[9px] bg-blue-600 text-white px-1.5 py-0.2 rounded font-black">' + (currentLang === 'ar' ? 'أنت' : 'You') + '</span>' : ''}
+                  </div>
+                  <span class="text-[10px] text-slate-400 font-mono">${I18N[currentLang].lvl_short} ${formatNum(entry.level || 1)}</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="font-black text-xs text-cyan-400 font-mono">${formatNum(entry.xp || 0)} XP</span>
+              </div>
+            `;
+            container.appendChild(row);
+            rank++;
+          });
+        })
+        .catch((err) => {
+          container.innerHTML = `
+            <div class="text-center py-6 text-rose-400 text-xs">
+              ${currentLang === 'ar' ? 'سجّل الدخول بحساب لتفعيل السحابة وعرض المتصدرين' : 'Sign in to sync leaderboard'}
+            </div>
+          `;
+        });
+    }
+
+    /* =========================================================================
+       6. شاشة اختيار الجداول والمراحل
+       ========================================================================= */
+    function renderTableCards() {
+      const container = document.getElementById('tableCardsGrid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      for (let t = 1; t <= 12; t++) {
+        const currentLvl = gameState.tableProgress[t] || 1;
+        const isCompletedAll = currentLvl > 10;
+        const displayStage = isCompletedAll ? 10 : currentLvl;
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-4 flex flex-col justify-between hover:border-slate-700 transition shadow-lg";
+
+        const tableText = `${I18N[currentLang].table_label} ${formatNum(t)}`;
+        const stageText = isCompletedAll 
+          ? I18N[currentLang].max_stage_done 
+          : `${I18N[currentLang].stage_prefix} ${formatNum(displayStage)} / ${formatNum(10)}`;
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-base font-black text-slate-100 light:text-slate-900">${tableText}</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-lg font-black ${isCompletedAll ? 'bg-amber-950/60 text-amber-300 border border-amber-500/50' : 'bg-blue-950/60 light:bg-blue-50 light:text-blue-700 text-blue-400 border border-blue-800/60'}">${stageText}</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mb-3">${formatNum(5)} ${I18N[currentLang].waves_completed} ${displayStage >= 5 ? '🔥' : '⚔️'}</p>
+          </div>
+          <button onclick="startBattleStage(${t}, ${displayStage})" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs shadow-md transition active:scale-95 flex items-center justify-center gap-1.5">
+            <span>⚔️</span>
+            <span>${currentLang === 'ar' ? 'بدء المستوى' : 'Start Level'} ${formatNum(displayStage)}</span>
+          </button>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    /* =========================================================================
+       7. نظام المعارك المتقدم (تصاعد قوة وتحمل الوحوش والزعماء)
+       ========================================================================= */
+    function startBattleStage(tableNum, stageNum) {
+      const wep = SHOP_DATA.weapons.find(w => w.id === gameState.equipped.weapon) || SHOP_DATA.weapons[0];
+      const arm = SHOP_DATA.armors.find(a => a.id === gameState.equipped.armor) || SHOP_DATA.armors[0];
+
+      currentBattle = {
+        table: tableNum,
+        stage: stageNum,
+        wave: 1,
+        totalWaves: 5,
+        playerMaxHp: 100,
+        playerHp: 100,
+        playerDmg: wep.dmg,
+        playerDef: arm.def,
+        monsterHp: calculateMonsterHp(tableNum, stageNum, 1, wep.dmg),
+        monsterMaxHp: calculateMonsterHp(tableNum, stageNum, 1, wep.dmg),
+        monsterDmg: 7 + Math.floor(tableNum * 1.1) + Math.floor(stageNum * 1.5),
+        correctAnswer: null
+      };
+
+      setupArenaVisuals();
+      nextWaveTurn();
+      showScreen('battleView');
+    }
+
+    function calculateMonsterHp(table, stage, wave, playerDmg) {
+      let requiredHits = 3; 
+      if (wave === 2 || wave === 3) requiredHits = 4;
+      if (wave === 4) requiredHits = 5; 
+      if (wave === 5) requiredHits = stage >= 5 ? 7 : 6; 
+
+      return Math.round(playerDmg * requiredHits) + (stage * 3);
+    }
+
+    function setupArenaVisuals() {
+      document.getElementById('battleTableText').innerText = `${I18N[currentLang].table_label} ${formatNum(currentBattle.table)}`;
+      document.getElementById('battleStageText').innerText = `${I18N[currentLang].stage_prefix} ${formatNum(currentBattle.stage)}`;
+      document.getElementById('battleWaveNum').innerText = formatNum(currentBattle.wave);
+      document.getElementById('battleTotalWaves').innerText = formatNum(currentBattle.totalWaves);
+
+      document.getElementById('arenaKnightLabel').innerText = gameState.name;
+      document.getElementById('arenaKnightImg').src = gameState.avatar;
+
+      const frameContainer = document.getElementById('arenaFrameSvgLayer');
+      frameContainer.innerHTML = '';
+      if (gameState.equipped.frame === 'silver_frame') {
+        frameContainer.innerHTML = `<div class="w-full h-full rounded-2xl border-2 border-slate-300"></div>`;
+      } else if (gameState.equipped.frame === 'gold_frame') {
+        frameContainer.innerHTML = `<div class="w-full h-full rounded-2xl border-2 border-amber-400 shadow-md"></div>`;
+      } else if (gameState.equipped.frame === 'fire_frame') {
+        frameContainer.innerHTML = `<div class="w-full h-full rounded-2xl border-2 border-rose-500 animate-pulse shadow-rose-500/50 shadow-lg"></div>`;
+      } else if (gameState.equipped.frame === 'cosmic_frame') {
+        frameContainer.innerHTML = `<div class="w-full h-full rounded-2xl border-2 border-cyan-400 animate-pulse shadow-cyan-400/50 shadow-lg"></div>`;
+      }
+
+      renderArenaBackdrop(gameState.equipped.arena);
+      updateBattleHp();
+    }
+
+    function renderArenaBackdrop(arenaId) {
+      const layer = document.getElementById('arenaBackdropLayer');
+      if (arenaId === 'stone_castle') {
+        layer.innerHTML = `
+          <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 250">
+            <rect width="500" height="250" fill="#1e293b"/>
+            <rect x="30" y="50" width="70" height="150" fill="#334155"/>
+            <rect x="400" y="50" width="70" height="150" fill="#334155"/>
+            <polygon points="30,50 65,15 100,50" fill="#475569"/>
+            <polygon points="400,50 435,15 470,50" fill="#475569"/>
+            <rect x="100" y="110" width="300" height="90" fill="#2d3748"/>
+          </svg>`;
+      } else if (arenaId === 'volcano') {
+        layer.innerHTML = `
+          <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 250">
+            <rect width="500" height="250" fill="#450a0a"/>
+            <polygon points="0,250 150,80 300,250" fill="#7f1d1d"/>
+            <polygon points="250,250 370,100 500,250" fill="#991b1b"/>
+            <circle cx="150" cy="80" r="16" fill="#f97316"/>
+            <path class="lava-flow" d="M150,96 Q170,160 180,250" stroke="#f59e0b" stroke-width="8" fill="none"/>
+            <rect x="0" y="220" width="500" height="30" fill="#dc2626" opacity="0.6"/>
+          </svg>`;
+      } else if (arenaId === 'cyber_void') {
+        layer.innerHTML = `
+          <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 250">
+            <rect width="500" height="250" fill="#050814"/>
+            <circle cx="80" cy="60" r="2" fill="#38bdf8"/><circle cx="220" cy="40" r="2" fill="#818cf8"/>
+            <circle cx="380" cy="80" r="2" fill="#c084fc"/><circle cx="450" cy="50" r="2" fill="#38bdf8"/>
+            <line x1="0" y1="200" x2="500" y2="200" stroke="#0ea5e9" stroke-width="1.5" opacity="0.4"/>
+            <line x1="0" y1="230" x2="500" y2="230" stroke="#0ea5e9" stroke-width="2" opacity="0.6"/>
+          </svg>`;
+      } else {
+        layer.innerHTML = `
+          <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 250">
+            <rect width="500" height="250" fill="#064e3b" opacity="0.4"/>
+            <circle cx="60" cy="140" r="35" fill="#15803d"/>
+            <rect x="55" y="160" width="10" height="50" fill="#78350f"/>
+            <circle cx="440" cy="130" r="40" fill="#16a34a"/>
+            <rect x="435" y="160" width="10" height="50" fill="#78350f"/>
+            <path d="M0,190 Q150,160 300,180 T500,170 L500,250 L0,250 Z" fill="#14532d"/>
+          </svg>`;
+      }
+    }
+
+    function renderCurrentMonsterSvg() {
+      const box = document.getElementById('arenaMonsterSvg');
+      const isBoss = currentBattle.wave === currentBattle.totalWaves;
+      const monsterName = isBoss 
+        ? (currentLang === 'ar' ? `زعيم المستوى ${formatNum(currentBattle.stage)} 👑` : `Level ${formatNum(currentBattle.stage)} Boss 👑`)
+        : (currentLang === 'ar' ? `وحش الجولة ${formatNum(currentBattle.wave)}` : `Wave Monster ${formatNum(currentBattle.wave)}`);
+
+      document.getElementById('arenaMonsterLabel').innerText = monsterName;
+
+      const skinColor = isBoss ? "#e11d48" : (currentBattle.wave % 2 === 0 ? "#8b5cf6" : "#10b981");
+
+      box.innerHTML = `
+        <svg viewBox="0 0 100 100" class="w-full h-full">
+          <ellipse cx="50" cy="55" rx="${isBoss ? 42 : 34}" ry="${isBoss ? 38 : 30}" fill="${skinColor}"/>
+          <circle cx="38" cy="48" r="5" fill="#000"/><circle cx="39" cy="47" r="1.5" fill="#fff"/>
+          <circle cx="62" cy="48" r="5" fill="#000"/><circle cx="63" cy="47" r="1.5" fill="#fff"/>
+          <polygon points="36,64 64,64 50,75" fill="#0f172a"/>
+          ${isBoss ? '<polygon points="50,12 38,32 62,32" fill="#fbbf24"/><circle cx="50" cy="12" r="3" fill="#ef4444"/>' : ''}
+        </svg>
+      `;
+    }
+
+    function updateBattleHp() {
+      const kPct = Math.max(0, Math.round((currentBattle.playerHp / currentBattle.playerMaxHp) * 100));
+      const mPct = Math.max(0, Math.round((currentBattle.monsterHp / currentBattle.monsterMaxHp) * 100));
+
+      document.getElementById('knightHpFill').style.width = kPct + '%';
+      document.getElementById('knightHpText').innerText = `${formatNum(currentBattle.playerHp)} / ${formatNum(currentBattle.playerMaxHp)}`;
+
+      document.getElementById('monsterHpFill').style.width = mPct + '%';
+      document.getElementById('monsterHpText').innerText = `${formatNum(currentBattle.monsterHp)} / ${formatNum(currentBattle.monsterMaxHp)}`;
+    }
+
+    function nextWaveTurn() {
+      renderCurrentMonsterSvg();
+      updateBattleHp();
+
+      document.getElementById('battleWaveNum').innerText = formatNum(currentBattle.wave);
+
+      const t = currentBattle.table;
+      const factor = Math.floor(Math.random() * 10) + 1;
+      const correct = t * factor;
+      currentBattle.correctAnswer = correct;
+
+      if (currentLang === 'ar') {
+        document.getElementById('mathEquationBox').innerText = `${formatNum(t)} × ${formatNum(factor)} = ؟`;
+      } else {
+        document.getElementById('mathEquationBox').innerText = `${t} × ${factor} = ?`;
+      }
+
+      const opts = new Set([correct]);
+      while (opts.size < 4) {
+        const offset = (Math.floor(Math.random() * 4) + 1) * (Math.random() > 0.5 ? 1 : -1);
+        const val = correct + offset;
+        if (val > 0 && val !== correct) opts.add(val);
+      }
+
+      const answersArr = Array.from(opts).sort(() => Math.random() - 0.5);
+      const grid = document.getElementById('answersGridBox');
+      grid.innerHTML = '';
+
+      answersArr.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = "py-3.5 md:py-4 rounded-2xl bg-slate-800 hover:bg-blue-600 text-white font-black text-xl md:text-2xl border border-slate-700 hover:border-blue-400 transition active:scale-95 shadow-md font-mono";
+        btn.innerText = formatNum(opt);
+        btn.onclick = () => handleAnswer(opt);
+        grid.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(ans) {
+      const isCorrect = ans === currentBattle.correctAnswer;
+      const monsterEl = document.getElementById('monsterFighterBox');
+      const knightEl = document.getElementById('knightFighterBox');
+
+      if (isCorrect) {
+        const dmg = currentBattle.playerDmg;
+        currentBattle.monsterHp = Math.max(0, currentBattle.monsterHp - dmg);
+        showFloatingText(`-${formatNum(dmg)}`, monsterEl, 'text-emerald-400');
+        monsterEl.classList.add('shake-target');
+        setTimeout(() => monsterEl.classList.remove('shake-target'), 350);
+        playAudio('hit');
+      } else {
+        const rawDmg = currentBattle.monsterDmg;
+        const finalDmg = Math.max(2, Math.round(rawDmg * (1 - currentBattle.playerDef)));
+        currentBattle.playerHp = Math.max(0, currentBattle.playerHp - finalDmg);
+        showFloatingText(`-${formatNum(finalDmg)}`, knightEl, 'text-rose-500');
+        knightEl.classList.add('shake-target');
+        setTimeout(() => knightEl.classList.remove('shake-target'), 350);
+        playAudio('hurt');
+      }
+
+      updateBattleHp();
+
+      if (currentBattle.playerHp <= 0) {
+        playAudio('hurt');
+        showToast(currentLang === 'ar' ? "نفدت طاقتك في المعركة!" : "Defeated in battle!", "💔");
+        showScreen('homeView');
+        return;
+      }
+
+      if (currentBattle.monsterHp <= 0) {
+        if (currentBattle.wave < currentBattle.totalWaves) {
+          currentBattle.wave++;
+          const nextHp = calculateMonsterHp(currentBattle.table, currentBattle.stage, currentBattle.wave, currentBattle.playerDmg);
+          currentBattle.monsterMaxHp = nextHp;
+          currentBattle.monsterHp = nextHp;
+          showToast(currentLang === 'ar' ? `هزمت الوحش! التالي: جولة ${formatNum(currentBattle.wave)}` : `Wave cleared! Next: ${formatNum(currentBattle.wave)}`, "⚔️");
+          setTimeout(nextWaveTurn, 600);
+        } else {
+          winStageComplete();
+        }
+      } else {
+        setTimeout(nextWaveTurn, 500);
+      }
+    }
+
+    function showFloatingText(text, parent, colorCls) {
+      const sp = document.createElement('span');
+      sp.className = `absolute top-0 font-black text-2xl z-30 damage-indicator ${colorCls} font-mono`;
+      sp.innerText = text;
+      parent.appendChild(sp);
+      setTimeout(() => sp.remove(), 800);
+    }
+
+    function winStageComplete() {
+      gameState.totalBattles = (gameState.totalBattles || 0) + 1;
+
+      const currentLvl = gameState.tableProgress[currentBattle.table] || 1;
+      let isTableFullyClearedNow = false;
+
+      if (currentBattle.stage >= currentLvl) {
+        if (currentLvl === 10) {
+          gameState.tableProgress[currentBattle.table] = 11;
+          isTableFullyClearedNow = true;
+        } else {
+          gameState.tableProgress[currentBattle.table] = currentLvl + 1;
+        }
+      }
+
+      let goldEarned = 25 + (currentBattle.table * 3) + (currentBattle.stage * 12);
+      let xpEarned = 35 + (currentBattle.stage * 20);
+      let gemsEarned = currentBattle.stage >= 5 ? 1 : 0;
+
+      if (isTableFullyClearedNow) {
+        goldEarned += 250;
+        gemsEarned += 10;
+        xpEarned += 200;
+      }
+
+      const knt = SHOP_DATA.knights.find(k => k.id === gameState.equipped.knight);
+      if (knt?.goldBonus) goldEarned = Math.round(goldEarned * knt.goldBonus);
+      if (knt?.xpBonus) xpEarned = Math.round(xpEarned * knt.xpBonus);
+
+      gameState.gold += goldEarned;
+      gameState.xp += xpEarned;
+      gameState.gems += gemsEarned;
+
+      while (gameState.xp >= gameState.level * 100) {
+        gameState.xp -= gameState.level * 100;
+        gameState.level++;
+        gameState.gold += 50;
+        gameState.gems += 2;
+      }
+
+      checkBadges();
+      saveGame();
+      updateHeaderUI();
+      renderTableCards();
+      renderBadges();
+      renderLeaderboard();
+      playAudio('coin');
+
+      let victoryMsg = currentLang === 'ar'
+        ? `🎉 انتصار كامل! أنهيت المستوى ${formatNum(currentBattle.stage)}!\n+${formatNum(goldEarned)} ذهب | +${formatNum(xpEarned)} XP` + (gemsEarned > 0 ? ` | +${formatNum(gemsEarned)} 💎` : '')
+        : `🎉 Victory! Level ${formatNum(currentBattle.stage)} cleared!\n+${formatNum(goldEarned)} Gold | +${formatNum(xpEarned)} XP` + (gemsEarned > 0 ? ` | +${formatNum(gemsEarned)} 💎` : '');
+
+      if (isTableFullyClearedNow) {
+        victoryMsg += currentLang === 'ar'
+          ? `\n👑 مبروك! ختمت جدول ${formatNum(currentBattle.table)} بالكامل وحصلت على الجائزة الكبرى (+٢٥٠ ذهب و +١٠ جواهر)!`
+          : `\n👑 Congratulations! Table ${formatNum(currentBattle.table)} fully cleared (+250 Gold & +10 Gems)!`;
+      }
+
+      showToast(victoryMsg, "🏆");
+      showScreen('homeView');
+    }
+
+    function fleeBattle() {
+      showToast(currentLang === 'ar' ? "تم الانسحاب من المعركة" : "Retreated from battle", "🏳️");
+      showScreen('homeView');
+    }
+
+    /* =========================================================================
+       8. برج الجواهر والذهب التفاعلي الحي (Online Tower)
+       ========================================================================= */
+    function initLiveTower() {
+      setInterval(() => {
+        if (!isTowerReady) {
+          if (towerRemainingSec > 0) {
+            towerRemainingSec--;
+          } else {
+            isTowerReady = true;
+            document.getElementById('towerNoticePing').classList.remove('hidden');
+          }
+        }
+        updateTowerUI();
+      }, 1000);
+    }
+
+    function openTowerModal() {
+      document.getElementById('towerModal').classList.remove('hidden');
+      updateTowerUI();
+    }
+
+    function closeTowerModal() {
+      document.getElementById('towerModal').classList.add('hidden');
+    }
+
+    function updateTowerUI() {
+      const idx = Math.min((gameState.towerStage || 1) - 1, TOWER_SCHEDULE.length - 1);
+      const schedule = TOWER_SCHEDULE[idx];
+
+      const rewardDesc = `🪙 ${formatNum(schedule.gold)} ${currentLang === 'ar' ? 'ذهب' : 'Gold'} + 💎 ${formatNum(schedule.gems)} ${currentLang === 'ar' ? 'جواهر' : 'Gems'}`;
+      document.getElementById('towerNextRewardText').innerText = rewardDesc;
+
+      const m = Math.floor(towerRemainingSec / 60).toString().padStart(2, '0');
+      const s = (towerRemainingSec % 60).toString().padStart(2, '0');
+      document.getElementById('towerTimerBox').innerText = isTowerReady ? (currentLang === 'ar' ? "جاهز الآن!" : "Ready Now!") : `${formatNum(m)}:${formatNum(s)}`;
+
+      const claimBtn = document.getElementById('towerClaimBtn');
+      claimBtn.disabled = !isTowerReady;
+    }
+
+    function claimTowerReward() {
+      if (!isTowerReady) return;
+      const idx = Math.min((gameState.towerStage || 1) - 1, TOWER_SCHEDULE.length - 1);
+      const schedule = TOWER_SCHEDULE[idx];
+
+      gameState.gold += schedule.gold;
+      gameState.gems += schedule.gems;
+
+      gameState.towerStage = (gameState.towerStage || 1) + 1;
+      const nextIdx = Math.min(gameState.towerStage - 1, TOWER_SCHEDULE.length - 1);
+      towerRemainingSec = TOWER_SCHEDULE[nextIdx].min * 60;
+      isTowerReady = false;
+      document.getElementById('towerNoticePing').classList.add('hidden');
+
+      saveGame();
+      updateHeaderUI();
+      playAudio('gem');
+
+      showToast(currentLang === 'ar' ? `استلمت مكافأة البرج (+${formatNum(schedule.gold)} ذهب و +${formatNum(schedule.gems)} جواهر)!` : `Tower reward claimed!`, "📡");
+      closeTowerModal();
+    }
+
+    /* =========================================================================
+       9. عرض عناصر المتجر والشراء
+       ========================================================================= */
+    let currentShopTab = 'weapons';
+
+    function switchShopCategory(cat, btn) {
+      currentShopTab = cat;
+      document.querySelectorAll('.shop-tab').forEach(b => {
+        b.className = "shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-700";
+      });
+      btn.className = "shop-tab active px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-blue-600 text-white";
+      renderShopItems();
+    }
+
+    function renderShopItems() {
+      const container = document.getElementById('shopGridBox');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const items = SHOP_DATA[currentShopTab] || [];
+      items.forEach(item => {
+        const isOwned = gameState.inventory.includes(item.id);
+        const isEquipped = Object.values(gameState.equipped).includes(item.id);
+
+        const card = document.createElement('div');
+        card.className = `p-3.5 rounded-2xl border transition flex flex-col justify-between ${
+          isEquipped ? 'bg-blue-950/40 light:bg-blue-50 border-emerald-500 shadow-md' : 'bg-slate-950/60 light:bg-slate-50 border-slate-800 light:border-slate-200'
+        }`;
+
+        const itemName = currentLang === 'ar' ? item.name_ar : item.name_en;
+        const itemDesc = currentLang === 'ar' ? item.desc_ar : item.desc_en;
+
+        let priceHtml = '';
+        if (isOwned) {
+          priceHtml = `<span class="text-xs font-bold text-emerald-400 font-mono">${I18N[currentLang].owned}</span>`;
+        } else {
+          const g = item.priceGold > 0 ? `<span class="font-mono">🪙 ${formatNum(item.priceGold)}</span>` : '';
+          const gem = item.priceGem > 0 ? `<span class="font-mono">💎 ${formatNum(item.priceGem)}</span>` : '';
+          priceHtml = `<div class="flex items-center gap-1.5 text-xs font-bold text-amber-400">${g} ${gem}</div>`;
+        }
+
+        let btnHtml = '';
+        if (!isOwned) {
+          btnHtml = `<button onclick="buyShopItem('${item.id}', '${currentShopTab}')" class="px-3 py-1 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition shadow">${I18N[currentLang].buy}</button>`;
+        } else if (isEquipped) {
+          btnHtml = `<button disabled class="px-3 py-1 rounded-xl bg-emerald-950 light:bg-emerald-100 text-emerald-400 light:text-emerald-700 border border-emerald-700 font-bold text-xs">${I18N[currentLang].equipped}</button>`;
+        } else {
+          btnHtml = `<button onclick="equipShopItem('${item.id}', '${currentShopTab}')" class="px-3 py-1 rounded-xl bg-slate-800 light:bg-slate-200 hover:bg-slate-700 text-slate-200 light:text-slate-800 border border-slate-600 light:border-slate-300 font-bold text-xs transition">${I18N[currentLang].equip}</button>`;
+        }
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2.5 mb-1.5">
+              <span class="text-2xl p-2 rounded-xl bg-slate-900 light:bg-white border border-slate-700/80 light:border-slate-300 shadow-sm">${item.icon}</span>
+              <div>
+                <h4 class="font-bold text-xs text-slate-100 light:text-slate-900">${itemName}</h4>
+                <span class="text-[10px] text-blue-400 font-mono font-bold">${item.dmg ? '+' + formatNum(item.dmg) + ' Dmg' : (item.def ? Math.round(item.def*100) + '% Def' : '')}</span>
+              </div>
+            </div>
+            <p class="text-[10px] text-slate-400 light:text-slate-600 leading-snug my-2">${itemDesc}</p>
+          </div>
+          <div class="flex items-center justify-between border-t border-slate-800/80 light:border-slate-200 pt-2 mt-1">
+            ${priceHtml}
+            ${btnHtml}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function buyShopItem(id, cat) {
+      const item = (SHOP_DATA[cat] || []).find(i => i.id === id);
+      if (!item) return;
+
+      if (gameState.gold < item.priceGold || gameState.gems < item.priceGem) {
+        showToast(currentLang === 'ar' ? "الموارد غير كافية للشراء!" : "Not enough resources!", "⚠️");
+        return;
+      }
+
+      gameState.gold -= item.priceGold;
+      gameState.gems -= item.priceGem;
+      gameState.inventory.push(item.id);
+      saveGame();
+      updateHeaderUI();
+      renderShopItems();
+      playAudio('coin');
+      showToast(currentLang === 'ar' ? "تم الشراء بنجاح!" : "Purchased successfully!", "🛍️");
+    }
+
+    function equipShopItem(id, cat) {
+      const map = { weapons: 'weapon', armors: 'armor', knights: 'knight', frames: 'frame', arenas: 'arena' };
+      const k = map[cat];
+      if (k) {
+        gameState.equipped[k] = id;
+        saveGame();
+        updateHeaderUI();
+        renderShopItems();
+        playAudio('coin');
+        showToast(currentLang === 'ar' ? "تم التجهيز!" : "Equipped!", "🛡️");
+      }
+    }
+
+    /* =========================================================================
+       10. الشارات والملف الشخصي وتحديث الهيدر
+       ========================================================================= */
+    function checkBadges() {
+      BADGES_LIST.forEach(b => {
+        if (!gameState.badges.includes(b.id) && b.req(gameState)) {
+          gameState.badges.push(b.id);
+          gameState.gems += b.gem;
+          playAudio('gem');
+          showToast(currentLang === 'ar' ? `شارة جديدة: ${b.name_ar} (+${formatNum(b.gem)} 💎)` : `New badge: ${b.name_en} (+${formatNum(b.gem)} 💎)`, "🎖️");
+        }
+      });
+    }
+
+    function renderBadges() {
+      const box = document.getElementById('badgesGridBox');
+      if (!box) return;
+      box.innerHTML = '';
+
+      BADGES_LIST.forEach(b => {
+        const done = gameState.badges.includes(b.id);
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-2xl border transition flex items-center justify-between ${
+          done ? 'bg-amber-950/20 light:bg-amber-50 border-amber-500/60' : 'bg-slate-950/50 light:bg-slate-50 border-slate-800 light:border-slate-200 opacity-70'
+        }`;
+
+        card.innerHTML = `
+          <div>
+            <h4 class="font-bold text-xs text-slate-100 light:text-slate-900">${currentLang === 'ar' ? b.name_ar : b.name_en}</h4>
+            <p class="text-[10px] text-slate-400 mt-0.5">${currentLang === 'ar' ? b.desc_ar : b.desc_en}</p>
+            <span class="text-[10px] font-bold ${done ? 'text-emerald-400' : 'text-slate-500'}">${done ? I18N[currentLang].completed : I18N[currentLang].locked}</span>
+          </div>
+          <span class="text-xs font-black text-cyan-400 font-mono">+${formatNum(b.gem)} 💎</span>
+        `;
+        box.appendChild(card);
+      });
+    }
+
+    function updateHeaderUI() {
+      document.getElementById('headerKnightName').innerText = gameState.name;
+      document.getElementById('headerLevel').innerText = formatNum(gameState.level);
+      document.getElementById('headerGold').innerText = formatNum(gameState.gold);
+      document.getElementById('headerGems').innerText = formatNum(gameState.gems);
+      document.getElementById('headerAvatarImg').src = gameState.avatar;
+
+      const needed = gameState.level * 100;
+      const pct = Math.min(100, Math.round((gameState.xp / needed) * 100));
+      document.getElementById('headerXpFill').style.width = pct + '%';
+      document.getElementById('headerXpText').innerText = `${formatNum(gameState.xp)}/${formatNum(needed)}`;
+
+      applyFrameClass(document.getElementById('headerAvatarBox'), gameState.equipped.frame);
+
+      document.getElementById('profilePreviewImg').src = gameState.avatar;
+      document.getElementById('profileNameBox').value = gameState.name;
+      document.getElementById('profileAccountType').innerText = gameState.isGuest ? I18N[currentLang].guest_text : gameState.authType;
+
+      const completedTables = Object.values(gameState.tableProgress).filter(lvl => lvl > 10).length;
+      document.getElementById('profileCompletedTablesCount').innerText = `${formatNum(completedTables)} / ${formatNum(12)}`;
+
+      let totalCompletedStages = 0;
+      Object.values(gameState.tableProgress).forEach(lvl => {
+        totalCompletedStages += (lvl > 10 ? 10 : (lvl - 1));
+      });
+      document.getElementById('profileCompletedStagesCount').innerText = formatNum(totalCompletedStages);
+
+      const wep = SHOP_DATA.weapons.find(w => w.id === gameState.equipped.weapon);
+      const arm = SHOP_DATA.armors.find(a => a.id === gameState.equipped.armor);
+      document.getElementById('profileWeaponLabel').innerText = wep ? (currentLang === 'ar' ? wep.name_ar : wep.name_en) : "";
+      document.getElementById('profileArmorLabel').innerText = arm ? (currentLang === 'ar' ? arm.name_ar : arm.name_en) : "";
+    }
+
+    function applyFrameClass(el, frameId) {
+      el.className = "w-11 h-11 rounded-2xl overflow-hidden bg-slate-800 flex items-center justify-center p-0.5 border";
+      if (frameId === 'silver_frame') {
+        el.classList.add('border-slate-300', 'shadow-md');
+      } else if (frameId === 'gold_frame') {
+        el.classList.add('border-amber-400', 'shadow-md', 'shadow-amber-500/20');
+      } else if (frameId === 'fire_frame') {
+        el.classList.add('border-rose-500', 'shadow-md', 'shadow-rose-500/30', 'animate-pulse');
+      } else if (frameId === 'cosmic_frame') {
+        el.classList.add('border-cyan-400', 'shadow-md', 'shadow-cyan-500/30', 'animate-pulse');
+      } else {
+        el.classList.add('border-slate-700');
+      }
+    }
+
+    function handleCustomAvatarUpload(e) {
+      const f = e.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = ev => {
+        gameState.avatar = ev.target.result;
+        saveGame();
+        updateHeaderUI();
+        showToast(currentLang === 'ar' ? "تم تحديث الصورة الشخصية!" : "Avatar updated!", "📷");
+      };
+      r.readAsDataURL(f);
+    }
+
+    function resetAvatarToDefault() {
+      gameState.avatar = DEFAULT_AVATAR;
+      saveGame();
+      updateHeaderUI();
+      showToast(currentLang === 'ar' ? "استعادة الصورة الأصلية" : "Restored default avatar", "🔄");
+    }
+
+    function saveCustomName() {
+      const val = document.getElementById('profileNameBox').value.trim();
+      if (!val) return;
+      gameState.name = val;
+      saveGame();
+      updateHeaderUI();
+      renderLeaderboard();
+      showToast(currentLang === 'ar' ? "تم حفظ الاسم!" : "Name saved!", "✨");
+    }
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.view-screen').forEach(s => s.classList.add('hidden'));
+      const sc = document.getElementById(screenId);
+      if (sc) {
+        sc.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function openSettingsModal() {
+      document.getElementById('settingsModal').classList.remove('hidden');
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settingsModal').classList.add('hidden');
+    }
+
+    function showToast(msg, icon = "⚡") {
+      const t = document.getElementById('toastNotification');
+      document.getElementById('toastMessage').innerText = msg;
+      document.getElementById('toastIcon').innerText = icon;
+      t.classList.remove('-translate-y-28', 'opacity-0', 'pointer-events-none');
+      t.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        t.classList.add('-translate-y-28', 'opacity-0', 'pointer-events-none');
+        t.classList.remove('translate-y-0', 'opacity-100');
+      }, 3200);
+    }
+  </script>
+</body>
+</html>
