@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>مغامرة جدول الضرب - فارس الرياضيات</title>
   
   <!-- خطوط عربية ولاتينية احترافية -->
@@ -100,6 +100,60 @@
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg-primary); }
     ::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 9999px; }
+    /* تحسينات كاملة للهواتف والشاشات الصغيرة */
+@media (max-width: 640px) {
+  /* جعل الهيدر منظم على سطرين بدون خروج عن الشاشة */
+  header {
+    padding: 8px 10px !important;
+  }
+  
+  .max-w-6xl {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  /* تصغير حجم نص اسم الفارس والـ XP */
+  #headerKnightName {
+    font-size: 12px !important;
+  }
+
+  /* ضبط ساحة القتال لتناسب الشاشة الرأسية */
+  #arenaBox {
+    height: 240px !important;
+    padding: 12px 14px !important;
+  }
+
+  /* تصغير الفارس والوحش على الهاتف */
+  #arenaKnightImg, #arenaMonsterSvg {
+    width: 65px !important;
+    height: 65px !important;
+  }
+
+  /* ضبط حجم مسألة الضرب والأزرار لتناسب أصابع اليد */
+  #mathEquationBox {
+    font-size: 28px !important;
+    margin-bottom: 12px !important;
+  }
+
+  #answersGridBox button {
+    padding: 12px 8px !important;
+    font-size: 18px !important;
+    border-radius: 14px !important;
+  }
+
+  /* جعل بطاقات الجداول في الشاشة الرئيسية تظهر في عمودين مرتبين */
+  #tableCardsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  /* ضبط نوافذ تسجيل الدخول والإعدادات لتناسب شاشة الموبايل بالكامل */
+  #authModal > div, #settingsModal > div, #towerModal > div, #resetPasswordModal > div {
+    max-width: 95% !important;
+    padding: 18px !important;
+    border-radius: 20px !important;
+  }
+}
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -207,7 +261,7 @@
 
   <!-- الشريط العلوي -->
   <header class="bg-slate-900/90 dark:bg-slate-900/95 light:bg-white light:border-slate-200 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md px-3 md:px-6 py-2.5 transition-colors">
-    <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+   <div class="max-w-6xl mx-auto flex items-center justify-between gap-2 flex-wrap">
       
       <div class="flex items-center gap-2.5 cursor-pointer" onclick="showScreen('profileView')">
         <div class="w-11 h-11 rounded-2xl overflow-hidden bg-slate-800 flex items-center justify-center p-0.5 border border-slate-700 relative" id="headerAvatarBox">
