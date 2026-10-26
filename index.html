@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta name="monetag" content="62ef918738a3043df88bcb81976c7415">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>مغامرة جدول الضرب - فارس الرياضيات</title>
   
-  <!-- خطوط عربية ولاتينية احترافية -->
+  <meta name="monetag" content="62ef918738a3043df88bcb81976c7415">
+
+  <!-- خطوط احترافية -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   
-  <!-- مكتبة Tailwind CSS للتصميم المتجاوب والفاخر -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- مكتبات Firebase لتسجيل الدخول السحابي وقاعدة البيانات Firestore -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -32,7 +33,6 @@
         }
       },
       plugins: [
-        // تفعيل خيار light: لاستخدامه في الكلاسات مباشرة للوضع النهاري
         function({ addVariant }) {
           addVariant('light', '.light &');
         }
@@ -90,6 +90,24 @@
       animation: shakeFx 0.35s ease-in-out;
     }
 
+    @keyframes knightAttackSlash {
+      0% { transform: scale(1) translateX(0); }
+      40% { transform: scale(1.15) translateX(-25px) rotate(-10deg); }
+      100% { transform: scale(1) translateX(0); }
+    }
+    .knight-attacking {
+      animation: knightAttackSlash 0.4s ease-out;
+    }
+
+    @keyframes weaponSlash {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(-55deg) scale(1.35); filter: drop-shadow(0 0 10px #38bdf8); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+    .weapon-slash-fx {
+      animation: weaponSlash 0.35s ease-in-out;
+    }
+
     .lava-flow {
       animation: lavaAnim 4s ease-in-out infinite alternate;
     }
@@ -98,63 +116,64 @@
       100% { opacity: 1; transform: scaleY(1.08); }
     }
 
+    .stars-twinkle {
+      animation: twinkleAnim 2.5s infinite ease-in-out alternate;
+    }
+    @keyframes twinkleAnim {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+
+    /* إطارات خرافيّة وبارزة جداً في البروفايل */
+    .frame-silver {
+      border: 4px solid #cbd5e1 !important;
+      box-shadow: 0 0 15px rgba(203, 213, 225, 0.6), inset 0 0 6px rgba(255, 255, 255, 0.8) !important;
+    }
+    .frame-gold {
+      border: 4px solid #f59e0b !important;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.8), inset 0 0 8px rgba(251, 191, 36, 0.9) !important;
+    }
+    .frame-red {
+      border: 4px solid #ef4444 !important;
+      box-shadow: 0 0 22px rgba(239, 68, 68, 0.85), inset 0 0 8px rgba(248, 113, 113, 0.9) !important;
+      animation: pulse 1.8s infinite;
+    }
+    .frame-purple {
+      border: 4px solid #a855f7 !important;
+      box-shadow: 0 0 24px rgba(168, 85, 247, 0.9), inset 0 0 10px rgba(192, 132, 252, 0.9) !important;
+      animation: pulse 1.8s infinite;
+    }
+
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg-primary); }
     ::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 9999px; }
-    /* تحسينات كاملة للهواتف والشاشات الصغيرة */
-@media (max-width: 640px) {
-  /* جعل الهيدر منظم على سطرين بدون خروج عن الشاشة */
-  header {
-    padding: 8px 10px !important;
-  }
-  
-  .max-w-6xl {
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-  }
 
-  /* تصغير حجم نص اسم الفارس والـ XP */
-  #headerKnightName {
-    font-size: 12px !important;
-  }
-
-  /* ضبط ساحة القتال لتناسب الشاشة الرأسية */
-  #arenaBox {
-    height: 240px !important;
-    padding: 12px 14px !important;
-  }
-
-  /* تصغير الفارس والوحش على الهاتف */
-  #arenaKnightImg, #arenaMonsterSvg {
-    width: 65px !important;
-    height: 65px !important;
-  }
-
-  /* ضبط حجم مسألة الضرب والأزرار لتناسب أصابع اليد */
-  #mathEquationBox {
-    font-size: 28px !important;
-    margin-bottom: 12px !important;
-  }
-
-  #answersGridBox button {
-    padding: 12px 8px !important;
-    font-size: 18px !important;
-    border-radius: 14px !important;
-  }
-
-  /* جعل بطاقات الجداول في الشاشة الرئيسية تظهر في عمودين مرتبين */
-  #tableCardsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-  }
-
-  /* ضبط نوافذ تسجيل الدخول والإعدادات لتناسب شاشة الموبايل بالكامل */
-  #authModal > div, #settingsModal > div, #towerModal > div, #resetPasswordModal > div {
-    max-width: 95% !important;
-    padding: 18px !important;
-    border-radius: 20px !important;
-  }
-}
+    @media (max-width: 640px) {
+      header {
+        padding: 6px 8px !important;
+      }
+      #arenaBox {
+        height: 260px !important;
+        padding: 10px !important;
+      }
+      #arenaKnightImg, #arenaMonsterSvg {
+        width: 60px !important;
+        height: 60px !important;
+      }
+      #mathEquationBox {
+        font-size: 26px !important;
+        margin-bottom: 8px !important;
+      }
+      #answersGridBox button {
+        padding: 12px 6px !important;
+        font-size: 16px !important;
+        border-radius: 12px !important;
+      }
+      #tableCardsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -165,10 +184,55 @@
     <span id="toastMessage" class="flex-1 text-sm md:text-base font-bold"></span>
   </div>
 
-  <!-- نافذة المصادقة (Auth Gate Modal) -->
+  <!-- نافذة مكافأة التسجيل اليومي الاحترافية -->
+  <div id="dailyRewardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden">
+    <div class="bg-slate-900 border-2 border-amber-500/60 rounded-3xl max-w-sm w-full p-6 text-center text-slate-100 shadow-2xl relative">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-amber-500/20 border border-amber-400 flex items-center justify-center text-4xl mb-3 shadow-lg">
+        🎁
+      </div>
+      <h3 class="text-xl font-black text-amber-300">مكافأة التسجيل اليومي!</h3>
+      <p class="text-xs text-slate-300 mt-1 mb-4">مرحباً بعودتك يا بطل! استلم جائزتك اليومية لتزيد قوتك في الميدان.</p>
+
+      <div class="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 mb-4 flex justify-around items-center">
+        <div class="text-center font-bold">
+          <span class="block text-2xl">🪙</span>
+          <span class="text-amber-400 font-mono text-sm">+50 ذهب</span>
+        </div>
+        <div class="text-center font-bold">
+          <span class="block text-2xl">💎</span>
+          <span class="text-cyan-400 font-mono text-sm">+2 جوهرة</span>
+        </div>
+      </div>
+
+      <button onclick="claimDailyReward()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-emerald-500 text-white font-black text-sm shadow-lg transition active:scale-95">
+        استلام الجائزة الآن ✨
+      </button>
+    </div>
+  </div>
+
+  <!-- نافذة التوقيف المؤقت أثناء المعركة -->
+  <div id="battlePauseModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-xs w-full p-6 text-center text-slate-100 shadow-2xl">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-blue-600/20 border border-blue-500 flex items-center justify-center text-3xl mb-3">
+        ⏸️
+      </div>
+      <h3 class="text-lg font-black text-white mb-2">اللعبة متوقفة مؤقتاً</h3>
+      <p class="text-xs text-slate-400 mb-5">التايمر متوقف. هل تريد استئناف المعركة أم الانسحاب؟</p>
+
+      <div class="space-y-2.5">
+        <button onclick="resumeBattle()" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs shadow transition active:scale-95">
+          استئناف القتال ▶️
+        </button>
+        <button onclick="confirmFleeFromPause()" class="w-full py-2.5 rounded-xl bg-rose-950 text-rose-300 border border-rose-800 font-black text-xs hover:bg-rose-900 transition active:scale-95">
+          انسحاب من المعركة 🏳️
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة المصادقة -->
   <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl relative text-slate-100">
-      
       <div class="text-center mb-5">
         <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 mb-3 shadow-lg shadow-blue-500/20 text-3xl">
           ⚔️
@@ -214,7 +278,7 @@
 
         <div class="flex justify-between items-center text-[11px]">
           <button type="button" onclick="openResetPasswordModal()" class="text-blue-400 hover:underline font-bold" data-i18n="forgot_pass_btn">نسيت كلمة المرور؟</button>
-          <span class="text-slate-500" data-i18n="pass_encrypted_tag">🔒 تشفير محلي آمن</span>
+          <span class="text-slate-500" data-i18n="pass_encrypted_tag">🔒 حماية بريد وباسورد</span>
         </div>
 
         <button onclick="handleManualAuth()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl text-xs transition active:scale-95 shadow-md" data-i18n="save_and_play">حفظ وبدء اللعب</button>
@@ -226,7 +290,6 @@
         </div>
         <button onclick="loginAsGuest()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold rounded-xl text-xs border border-slate-700 transition active:scale-95" data-i18n="guest_btn">متابعة كضيف</button>
       </div>
-
     </div>
   </div>
 
@@ -235,78 +298,97 @@
     <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-6 text-slate-100 shadow-2xl">
       <div class="text-center mb-4">
         <span class="text-3xl">📧</span>
-        <h3 class="text-base font-black mt-2" data-i18n="reset_pass_title">استعادة كلمة المرور عبر Gmail</h3>
-        <p class="text-[11px] text-slate-400 mt-1" data-i18n="reset_pass_desc">أدخل بريدك الإلكتروني المسجل لإرسال رمز التحقق وإعادة التعيين.</p>
+        <h3 class="text-base font-black mt-2" data-i18n="reset_pass_title">استعادة الحساب عبر Gmail</h3>
+        <p class="text-[11px] text-slate-400 mt-1" data-i18n="reset_pass_desc">أدخل بريدك الإلكتروني المسجل لإرسال رابط إعادة تعيين كلمة المرور رسمياً إلى صندوق بريدك.</p>
       </div>
 
-      <div class="space-y-3" id="resetStep1">
-        <input type="email" id="resetEmailField" placeholder="example@gmail.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white" dir="ltr">
-        <button onclick="sendResetVerificationCode()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs" data-i18n="send_code_btn">إرسال كود التحقق</button>
-      </div>
-
-      <div class="space-y-3 hidden" id="resetStep2">
-        <div class="p-2.5 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-[11px] text-emerald-300 hidden" id="resetCodeHint">
-          كود التحقق التجريبي (لأن السيرفر مغلق): <strong id="generatedCodeDisplay" class="font-mono text-white"></strong>
-        </div>
-        <input type="text" id="resetCodeInput" placeholder="أدخل كود التحقق..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white text-center" dir="ltr">
-        <input type="password" id="resetNewPassInput" placeholder="كلمة المرور الجديدة" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white" dir="ltr">
-        <!-- حقل تأكيد كلمة المرور تمت إضافته هنا -->
-        <input type="password" id="resetConfirmPassInput" placeholder="تأكيد كلمة المرور الجديدة" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white" dir="ltr">
-        
-        <button onclick="applyNewPassword()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs" data-i18n="confirm_new_pass">تأكيد وتغيير كلمة المرور</button>
+      <div class="space-y-3">
+        <input type="email" id="resetEmailField" placeholder="your-email@gmail.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white text-center" dir="ltr">
+        <button onclick="sendRealFirebasePasswordReset()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl text-xs transition shadow" data-i18n="send_reset_btn">إرسال رابط الاستعادة 📩</button>
       </div>
 
       <button onclick="closeResetPasswordModal()" class="w-full mt-3 py-1.5 text-slate-400 hover:text-white text-xs font-bold" data-i18n="close_btn">إلغاء</button>
     </div>
   </div>
 
-  <!-- الشريط العلوي -->
-  <header class="bg-slate-900/90 dark:bg-slate-900/95 light:bg-white light:border-slate-200 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md px-3 md:px-6 py-2.5 transition-colors">
-   <div class="max-w-6xl mx-auto flex items-center justify-between gap-2 flex-wrap">
+  <!-- الشريط العلوي (يختفي كلياً داخل المعركة) -->
+  <header id="mainAppHeader" class="bg-slate-900/95 dark:bg-slate-900/95 light:bg-white light:border-slate-200 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md px-2.5 md:px-6 py-2 transition-all">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-1.5 md:gap-2">
       
-      <div class="flex items-center gap-2.5 cursor-pointer" onclick="showScreen('profileView')">
-        <div class="w-11 h-11 rounded-2xl overflow-hidden bg-slate-800 flex items-center justify-center p-0.5 border border-slate-700 relative" id="headerAvatarBox">
+      <!-- معلومات الفارس -->
+      <div class="flex items-center gap-1.5 md:gap-2 cursor-pointer" onclick="showScreen('profileView')">
+        <div class="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden bg-slate-800 flex items-center justify-center p-0.5 relative shrink-0 transition-all" id="headerAvatarBox">
           <img id="headerAvatarImg" src="" alt="Avatar" class="w-full h-full object-cover rounded-xl">
         </div>
         <div>
-          <div class="flex items-center gap-1.5">
-            <span id="headerKnightName" class="font-black text-sm text-slate-100 dark:text-slate-100 light:text-slate-900">فارس الحساب</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-blue-900/60 light:bg-blue-100 light:text-blue-800 text-blue-300 border border-blue-700/50">
-              <span data-i18n="lvl_short">مستوى</span> <span id="headerLevel">1</span>
+          <div class="flex items-center gap-1">
+            <span id="headerKnightName" class="font-black text-xs md:text-sm text-slate-100 dark:text-slate-100 light:text-slate-900 truncate max-w-[85px] md:max-w-[140px]">فارس الحساب</span>
+            <span class="text-[9px] md:text-[10px] px-1 py-0.5 rounded font-bold bg-blue-900/60 light:bg-blue-100 light:text-blue-800 text-blue-300 border border-blue-700/50">
+              <span data-i18n="lvl_short">م</span> <span id="headerLevel">1</span>
             </span>
           </div>
-          <div class="flex items-center gap-1.5 mt-1">
-            <div class="w-20 md:w-28 h-1.5 bg-slate-800 light:bg-slate-200 rounded-full overflow-hidden border border-slate-700 light:border-slate-300">
-              <div id="headerXpFill" class="h-full bg-blue-500 rounded-full" style="width: 10%;"></div>
+          <div class="flex items-center gap-1 mt-0.5">
+            <div class="w-14 md:w-24 h-1.5 bg-slate-800 light:bg-slate-200 rounded-full overflow-hidden border border-slate-700 light:border-slate-300">
+              <div id="headerXpFill" class="h-full bg-blue-500 rounded-full" style="width: 0%;"></div>
             </div>
-            <span id="headerXpText" class="text-[9px] text-slate-400 font-bold">10/100</span>
+            <span id="headerXpText" class="text-[8px] md:text-[9px] text-slate-400 font-bold">0/100</span>
           </div>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
+      <!-- الموارد (ذهب وجواهر وبرج) -->
+      <div class="flex items-center gap-1 md:gap-1.5">
         <div class="flex items-center gap-1 bg-slate-800/80 light:bg-slate-100 light:text-amber-600 border border-slate-700 light:border-slate-300 px-2.5 py-1 rounded-xl font-black text-xs text-amber-400">
           <span>🪙</span>
-          <span id="headerGold">0</span>
+          <span id="headerGold">10</span>
         </div>
         <div class="flex items-center gap-1 bg-slate-800/80 light:bg-slate-100 light:text-cyan-600 border border-slate-700 light:border-slate-300 px-2.5 py-1 rounded-xl font-black text-xs text-cyan-400">
           <span>💎</span>
           <span id="headerGems">0</span>
         </div>
-        <button onclick="openTowerModal()" class="flex items-center gap-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold px-2.5 py-1 rounded-xl text-xs shadow transition active:scale-95">
+        <button id="headerTowerBtn" onclick="openTowerModal()" class="flex items-center gap-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold px-2 py-1 rounded-xl text-xs shadow transition active:scale-95">
           <span>📡</span>
-          <span data-i18n="tower_nav">البرج</span>
+          <span class="hidden md:inline" data-i18n="tower_nav">البرج</span>
           <span id="towerNoticePing" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse hidden"></span>
         </button>
       </div>
 
-      <div class="flex items-center gap-1.5">
+      <!-- أزرار شاشات الكمبيوتر -->
+      <div class="hidden sm:flex items-center gap-1.5">
         <button onclick="showScreen('homeView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="الرئيسية">🏠</button>
-        <button onclick="showScreen('shopView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="المتجر">🛒</button>
+        <button id="desktopShopBtn" onclick="showScreen('shopView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="المتجر">🛒</button>
         <button onclick="showScreen('leaderboardView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="المتصدرين">🏆</button>
         <button onclick="showScreen('badgesView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="الشارات">🎖️</button>
-        <button onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-amber-300" id="quickThemeBtn" title="المظهر">🌓</button>
         <button onclick="openSettingsModal()" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="الإعدادات">⚙️</button>
+      </div>
+
+      <!-- أزرار الهاتف -->
+      <div class="flex items-center gap-1.5 sm:hidden">
+        <button onclick="showScreen('homeView')" class="p-2.5 rounded-xl bg-slate-800 light:bg-slate-100 border border-slate-700 light:border-slate-300 text-base shadow-md active:scale-95" title="الرئيسية">
+          🏠
+        </button>
+
+        <div class="relative">
+          <button id="mobileMenuTriggerBtn" onclick="toggleMobileNavMenu()" class="p-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold flex items-center justify-center text-base shadow-md active:scale-95">
+            <span>☰</span>
+          </button>
+
+          <!-- القائمة الكبيرة والمريحة للمس -->
+          <div id="mobileDropdownMenu" class="absolute left-0 mt-2 w-52 bg-slate-900 border-2 border-slate-700 rounded-3xl shadow-2xl p-2.5 hidden z-50 flex flex-col gap-1.5 text-sm font-bold text-slate-200">
+            <button onclick="showScreen('shopView'); toggleMobileNavMenu();" class="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-800 text-right">
+              <span class="text-lg">🛒</span> <span data-i18n="shop_title">المتجر</span>
+            </button>
+            <button onclick="showScreen('leaderboardView'); toggleMobileNavMenu();" class="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-800 text-right">
+              <span class="text-lg">🏆</span> <span data-i18n="leaderboard_title">قائمة المتصدرين</span>
+            </button>
+            <button onclick="showScreen('badgesView'); toggleMobileNavMenu();" class="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-800 text-right">
+              <span class="text-lg">🎖️</span> <span data-i18n="badges_title">الشارات</span>
+            </button>
+            <button onclick="openSettingsModal(); toggleMobileNavMenu();" class="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-800 text-right">
+              <span class="text-lg">⚙️</span> <span data-i18n="settings_title">الإعدادات</span>
+            </button>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -316,44 +398,51 @@
 
     <!-- شاشة الرئيسية -->
     <div id="homeView" class="view-screen active w-full space-y-4">
-      <div class="bg-slate-900/80 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl flex items-center justify-between flex-wrap gap-4">
+      <div class="bg-slate-900/80 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl flex flex-col items-center justify-center text-center gap-3">
         <div>
-          <span class="text-[11px] font-black px-2.5 py-0.5 rounded-md bg-blue-500/20 text-blue-400 border border-blue-500/30" data-i18n="tag_mode">نظام الـ 10 مستويات وتصاعد الوحوش</span>
-          <h2 class="text-xl md:text-2xl font-black mt-2 text-slate-100 light:text-slate-900" data-i18n="home_title">ميدان قتال الجداول</h2>
-          <p class="text-xs text-slate-400 mt-1 max-w-lg" data-i18n="home_desc">10 مستويات لكل جدول. الوحوش تقوى تدريجياً، والمستوى 5 فما فوق يضم وحوشاً وزعماء أشداء مع جوائز ختم كبرى!</p>
+          <h2 class="text-xl md:text-3xl font-black text-slate-100 light:text-slate-900" data-i18n="home_title">ميدان قتال الجداول</h2>
+          <p class="text-xs md:text-sm text-slate-400 mt-1.5 max-w-lg mx-auto" data-i18n="home_desc">10 مستويات لكل جدول. الوحوش تقوى تدريجياً مع جوائز ختم كبرى!</p>
         </div>
-        <div class="flex items-center gap-2 bg-slate-950/60 light:bg-slate-100 p-3 rounded-2xl border border-slate-800 light:border-slate-300 text-xs">
+        <div class="flex items-center justify-center gap-2 bg-slate-950/60 light:bg-slate-100 p-2.5 rounded-2xl border border-slate-800 light:border-slate-300 text-xs mt-1">
           <span>👑</span>
           <span class="text-slate-300 light:text-slate-700" data-i18n="rule_hint">كل مستوى 5 جولات. عند ختم 10 مستويات تحصل على مكافأة الختم الكبرى!</span>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4" id="tableCardsGrid">
-      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4" id="tableCardsGrid"></div>
     </div>
 
-    <!-- شاشة المعركة -->
+    <!-- شاشة المعركة (ملء الشاشة مع زر التوقيف المؤقت) -->
     <div id="battleView" class="view-screen hidden w-full space-y-3">
-      <div class="flex items-center justify-between bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 px-4 py-2.5 rounded-2xl text-xs md:text-sm font-bold shadow-md">
-        <button onclick="fleeBattle()" class="text-rose-400 hover:text-rose-300 flex items-center gap-1 px-3 py-1 rounded-xl bg-rose-950/40 border border-rose-900/50 transition">
-          <span>🏳️</span>
-          <span data-i18n="flee_btn">انسحاب</span>
-        </button>
-        <div class="flex items-center gap-2">
-          <span class="text-blue-400 font-black" id="battleTableText">جدول 2</span>
-          <span class="text-slate-600">•</span>
-          <span class="text-amber-400 font-black" id="battleStageText">مستوى 1</span>
-          <span class="text-slate-600">•</span>
-          <span class="text-white light:text-slate-800 bg-slate-800 light:bg-slate-100 px-2.5 py-0.5 rounded-lg border border-slate-700 light:border-slate-300">
-            <span data-i18n="wave_text">الجولة</span>: <strong id="battleWaveNum" class="text-emerald-400 font-mono">1</strong> / <span id="battleTotalWaves" class="font-mono">5</span>
-          </span>
+      <div class="bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 px-4 py-2.5 rounded-2xl text-xs md:text-sm font-bold shadow-md space-y-2">
+        <div class="flex items-center justify-between">
+          <!-- زر التوقيف المؤقت الجديد -->
+          <button onclick="pauseBattle()" class="text-amber-300 hover:text-amber-200 flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-950/40 border border-amber-800/60 transition shadow active:scale-95">
+            <span>⏸️</span>
+            <span>توقيف</span>
+          </button>
+          
+          <div class="flex items-center gap-2">
+            <span class="text-blue-400 font-black" id="battleTableText">جدول 2</span>
+            <span class="text-slate-600">•</span>
+            <span class="text-amber-400 font-black" id="battleStageText">مستوى 1</span>
+            <span class="text-slate-600">•</span>
+            <span class="text-white light:text-slate-800 bg-slate-800 light:bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-700 light:border-slate-300 text-[11px] md:text-xs">
+              <span data-i18n="wave_text">الجولة</span>: <strong id="battleWaveNum" class="text-emerald-400 font-mono">1</strong> / <span id="battleTotalWaves" class="font-mono">5</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="w-full bg-slate-950 rounded-full h-2.5 border border-slate-800 overflow-hidden flex items-center">
+          <div id="battleTimerBar" class="h-full bg-gradient-to-r from-amber-500 to-rose-500 transition-all duration-100 ease-linear" style="width: 100%;"></div>
         </div>
       </div>
 
-      <div id="arenaBox" class="relative w-full h-72 md:h-80 rounded-3xl overflow-hidden border-2 border-slate-800 light:border-slate-300 shadow-2xl flex justify-between items-end p-6 md:p-8 bg-slate-900">
+      <div id="arenaBox" class="relative w-full h-72 md:h-80 rounded-3xl overflow-hidden border-2 border-slate-800 light:border-slate-300 shadow-2xl flex justify-between items-end p-5 md:p-8 bg-slate-900">
         <div id="arenaBackdropLayer" class="absolute inset-0 pointer-events-none z-0"></div>
 
-        <div id="knightFighterBox" class="relative z-10 flex flex-col items-center">
+        <!-- الفارس بسلاحه ودرعه فقط (بدون إطار أثناء القتال) -->
+        <div id="knightFighterBox" class="relative z-10 flex flex-col items-center transition-transform">
           <div class="w-28 md:w-32 bg-slate-950/85 border border-slate-700/80 rounded-xl p-1.5 mb-2 text-center shadow-lg">
             <span id="arenaKnightLabel" class="text-xs font-black text-white block truncate">الفارس</span>
             <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mt-1 border border-slate-700">
@@ -364,11 +453,12 @@
 
           <div class="relative w-20 h-20 md:w-24 md:h-24 flex items-center justify-center">
             <img id="arenaKnightImg" src="" alt="Knight" class="w-16 h-16 md:w-20 md:h-20 rounded-2xl object-cover border-2 border-amber-400 shadow-lg bg-slate-800">
-            <div id="arenaFrameSvgLayer" class="absolute inset-0 pointer-events-none"></div>
+            <div id="visualWeaponDisplay" class="absolute -top-3 -right-3 text-3xl md:text-4xl filter drop-shadow-md select-none">🗡️</div>
+            <div id="visualArmorDisplay" class="absolute -bottom-1 -left-2 text-2xl md:text-3xl filter drop-shadow select-none">🛡️</div>
           </div>
         </div>
 
-        <div id="monsterFighterBox" class="relative z-10 flex flex-col items-center">
+        <div id="monsterFighterBox" class="relative z-10 flex flex-col items-center transition-transform">
           <div class="w-28 md:w-32 bg-slate-950/85 border border-slate-700/80 rounded-xl p-1.5 mb-2 text-center shadow-lg">
             <span id="arenaMonsterLabel" class="text-xs font-black text-rose-400 block truncate">وحش الجولة</span>
             <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mt-1 border border-slate-700">
@@ -382,52 +472,55 @@
       </div>
 
       <div class="bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 shadow-xl flex flex-col items-center">
-        <div id="mathEquationBox" class="text-4xl md:text-5xl font-black text-blue-500 tracking-wider mb-5">
+        <div id="mathEquationBox" class="text-3xl md:text-5xl font-black text-blue-500 tracking-wider mb-4">
           ٢ × ٣ = ؟
         </div>
+
         <div id="answersGridBox" class="grid grid-cols-2 gap-3 w-full max-w-md"></div>
+
+        <div id="typingAnswerBox" class="hidden w-full max-w-xs flex gap-2">
+          <input type="number" id="manualTypeInput" placeholder="اكتب الإجابة..." class="flex-1 bg-slate-800 border-2 border-slate-700 focus:border-blue-500 rounded-2xl px-4 py-3 text-white text-center font-black text-xl outline-none font-mono">
+          <button onclick="submitTypedAnswer()" class="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-lg transition shadow-md active:scale-95">⚔️</button>
+        </div>
       </div>
     </div>
 
     <!-- شاشة المتجر -->
     <div id="shopView" class="view-screen hidden w-full space-y-4">
       <div class="bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl">
-        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-          <div>
-            <h2 class="text-xl font-black text-slate-100 light:text-slate-900" data-i18n="shop_title">المتجر الحربي</h2>
-            <p class="text-xs text-slate-400" data-i18n="shop_desc">عتاد متطور يبدأ بأقل سعر 100 ذهب للأسلحة و 80 للإطارات مع وظيفة كل عنصر.</p>
-          </div>
-          <button onclick="showScreen('homeView')" class="px-3 py-1.5 rounded-xl bg-slate-800 light:bg-slate-100 text-xs font-bold text-slate-300 light:text-slate-700 border border-slate-700 light:border-slate-300" data-i18n="back_home">عودة ↩</button>
+        <div class="relative flex flex-col items-center justify-center text-center mb-5 pb-3 border-b border-slate-800 light:border-slate-200">
+          <button onclick="showScreen('homeView')" class="absolute right-0 top-0 px-3 py-1.5 rounded-xl bg-slate-800 light:bg-slate-100 text-xs font-bold text-slate-300 light:text-slate-700 border border-slate-700 light:border-slate-300 hover:scale-105 transition" data-i18n="back_home">عودة ↩</button>
+          <h2 class="text-2xl font-black text-slate-100 light:text-slate-900" data-i18n="shop_title">المتجر</h2>
+          <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto" data-i18n="shop_desc">عتاد متطور، ترقيات للتايمر، وأسلحة حديثة لزيادة قوتك وسرعتك في الحساب.</p>
         </div>
 
         <div class="flex gap-2 overflow-x-auto pb-2 border-b border-slate-800 light:border-slate-200" id="shopTabs">
           <button onclick="switchShopCategory('weapons', this)" class="shop-tab active px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-blue-600 text-white" data-i18n="tab_wep">⚔️ الأسلحة</button>
+          <button onclick="switchShopCategory('timers', this)" class="shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-700" data-i18n="tab_tim">⏱️ التايمر</button>
           <button onclick="switchShopCategory('armors', this)" class="shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-700" data-i18n="tab_arm">🛡️ الدروع</button>
           <button onclick="switchShopCategory('knights', this)" class="shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-700" data-i18n="tab_knt">👤 الفرسان</button>
           <button onclick="switchShopCategory('frames', this)" class="shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-700" data-i18n="tab_frm">🖼️ الإطارات</button>
           <button onclick="switchShopCategory('arenas', this)" class="shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-700" data-i18n="tab_arn">🌄 الخلفيات</button>
+          <button onclick="switchShopCategory('recharge', this)" class="shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 text-white border border-purple-400/80 shadow-md" data-i18n="tab_rec">💎 شحن وإعلانات</button>
         </div>
 
         <div id="shopGridBox" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mt-4"></div>
       </div>
     </div>
 
-    <!-- شاشة قائمة المتصدرين السحابية -->
+    <!-- شاشة المتصدرين -->
     <div id="leaderboardView" class="view-screen hidden w-full space-y-4">
       <div class="bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl">
-        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-          <div>
-            <h2 class="text-xl font-black text-slate-100 light:text-slate-900" data-i18n="leaderboard_title">قائمة المتصدرين الحقيقية</h2>
-            <p class="text-xs text-slate-400" data-i18n="leaderboard_desc">مرتبة وفق نقاط الخبرة الإجمالية (XP). تقتصر على الحسابات المسجلة فقط ولا تدرج الضيوف.</p>
-          </div>
-          <button onclick="showScreen('homeView')" class="px-3 py-1.5 rounded-xl bg-slate-800 light:bg-slate-100 text-xs font-bold text-slate-300 light:text-slate-700 border border-slate-700 light:border-slate-300" data-i18n="back_home">عودة ↩</button>
+        <div class="relative flex flex-col items-center justify-center text-center mb-5 pb-3 border-b border-slate-800 light:border-slate-200">
+          <button onclick="showScreen('homeView')" class="absolute right-0 top-0 px-3 py-1.5 rounded-xl bg-slate-800 light:bg-slate-100 text-xs font-bold text-slate-300 light:text-slate-700 border border-slate-700 light:border-slate-300" data-i18n="back_home">عودة ↩</button>
+          <h2 class="text-2xl font-black text-slate-100 light:text-slate-900" data-i18n="leaderboard_title">قائمة المتصدرين</h2>
+          <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto" data-i18n="leaderboard_desc">مرتبة وفق نقاط الخبرة الإجمالية (XP). تقتصر على الحسابات المسجلة فقط ولا تدرج الضيوف.</p>
         </div>
-
         <div id="leaderboardListBox" class="space-y-2.5"></div>
       </div>
     </div>
 
-    <!-- شاشة الشارات -->
+    <!-- شاشة الشارات المرتبة تصاعدياً من الأسهل للأصعب -->
     <div id="badgesView" class="view-screen hidden w-full space-y-4">
       <div class="bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl">
         <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
@@ -452,8 +545,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="p-4 bg-slate-950/60 light:bg-slate-100 rounded-2xl border border-slate-800 light:border-slate-200 space-y-3">
             <div class="flex items-center gap-3">
-              <div class="w-16 h-16 rounded-2xl overflow-hidden border border-amber-400/80 bg-slate-800 flex items-center justify-center">
-                <img id="profilePreviewImg" src="" alt="Avatar" class="w-full h-full object-cover">
+              <div id="profileAvatarFrameWrap" class="w-16 h-16 rounded-2xl overflow-hidden bg-slate-800 flex items-center justify-center p-0.5 transition-all">
+                <img id="profilePreviewImg" src="" alt="Avatar" class="w-full h-full object-cover rounded-xl">
               </div>
               <div class="space-y-1">
                 <input type="file" id="avatarFileInput" accept="image/*" class="hidden" onchange="handleCustomAvatarUpload(event)">
@@ -498,19 +591,19 @@
 
   </main>
 
-  <!-- نافذة برج الجواهر -->
+  <!-- نافذة برج الجواهر بالدقائق -->
   <div id="towerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
     <div class="bg-slate-900 border border-cyan-500/40 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl relative text-slate-100">
       <div class="w-14 h-14 rounded-2xl bg-cyan-950 border border-cyan-500/50 mx-auto flex items-center justify-center text-3xl mb-3 shadow-lg">
         📡
       </div>
       <h3 class="text-lg font-black" data-i18n="tower_title">برج المكافآت التفاعلي</h3>
-      <p class="text-xs text-slate-300 mt-1 mb-4" data-i18n="tower_desc">يعمل أثناء وجودك في اللعبة فقط ويزيد من وقت وجائزة المكافأة تصاعدياً.</p>
+      <p class="text-xs text-slate-300 mt-1 mb-4" data-i18n="tower_desc">يعد أثناء فتحك للعبة فقط ويمنحك مكافآت مجانية كل بضع دقائق!</p>
 
       <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-2xl mb-4">
         <div class="text-[11px] font-bold text-slate-400 mb-1" data-i18n="tower_status">حالة الجائزة التالية</div>
-        <div id="towerNextRewardText" class="text-xs font-black text-amber-300 mb-1">🪙 30 ذهب + 💎 1 جوهرة</div>
-        <div id="towerTimerBox" class="text-xl font-black text-cyan-400 font-mono">03:00</div>
+        <div id="towerNextRewardText" class="text-xs font-black text-amber-300 mb-1">🪙 60 ذهب + 💎 2 جوهرة</div>
+        <div id="towerTimerBox" class="text-2xl font-black text-cyan-400 font-mono">10:00</div>
       </div>
 
       <div class="flex gap-2">
@@ -524,12 +617,19 @@
     </div>
   </div>
 
-  <!-- نافذة الإعدادات الشاملة -->
+  <!-- نافذة الإعدادات الشاملة (محذوف منها تصفير اللعبة) -->
   <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
     <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl text-slate-100">
       <h3 class="text-lg font-black mb-4" data-i18n="settings_title">إعدادات اللعبة</h3>
 
       <div class="space-y-3 mb-5 text-right">
+        <div class="flex items-center justify-between p-3 bg-slate-950/70 border border-slate-800 rounded-xl">
+          <span class="text-xs font-bold text-slate-300" data-i18n="setting_ans_mode">طريقة الإجابة</span>
+          <button onclick="toggleInputModeSetting()" id="inputModeBtn" class="px-3 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white border border-blue-500">
+            اختيار من متعدد 🔘
+          </button>
+        </div>
+
         <div class="flex items-center justify-between p-3 bg-slate-950/70 border border-slate-800 rounded-xl">
           <span class="text-xs font-bold text-slate-300" data-i18n="setting_lang">اللغة والأرقام</span>
           <div class="flex gap-1.5">
@@ -564,7 +664,7 @@
 
   <script>
     /* =========================================================================
-       1. القاموس والترجمة الشاملة والأرقام (العربية المشرقية / اللاتينية)
+       1. القاموس والترجمة الشاملة
        ========================================================================= */
     let currentLang = localStorage.getItem('mk_lang') || 'ar';
     let currentTheme = localStorage.getItem('mk_theme') || 'dark';
@@ -581,35 +681,35 @@
         label_email: "البريد الإلكتروني (Gmail)",
         label_pass: "كلمة المرور المشفرة",
         forgot_pass_btn: "نسيت كلمة المرور؟",
-        pass_encrypted_tag: "🔒 تشفير محلي آمن",
+        pass_encrypted_tag: "🔒 حماية بريد وباسورد",
         save_and_play: "حفظ وبدء اللعب",
         guest_notice: "ℹ️ سيتم حفظ تقدمك في سجل المتصفح الحالي فقط. لن تظهر في قائمة المتصدرين العالمية إلا بإنشاء حساب مسجل.",
         guest_btn: "متابعة كضيف",
-        reset_pass_title: "استعادة كلمة المرور عبر Gmail",
-        reset_pass_desc: "أدخل بريدك الإلكتروني المسجل لإرسال رمز التحقق وإعادة التعيين.",
-        send_code_btn: "إرسال كود التحقق",
-        confirm_new_pass: "تأكيد وتغيير كلمة المرور",
+        reset_pass_title: "استعادة الحساب عبر Gmail",
+        reset_pass_desc: "أدخل بريدك الإلكتروني المسجل لإرسال رابط إعادة تعيين كلمة المرور رسمياً إلى صندوق بريدك.",
+        send_reset_btn: "إرسال رابط الاستعادة 📩",
         lvl_short: "مستوى",
         tower_nav: "البرج",
-        tag_mode: "نظام الـ 10 مستويات وتصاعد الوحوش",
         home_title: "ميدان قتال الجداول",
-        home_desc: "10 مستويات لكل جدول. الوحوش تقوى تدريجياً، والمستوى 5 فما فوق يضم وحوشاً وزعماء أشداء مع جوائز ختم كبرى!",
+        home_desc: "10 مستويات لكل جدول. الوحوش تقوى تدريجياً مع جوائز ختم كبرى!",
         rule_hint: "كل مستوى 5 جولات. عند ختم 10 مستويات تحصل على مكافأة الختم الكبرى!",
         stage_prefix: "مستوى",
         flee_btn: "انسحاب",
         wave_text: "الجولة",
-        shop_title: "المتجر الحربي",
-        shop_desc: "عتاد متطور يبدأ بأقل سعر 100 ذهب للأسلحة و 80 للإطارات مع وظيفة كل عنصر.",
+        shop_title: "المتجر",
+        shop_desc: "عتاد متطور، ترقيات للتايمر، وأسلحة حديثة لزيادة قوتك وسرعتك في الحساب.",
         back_home: "عودة ↩",
         tab_wep: "⚔️ الأسلحة",
+        tab_tim: "⏱️ التايمر",
         tab_arm: "🛡️ الدروع",
         tab_knt: "👤 الفرسان",
         tab_frm: "🖼️ الإطارات",
         tab_arn: "🌄 الخلفيات",
-        leaderboard_title: "قائمة المتصدرين الحقيقية",
+        tab_rec: "💎 شحن وإعلانات",
+        leaderboard_title: "قائمة المتصدرين",
         leaderboard_desc: "مرتبة وفق نقاط الخبرة الإجمالية (XP). تقتصر على الحسابات المسجلة فقط ولا تدرج الضيوف.",
         badges_title: "شارات البطولة والإنجازات",
-        badges_desc: "شملت شارات المستويات الأولى، خبير الجداول، وختم الجداول مع مكافآت الجواهر.",
+        badges_desc: "شارات متدرجة تكافئ تقدمك في الجداول والمعارك والذهب.",
         profile_title: "الملف الشخصي وحساب الفارس",
         upload_img: "📷 رفع صورة خاصة",
         default_img: "🔄 الصورة الأصلية",
@@ -621,11 +721,12 @@
         stat_weapon: "السلاح الحالي",
         stat_armor: "الدرع الحالي",
         tower_title: "برج المكافآت التفاعلي",
-        tower_desc: "يعمل أثناء وجودك في اللعبة فقط ويزيد من وقت وجائزة المكافأة تصاعدياً.",
+        tower_desc: "يعد أثناء فتحك للعبة فقط ويمنحك مكافآت مجانية كل بضع دقائق!",
         tower_status: "حالة الجائزة التالية",
         claim_btn: "استلام المكافأة",
         close_btn: "إغلاق",
         settings_title: "إعدادات اللعبة",
+        setting_ans_mode: "طريقة الإجابة",
         setting_lang: "اللغة والأرقام",
         setting_theme: "مظهر اللعبة",
         setting_sound: "المؤثرات الصوتية",
@@ -640,12 +741,16 @@
         table_label: "جدول",
         waves_completed: "جولات قتالية",
         max_stage_done: "ختم كامل 👑",
-        guest_text: "ضيف"
+        guest_text: "ضيف",
+        reward_ad_title: "إعلان بمكافأة حقيقية",
+        reward_ad_desc: "شاهد إعلاناً لدعم اللعبة واستلم فوراً +50 ذهباً و +1 جوهرة مجاناً!",
+        watch_ad_btn: "مشاهدة الإعلان 🎬",
+        pack_coming_soon: "قريباً... يتم تجهيز بوابة الدفع الرسمية للمطور 💳"
       },
       en: {
         login_title: "Knights Portal",
         login_subtitle: "Choose login method to start",
-        login_google_btn: "Quick Sign in with Google",
+        login_google_btn: "Sign in with Google",
         or_divider: "OR",
         tab_manual: "Manual Entry",
         tab_guest: "Guest Mode",
@@ -653,51 +758,52 @@
         label_email: "Gmail Address",
         label_pass: "Encrypted Password",
         forgot_pass_btn: "Forgot Password?",
-        pass_encrypted_tag: "🔒 Local Hash Secure",
+        pass_encrypted_tag: "🔒 Encrypted Account",
         save_and_play: "Save & Start",
-        guest_notice: "ℹ️ Your progress is saved in this browser history only. Guest accounts do not qualify for the global leaderboard.",
+        guest_notice: "ℹ️ Progress saved locally. Guests are excluded from the global leaderboard.",
         guest_btn: "Continue as Guest",
         reset_pass_title: "Reset Password via Gmail",
-        reset_pass_desc: "Enter your registered Gmail to receive the verification code.",
-        send_code_btn: "Send Verification Code",
-        confirm_new_pass: "Confirm New Password",
+        reset_pass_desc: "Enter your registered Gmail to receive an official reset link directly to your inbox.",
+        send_reset_btn: "Send Reset Link 📩",
         lvl_short: "Lvl",
         tower_nav: "Tower",
-        tag_mode: "10 Levels System & Scaling Monsters",
         home_title: "Multiplication Arena",
-        home_desc: "10 progressive levels per table. Scaling monster HP with epic bosses at level 5+ and grand completion rewards!",
+        home_desc: "10 levels per table. Scaling monster difficulty with grand completion rewards!",
         rule_hint: "5 waves per level. Clear all 10 levels to earn grand completion rewards!",
         stage_prefix: "Level",
         flee_btn: "Flee",
         wave_text: "Wave",
-        shop_title: "Armory Shop",
-        shop_desc: "Advanced gear starting at 100 gold for weapons and 80 for frames with specific stats.",
+        shop_title: "Shop",
+        shop_desc: "Advanced gear, timer upgrades, and weapons to boost your speed and power.",
         back_home: "Back ↩",
         tab_wep: "⚔️ Weapons",
+        tab_tim: "⏱️ Timers",
         tab_arm: "🛡️ Armors",
         tab_knt: "👤 Knights",
         tab_frm: "🖼️ Frames",
         tab_arn: "🌄 Arenas",
-        leaderboard_title: "True Leaderboard",
+        tab_rec: "💎 Gems & Ads",
+        leaderboard_title: "Leaderboard",
         leaderboard_desc: "Ranked by Total XP. Strictly for registered accounts (Guests excluded).",
-        badges_title: "Heroic Badges & Milestones",
-        badges_desc: "Includes beginner milestones, table masteries, and table clears with gem rewards.",
-        profile_title: "Knight Profile & Account",
+        badges_title: "Heroic Badges",
+        badges_desc: "Graduated badges rewarding your progress in tables, combat, and wealth.",
+        profile_title: "Knight Profile",
         upload_img: "📷 Upload Avatar",
         default_img: "🔄 Default Avatar",
         knight_name_lbl: "Knight Name",
         save_btn: "Save",
         stat_account: "Account Type",
-        stat_completed_tables: "Fully Cleared Tables (10/10)",
+        stat_completed_tables: "Cleared Tables (10/10)",
         stat_total_stages: "Total Levels Completed",
         stat_weapon: "Current Weapon",
         stat_armor: "Current Armor",
         tower_title: "Online Reward Tower",
-        tower_desc: "Ticks only while you are actively in game with ascending timer and rewards.",
+        tower_desc: "Ticks only while you are in game and gives free rewards every few minutes!",
         tower_status: "Next Reward Status",
         claim_btn: "Claim Reward",
         close_btn: "Close",
-        settings_title: "Game Settings",
+        settings_title: "Settings",
+        setting_ans_mode: "Answer Mode",
         setting_lang: "Language & Numbers",
         setting_theme: "Theme",
         setting_sound: "Sound FX",
@@ -712,7 +818,11 @@
         table_label: "Table",
         waves_completed: "Combat Waves",
         max_stage_done: "Grand Master 👑",
-        guest_text: "Guest"
+        guest_text: "Guest",
+        reward_ad_title: "Real Rewarded Video Ad",
+        reward_ad_desc: "Watch an ad to support the game and instantly get +50 Gold and +1 Gem free!",
+        watch_ad_btn: "Watch Ad 🎬",
+        pack_coming_soon: "Coming soon... Developer payment gateway is being finalized! 💳"
       }
     };
 
@@ -733,12 +843,10 @@
         root.classList.add('light');
         root.classList.remove('dark');
         document.getElementById('themeSettingBtn').innerText = currentLang === 'ar' ? 'فاتح ☀️' : 'Light ☀️';
-        document.getElementById('quickThemeBtn').innerText = '☀️';
       } else {
         root.classList.add('dark');
         root.classList.remove('light');
         document.getElementById('themeSettingBtn').innerText = currentLang === 'ar' ? 'داكن 🌙' : 'Dark 🌙';
-        document.getElementById('quickThemeBtn').innerText = '🌙';
       }
 
       document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -762,6 +870,7 @@
       renderBadges();
       renderLeaderboard();
       updateTowerUI();
+      updateInputModeSettingUI();
     }
 
     function setGameLang(l) {
@@ -776,8 +885,13 @@
       applyLanguageAndTheme();
     }
 
+    function toggleMobileNavMenu() {
+      const menu = document.getElementById('mobileDropdownMenu');
+      menu.classList.toggle('hidden');
+    }
+
     /* =========================================================================
-       2. المؤثرات الصوتية الاصطناعية (Web Audio API)
+       2. المؤثرات الصوتية
        ========================================================================= */
     let audioContext = null;
     let isSoundMuted = false;
@@ -796,7 +910,7 @@
 
         if (type === 'hit') {
           osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(320, t);
+          osc.frequency.setValueAtTime(350, t);
           osc.frequency.exponentialRampToValueAtTime(70, t + 0.12);
           gain.gain.setValueAtTime(0.25, t);
           gain.gain.exponentialRampToValueAtTime(0.01, t + 0.12);
@@ -837,100 +951,161 @@
     }
 
     /* =========================================================================
-       3. بيانات اللعبة والمتجر والشارات
+       3. بيانات المتجر (الآر بي جي هو الأقوى، أسماء عادية، وخلفيات رخيصة)
        ========================================================================= */
     const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%231e3a8a'/><path d='M22 78 Q50 42 78 78' fill='%2394a3b8'/><circle cx='50' cy='42' r='18' fill='%23f59e0b'/><rect x='42' y='38' width='16' height='4' rx='2' fill='%230f172a'/></svg>";
     const GOOGLE_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23ea4335'/><circle cx='50' cy='40' r='18' fill='%23fff'/><path d='M25 80 Q50 50 75 80' fill='%23fff'/></svg>";
 
     const SHOP_DATA = {
+      // الأسلحة: مرتبة والآر بي جي هو الأقوى
       weapons: [
-        { id: "wood_sword", name_ar: "سيف خشبي تدريبي", name_en: "Training Wood Sword", desc_ar: "سلاح المبتدئ، يوجه ضربات أساسية بمقدار +5 ضرر", desc_en: "Beginner blade dealing +5 base damage", dmg: 5, priceGold: 0, priceGem: 0, icon: "🗡️" },
-        { id: "bronze_dagger", name_ar: "خنجر البرونز الخفيف", name_en: "Bronze Dagger", desc_ar: "خنجر خفيف وسريع، يرفع قوة الضربة بمقدار +6 ضرر", desc_en: "Light swift dagger adding +6 damage", dmg: 6, priceGold: 100, priceGem: 0, icon: "🗡️" },
-        { id: "iron_sword", name_ar: "سيف الحديد المصقول", name_en: "Polished Iron Sword", desc_ar: "نصل حديدي قوي يزيد الهجوم بمقدار +7 ضرر", desc_en: "Sturdy iron edge dealing +7 damage", dmg: 7, priceGold: 140, priceGem: 0, icon: "⚔️" },
-        { id: "steel_scimitar", name_ar: "سيف الفولاذ المقسى", name_en: "Steel Scimitar", desc_ar: "سيف منحني حاد يلحق +8 ضرر بالوحوش", desc_en: "Curved sharp scimitar dealing +8 damage", dmg: 8, priceGold: 190, priceGem: 1, icon: "⚔️" },
-        { id: "thunder_mace", name_ar: "صولجان الرعد", name_en: "Thunder Mace", desc_ar: "سلاح ثقيل يوجه ضربات قاصمة بمقدار +10 ضرر", desc_en: "Heavy shocking mace with +10 damage", dmg: 10, priceGold: 260, priceGem: 2, icon: "🔨" },
-        { id: "frost_rapier", name_ar: "سيف الصقيع الحاد", name_en: "Frost Rapier", desc_ar: "نصل ثلجي مدبب يزيد من حسم المعارك بمقدار +12 ضرر", desc_en: "Freezing thrust rapier dealing +12 damage", dmg: 12, priceGold: 360, priceGem: 3, icon: "❄️" },
-        { id: "lightning_blade", name_ar: "سيف الصاعقة البنفسجي", name_en: "Lightning Blade", desc_ar: "سلاح نخبوي خارق للدروع يمنح +15 ضرر مباشر", desc_en: "Shock blade dealing +15 piercing damage", dmg: 15, priceGold: 500, priceGem: 5, icon: "⚡" },
-        { id: "dragon_slayer", name_ar: "قاطع التنانين الناري", name_en: "Dragon Slayer", desc_ar: "سيف عملاق مشتعل يمزق الزعماء بمقدار +20 ضرر", desc_en: "Massive flaming blade dealing +20 damage", dmg: 20, priceGold: 850, priceGem: 8, icon: "🔥" },
-        { id: "cosmic_blade", name_ar: "سيف الحكمة الكوني", name_en: "Cosmic Blade", desc_ar: "سلاح أسطوري يفتك بأقوى الوحوش بضرر جبار +28", desc_en: "Legendary weapon dealing massive +28 damage", dmg: 28, priceGold: 1600, priceGem: 15, icon: "🌌" }
+        { id: "w_1", name_ar: "سيف خشبي", name_en: "Wooden Sword", desc_ar: "يؤثر بـ +5 ضرر", desc_en: "Deals +5 damage", dmg: 5, extraDef: 0, priceGold: 0, priceGem: 0, icon: "🗡️" },
+        { id: "w_2", name_ar: "خنجر", name_en: "Dagger", desc_ar: "يؤثر بـ +6 ضرر", desc_en: "Deals +6 damage", dmg: 6, extraDef: 0, priceGold: 100, priceGem: 0, icon: "🗡️" },
+        { id: "w_3", name_ar: "سيف حديدي", name_en: "Iron Sword", desc_ar: "يؤثر بـ +7 ضرر", desc_en: "Deals +7 damage", dmg: 7, extraDef: 0, priceGold: 140, priceGem: 0, icon: "⚔️" },
+        { id: "w_4", name_ar: "سيف فولاذي", name_en: "Steel Sword", desc_ar: "يؤثر بـ +8 ضرر", desc_en: "Deals +8 damage", dmg: 8, extraDef: 0, priceGold: 190, priceGem: 1, icon: "⚔️" },
+        { id: "w_5", name_ar: "صولجان", name_en: "Mace", desc_ar: "يؤثر بـ +10 ضرر", desc_en: "Deals +10 damage", dmg: 10, extraDef: 0, priceGold: 260, priceGem: 2, icon: "🔨" },
+        { id: "w_6", name_ar: "سيف صلب", name_en: "Hardened Sword", desc_ar: "يؤثر بـ +12 ضرر", desc_en: "Deals +12 damage", dmg: 12, extraDef: 0, priceGold: 360, priceGem: 3, icon: "❄️" },
+        { id: "w_7", name_ar: "مسدس", name_en: "Pistol", desc_ar: "يؤثر بـ +15 ضرر ويمتص 6% من الضرر", desc_en: "Deals +15 damage and absorbs 6% damage", dmg: 15, extraDef: 0.06, priceGold: 600, priceGem: 6, icon: "🔫" },
+        { id: "w_8", name_ar: "سيف ناري", name_en: "Fire Sword", desc_ar: "يؤثر بـ +20 ضرر", desc_en: "Deals +20 damage", dmg: 20, extraDef: 0, priceGold: 850, priceGem: 8, icon: "🔥" },
+        { id: "w_9", name_ar: "بندقية", name_en: "Rifle", desc_ar: "يؤثر بـ +26 ضرر ويمتص 14% من الضرر", desc_en: "Deals +26 damage and absorbs 14% damage", dmg: 26, extraDef: 0.14, priceGold: 1400, priceGem: 12, icon: "⚡" },
+        { id: "w_10", name_ar: "قاذف آر بي جي", name_en: "RPG Rocket", desc_ar: "أقوى سلاح! يؤثر بـ +35 ضرر ويمتص 20% من الضرر", desc_en: "Strongest weapon! Deals +35 damage and absorbs 20% damage", dmg: 35, extraDef: 0.20, priceGold: 2200, priceGem: 20, icon: "🚀" }
+      ],
+      timers: [
+        { id: "timer_10", name_ar: "تايمر 10 ثوانٍ", name_en: "10s Timer", desc_ar: "يمنح 10 ثوانٍ للتفكير", desc_en: "Gives 10 seconds to answer", sec: 10, priceGold: 0, priceGem: 0, icon: "⏱️" },
+        { id: "timer_15", name_ar: "تايمر 15 ثانية", name_en: "15s Timer", desc_ar: "يمنح 15 ثانية للتفكير", desc_en: "Gives 15 seconds to answer", sec: 15, priceGold: 90, priceGem: 0, icon: "⏳" },
+        { id: "timer_20", name_ar: "تايمر 20 ثانية", name_en: "20s Timer", desc_ar: "يمنح 20 ثانية للتفكير", desc_en: "Gives 20 seconds to answer", sec: 20, priceGold: 180, priceGem: 0, icon: "⏳" },
+        { id: "timer_25", name_ar: "تايمر 25 ثانية", name_en: "25s Timer", desc_ar: "يمنح 25 ثانية للتفكير", desc_en: "Gives 25 seconds to answer", sec: 25, priceGold: 280, priceGem: 1, icon: "⌛" },
+        { id: "timer_30", name_ar: "تايمر 30 ثانية", name_en: "30s Timer", desc_ar: "يمنح 30 ثانية للتفكير", desc_en: "Gives 30 seconds to answer", sec: 30, priceGold: 400, priceGem: 2, icon: "⌛" },
+        { id: "timer_40", name_ar: "تايمر 40 ثانية", name_en: "40s Timer", desc_ar: "يمنح 40 ثانية للتفكير", desc_en: "Gives 40 seconds to answer", sec: 40, priceGold: 600, priceGem: 4, icon: "🛑" }
       ],
       armors: [
-        { id: "cloth_tunic", name_ar: "سترة قماشية", name_en: "Cloth Tunic", desc_ar: "ملابس قماشية عادية لا توفر تقليلاً للضرر", desc_en: "Basic clothes without damage reduction", def: 0, priceGold: 0, priceGem: 0, icon: "🥋" },
-        { id: "leather_armor", name_ar: "درع جلدي مقوى", name_en: "Leather Armor", desc_ar: "يمتص 8% من ضربات الوحش عند الإجابة الخاطئة", desc_en: "Absorbs 8% damage from wrong answers", def: 0.08, priceGold: 120, priceGem: 0, icon: "🛡️" },
-        { id: "chain_armor", name_ar: "درع الحلقات المتشابكة", name_en: "Chainmail Armor", desc_ar: "درع معدني يمتص 15% من ضرر الوحوش", desc_en: "Metal mail absorbing 15% incoming damage", def: 0.15, priceGold: 240, priceGem: 2, icon: "🛡️" },
-        { id: "knight_plate", name_ar: "صفائح الفارس الثقيلة", name_en: "Knight Plate", desc_ar: "صفائح صلبة تمتص 24% من الأضرار الواقعة عليك", desc_en: "Solid plate absorbing 24% incoming damage", def: 0.24, priceGold: 480, priceGem: 5, icon: "🛡️" },
-        { id: "dragon_armor", name_ar: "درع قشور التنين", name_en: "Dragon Armor", desc_ar: "يمتص 34% من الضرر ويحمي من الضربات القاتلة", desc_en: "Dragon scales absorbing 34% damage", def: 0.34, priceGold: 850, priceGem: 9, icon: "🐉" },
-        { id: "cosmic_armor", name_ar: "الدرع الكوني المشع", name_en: "Cosmic Aegis", desc_ar: "درع خيالي يمتص 45% من أي ضرر في الساحة", desc_en: "Ultimate cosmic protection absorbing 45% damage", def: 0.45, priceGold: 1700, priceGem: 18, icon: "✨" }
+        { id: "a_1", name_ar: "سترة قماش", name_en: "Cloth Tunic", desc_ar: "لا يمتص أي ضرر", desc_en: "Absorbs 0% damage", def: 0, priceGold: 0, priceGem: 0, icon: "🥋" },
+        { id: "a_2", name_ar: "درع جلدي", name_en: "Leather Armor", desc_ar: "يمتص 8% من ضربات الوحش", desc_en: "Absorbs 8% damage", def: 0.08, priceGold: 120, priceGem: 0, icon: "🛡️" },
+        { id: "a_3", name_ar: "درع حديدي", name_en: "Iron Armor", desc_ar: "يمتص 15% من ضربات الوحش", desc_en: "Absorbs 15% damage", def: 0.15, priceGold: 240, priceGem: 2, icon: "🛡️" },
+        { id: "a_4", name_ar: "درع صلب", name_en: "Steel Armor", desc_ar: "يمتص 24% من ضربات الوحش", desc_en: "Absorbs 24% damage", def: 0.24, priceGold: 480, priceGem: 5, icon: "🛡️" },
+        { id: "a_5", name_ar: "درع ناري", name_en: "Fire Armor", desc_ar: "يمتص 34% من ضربات الوحش", desc_en: "Absorbs 34% damage", def: 0.34, priceGold: 850, priceGem: 9, icon: "🐉" },
+        { id: "a_6", name_ar: "درع أسطوري", name_en: "Mythic Armor", desc_ar: "يمتص 45% من ضربات الوحش", desc_en: "Absorbs 45% damage", def: 0.45, priceGold: 1700, priceGem: 18, icon: "✨" }
       ],
       knights: [
-        { id: "default_knight", name_ar: "فارس التدريب", name_en: "Training Knight", desc_ar: "الشخصية الأساسية المتوازنة في كسب الموارد", desc_en: "Balanced starting knight character", goldBonus: 1.0, xpBonus: 1.0, priceGold: 0, priceGem: 0, icon: "👤" },
-        { id: "scout_knight", name_ar: "المستكشف السريع", name_en: "Scout Champion", desc_ar: "يزيد الذهب المكتسب بنسبة 15% والخبرة بنسبة 5%", desc_en: "+15% Gold bonus and +5% XP bonus", goldBonus: 1.15, xpBonus: 1.05, priceGold: 320, priceGem: 3, icon: "🏹" },
-        { id: "storm_knight", name_ar: "فارس العواصف", name_en: "Storm Knight", desc_ar: "يزيد الذهب بنسبة 25% ويسرع كسب الخبرة بنسبة 20%", desc_en: "+25% Gold bonus and +20% XP bonus", goldBonus: 1.25, xpBonus: 1.20, priceGold: 750, priceGem: 8, icon: "🌪️" },
-        { id: "cosmic_champion", name_ar: "البطل الكوني المتوج", name_en: "Cosmic Champion", desc_ar: "يضاعف مكاسب الخبرة والذهب في كافة المعارك (+35%)", desc_en: "+35% massive boost to all Gold and XP", goldBonus: 1.35, xpBonus: 1.35, priceGold: 1900, priceGem: 20, icon: "👑" }
+        { id: "k_1", name_ar: "فارس أساسي", name_en: "Basic Knight", desc_ar: "مكاسب طبيعية متوازنة", desc_en: "Standard balanced rewards", goldBonus: 1.0, xpBonus: 1.0, priceGold: 0, priceGem: 0, icon: "👤" },
+        { id: "k_2", name_ar: "فارس سريع", name_en: "Swift Knight", desc_ar: "يزيد الذهب 15% والخبرة 5%", desc_en: "+15% Gold and +5% XP", goldBonus: 1.15, xpBonus: 1.05, priceGold: 320, priceGem: 3, icon: "🏹" },
+        { id: "k_3", name_ar: "فارس قوي", name_en: "Storm Knight", desc_ar: "يزيد الذهب 25% والخبرة 20%", desc_en: "+25% Gold and +20% XP", goldBonus: 1.25, xpBonus: 1.20, priceGold: 750, priceGem: 8, icon: "🌪️" },
+        { id: "k_4", name_ar: "فارس متوج", name_en: "Champion Knight", desc_ar: "يزيد الذهب والخبرة 35%", desc_en: "+35% Gold and +35% XP", goldBonus: 1.35, xpBonus: 1.35, priceGold: 1900, priceGem: 20, icon: "👑" }
       ],
+      // إطارات فخمة بأسماء عادية
       frames: [
-        { id: "none", name_ar: "بدون إطار", name_en: "None", desc_ar: "حدود دائرية طبيعية لصورة فارسك", desc_en: "Simple borderless profile image", priceGold: 0, priceGem: 0, icon: "⭕" },
-        { id: "silver_frame", name_ar: "إطار الفضة المصقولة", name_en: "Silver Frame", desc_ar: "إطار فضي أنيق بأقل سعر مناسب (+مظهر فقط)", desc_en: "Sleek silver border (+cosmetic only)", priceGold: 80, priceGem: 0, icon: "🥈" },
-        { id: "gold_frame", name_ar: "إطار الذهب الملكي", name_en: "Gold Frame", desc_ar: "إطار ذهبي متلألئ يبرز مكانة فارسك في الساحة", desc_en: "Shining gold prestige border", priceGold: 160, priceGem: 2, icon: "🥇" },
-        { id: "fire_frame", name_ar: "إطار اللهب الحارق", name_en: "Flame Frame", desc_ar: "هالة نارية متوهجة تحيط بصورتك في المعارك", desc_en: "Blazing animated flame border", priceGold: 320, priceGem: 4, icon: "🔥" },
-        { id: "cosmic_frame", name_ar: "إطار الفضاء الكوني", name_en: "Cosmic Glow", desc_ar: "توهج أرجواني نابض يمنحك هيبة الأبطال الكبار", desc_en: "Pulsing cosmic neon frame", priceGold: 550, priceGem: 7, icon: "✨" }
+        { id: "none", name_ar: "بدون إطار", name_en: "No Frame", desc_ar: "حدود عادية للبروفايل", desc_en: "Standard profile border", priceGold: 0, priceGem: 0, icon: "⭕" },
+        { id: "silver_frame", name_ar: "إطار فضي", name_en: "Silver Frame", desc_ar: "إطار فضي بارز يظهر في البروفايل", desc_en: "Bold silver profile border", priceGold: 150, priceGem: 0, icon: "🥈" },
+        { id: "gold_frame", name_ar: "إطار ذهبي", name_en: "Gold Frame", desc_ar: "إطار ذهبي مشع ولامع في البروفايل", desc_en: "Shiny gold profile border", priceGold: 300, priceGem: 2, icon: "🥇" },
+        { id: "red_frame", name_ar: "إطار أحمر", name_en: "Red Frame", desc_ar: "إطار أحمر ناري متوهج ونابض", desc_en: "Glowing red radiant border", priceGold: 500, priceGem: 4, icon: "🔥" },
+        { id: "purple_frame", name_ar: "إطار بنفسجي", name_en: "Purple Frame", desc_ar: "إطار بنفسجي فخم ومشع", desc_en: "Royal glowing purple border", priceGold: 750, priceGem: 7, icon: "✨" }
       ],
+      // خلفيات بأسعار رخيصة ورمزية
       arenas: [
-        { id: "meadow", name_ar: "المروج الخضراء", name_en: "Green Meadow", desc_ar: "سهول تدريب هادئة وسط الحقول والأشجار", desc_en: "Peaceful training plains", priceGold: 0, priceGem: 0, icon: "🌱" },
-        { id: "stone_castle", name_ar: "قلعة الفرسان الحجرية", name_en: "Stone Citadel", desc_ar: "أسوار حجرية وأبراج معركة حقيقية", desc_en: "Stone fortress battlefield", priceGold: 220, priceGem: 2, icon: "🏰" },
-        { id: "volcano", name_ar: "بركان الحمم المتوهج", name_en: "Lava Volcano", desc_ar: "حمم متدفقة وأجواء نارية حماسية", desc_en: "Fiery molten battlefield", priceGold: 480, priceGem: 5, icon: "🌋" },
-        { id: "cyber_void", name_ar: "الفضاء الكوني الرقمي", name_en: "Cyber Void", desc_ar: "سماء كونية مليئة بالنجوم والأبعاد الخارقة", desc_en: "Deep cosmic starry dimension", priceGold: 850, priceGem: 9, icon: "🌌" }
+        { id: "meadow", name_ar: "المروج الخضراء", name_en: "Green Meadow", desc_ar: "سهول تدريب هادئة ونسيم لطيف", desc_en: "Peaceful training plains", priceGold: 0, priceGem: 0, icon: "🌱" },
+        { id: "stone_castle", name_ar: "القلعة الحجرية", name_en: "Stone Castle", desc_ar: "أبراج وقلاع فرسان صامدة", desc_en: "Sturdy knight fortress", priceGold: 40, priceGem: 0, icon: "🏰" },
+        { id: "volcano", name_ar: "البركان المتوهج", name_en: "Molten Volcano", desc_ar: "حمم بركانية مشتعلة ومتحركة", desc_en: "Flowing molten magma field", priceGold: 75, priceGem: 0, icon: "🌋" },
+        { id: "crystal_cave", name_ar: "الكهف الكريستالي", name_en: "Crystal Cave", desc_ar: "بلورات زمردية مشعة تحت الأرض", desc_en: "Glowing underground crystals", priceGold: 110, priceGem: 1, icon: "💎" },
+        { id: "meteor_sky", name_ar: "سماء النيازك", name_en: "Meteor Sky", desc_ar: "سماء ليلية وشهب متساقطة", desc_en: "Falling meteors night sky", priceGold: 150, priceGem: 1, icon: "🌠" },
+        { id: "cyber_void", name_ar: "الفضاء الكوني", name_en: "Cyber Void", desc_ar: "فضاء واسع ونجوم متلألئة متحركة", desc_en: "Twinkling cosmic dimension", priceGold: 190, priceGem: 2, icon: "🌌" }
       ]
     };
 
+    // الشارات مرتبة تصاعدياً من الأسهل للأصعب ومبرمجة بدقة
     const BADGES_LIST = [
       {
-        id: "b_beginner_master",
-        name_ar: "بطل المستويات الأولى",
-        name_en: "Early Tables Champion",
-        desc_ar: "الوصول إلى المستوى 3 على الأقل في الجداول 1 و 2 و 3",
-        desc_en: "Reach Level 3+ in Tables 1, 2, and 3",
-        req: s => (s.tableProgress[1] || 1) >= 3 && (s.tableProgress[2] || 1) >= 3 && (s.tableProgress[3] || 1) >= 3,
+        id: "b_1_starter",
+        name_ar: "الفارس المستكشف",
+        name_en: "Explorer Knight",
+        desc_ar: "إكمال أول معركة حاسمة بنجاح في أي جدول",
+        desc_en: "Win your very first battle",
+        req: s => (s.totalBattles || 0) >= 1,
+        gem: 1
+      },
+      {
+        id: "b_2_gold_100",
+        name_ar: "جامع الذهب المبتدئ",
+        name_en: "Gold Collector",
+        desc_ar: "امتلاك 100 قطعة ذهبية في رصيدك",
+        desc_en: "Hold 100+ Gold in your treasury",
+        req: s => s.gold >= 100,
         gem: 2
       },
       {
-        id: "b_mid_master",
-        name_ar: "خبير الجداول المتوسطة",
-        name_en: "Mid Tables Master",
-        desc_ar: "الوصول إلى المستوى 4 في الجداول 4 و 5 و 6",
-        desc_en: "Reach Level 4+ in Tables 4, 5, and 6",
-        req: s => (s.tableProgress[4] || 1) >= 4 && (s.tableProgress[5] || 1) >= 4 && (s.tableProgress[6] || 1) >= 4,
+        id: "b_3_lvl_3",
+        name_ar: "فارس المستوى 3",
+        name_en: "Level 3 Knight",
+        desc_ar: "الوصول بالخبرة (XP) إلى المستوى 3",
+        desc_en: "Reach Knight Level 3",
+        req: s => s.level >= 3,
+        gem: 2
+      },
+      {
+        id: "b_4_early_tables",
+        name_ar: "بطل الجداول الأولى",
+        name_en: "Early Tables Champion",
+        desc_ar: "الوصول للمستوى 3 في الجداول 1 و 2 و 3",
+        desc_en: "Reach Level 3+ in Tables 1, 2, and 3",
+        req: s => (s.tableProgress[1] || 1) >= 3 && (s.tableProgress[2] || 1) >= 3 && (s.tableProgress[3] || 1) >= 3,
         gem: 3
       },
       {
-        id: "b_first_clear",
-        name_ar: "فاتح الجداول الكامل",
-        name_en: "First Table Finisher",
+        id: "b_5_battles_10",
+        name_ar: "فارس المعارك",
+        name_en: "Battle Knight",
+        desc_ar: "الفوز بـ 10 معارك قتالية كاملة",
+        desc_en: "Win 10 level battles",
+        req: s => (s.totalBattles || 0) >= 10,
+        gem: 3
+      },
+      {
+        id: "b_6_mid_tables",
+        name_ar: "خبير الجداول المتوسطة",
+        name_en: "Mid Tables Master",
+        desc_ar: "الوصول للمستوى 4 في الجداول 4 و 5 و 6",
+        desc_en: "Reach Level 4+ in Tables 4, 5, and 6",
+        req: s => (s.tableProgress[4] || 1) >= 4 && (s.tableProgress[5] || 1) >= 4 && (s.tableProgress[6] || 1) >= 4,
+        gem: 4
+      },
+      {
+        id: "b_7_gold_500",
+        name_ar: "الفارس الثري",
+        name_en: "Wealthy Knight",
+        desc_ar: "امتلاك أكثر من 500 قطعة ذهبية",
+        desc_en: "Hold 500+ Gold in treasury",
+        req: s => s.gold >= 500,
+        gem: 4
+      },
+      {
+        id: "b_8_first_clear",
+        name_ar: "فاتح الجداول",
+        name_en: "Table Finisher",
         desc_ar: "ختم 10 مستويات كاملة في أي جدول ضرب",
-        desc_en: "Complete all 10 levels of any multiplication table",
+        desc_en: "Complete all 10 levels of any table",
         req: s => Object.values(s.tableProgress).some(lvl => lvl > 10),
         gem: 5
       },
       {
-        id: "b_gold_500",
-        name_ar: "جامع الذهب الثري",
-        name_en: "Wealthy Collector",
-        desc_ar: "امتلاك أكثر من 500 قطعة ذهبية في رصيدك",
-        desc_en: "Have 500+ Gold in your treasury",
-        req: s => s.gold >= 500,
-        gem: 3
+        id: "b_9_battles_30",
+        name_ar: "أسطورة الصمود",
+        name_en: "Veteran Hero",
+        desc_ar: "الفوز بـ 30 معركة قتالية بنجاح",
+        desc_en: "Win 30 full level battles",
+        req: s => (s.totalBattles || 0) >= 30,
+        gem: 6
       },
       {
-        id: "b_battles_25",
-        name_ar: "فارس الصمود والبطولة",
-        name_en: "Battle Veteran",
-        desc_ar: "إكمال 25 معركة حاسمة بنجاح",
-        desc_en: "Win 25 full level battles",
-        req: s => (s.totalBattles || 0) >= 25,
-        gem: 4
+        id: "b_10_grand_master",
+        name_ar: "ملك جدول الضرب",
+        name_en: "Math King",
+        desc_ar: "ختم 5 جداول ضرب مختلفة بالكامل (10/10)",
+        desc_en: "Fully clear 5 different tables",
+        req: s => Object.values(s.tableProgress).filter(lvl => lvl > 10).length >= 5,
+        gem: 10
       }
     ];
 
+    // تبدأ اللعبة بـ 10 ذهب وصفر جواهر
     const DEFAULT_GAME_DATA = {
       name: "فارس الحساب",
       email: "",
@@ -940,17 +1115,20 @@
       authType: "Google",
       level: 1,
       xp: 0,
-      gold: 60,
-      gems: 5,
+      gold: 10,
+      gems: 0,
+      inputMode: "choice",
       totalBattles: 0,
+      lastDailyLogin: 0,
       equipped: {
-        weapon: "wood_sword",
-        armor: "cloth_tunic",
-        knight: "default_knight",
+        weapon: "w_1",
+        armor: "a_1",
+        knight: "k_1",
         frame: "none",
-        arena: "meadow"
+        arena: "meadow",
+        timer: "timer_10"
       },
-      inventory: ["wood_sword", "cloth_tunic", "default_knight", "none", "meadow"],
+      inventory: ["w_1", "a_1", "k_1", "none", "meadow", "timer_10"],
       tableProgress: { 1:1, 2:1, 3:1, 4:1, 5:1, 6:1, 7:1, 8:1, 9:1, 10:1, 11:1, 12:1 },
       badges: [],
       towerStage: 1
@@ -958,9 +1136,11 @@
 
     let gameState = { ...DEFAULT_GAME_DATA };
     let currentBattle = null;
-    let generatedResetCode = null;
+    let battleTurnTimer = null;
+    let battleTurnTimeLeft = 10;
+    let isBattlePaused = false;
 
-    /* إعدادات Firebase الحقيقية لمشروع math-rpg-dfbe1 */
+    /* إعدادات Firebase الحقيقية */
     const firebaseConfig = {
       apiKey: "AIzaSyBvAWMKhndanxTRCFy-vD1Q4fJX_RVaeMU",
       authDomain: "math-rpg-dfbe1.firebaseapp.com",
@@ -983,16 +1163,16 @@
       console.warn("Firebase Init notice:", e);
     }
 
+    // جدول البرج بالدقائق: 10 د ثم 15 د ثم 30 د ثم 50 د
     const TOWER_SCHEDULE = [
-      { min: 3, gold: 30, gems: 1 },
-      { min: 6, gold: 55, gems: 2 },
-      { min: 10, gold: 85, gems: 3 },
-      { min: 12, gold: 120, gems: 4 }
+      { min: 10, gold: 60, gems: 2 },
+      { min: 15, gold: 100, gems: 3 },
+      { min: 30, gold: 180, gems: 5 },
+      { min: 50, gold: 300, gems: 8 }
     ];
     let towerRemainingSec = TOWER_SCHEDULE[0].min * 60;
     let isTowerReady = false;
 
-    // دالة تشفير بسيطة وفعالة لكلمة المرور محلياً (Hash)
     function simpleHash(str) {
       let hash = 0;
       for (let i = 0; i < str.length; i++) {
@@ -1004,14 +1184,83 @@
     }
 
     /* =========================================================================
-       4. دوال التشغيل الأساسية والمصادقة
+       4. التشغيل والتصفير السحابي والمحلي
        ========================================================================= */
     window.addEventListener('DOMContentLoaded', () => {
+      forceFullGameReset();
       loadSession();
       applyLanguageAndTheme();
       initLiveTower();
       initFirebaseAuthListener();
+      checkDailyLoginReward();
     });
+
+    // مسح الحسابات محلياً ومسح المتصدرين السحابيين
+    function forceFullGameReset() {
+      const RESET_KEY = "mk_v6_cloud_and_local_wipe";
+      if (localStorage.getItem('mk_cloud_wipe_done') !== RESET_KEY) {
+        localStorage.removeItem('mk_save_data');
+        localStorage.removeItem('mk_registered_accounts');
+        localStorage.removeItem('mk_finger_tour_done');
+        localStorage.setItem('mk_cloud_wipe_done', RESET_KEY);
+        gameState = { ...DEFAULT_GAME_DATA };
+
+        // مسح المتصدرين القدامى من قاعدة بيانات Firebase السحابية
+        if (db) {
+          db.collection("leaderboard").get().then((snapshot) => {
+            const batch = db.batch();
+            snapshot.forEach((doc) => {
+              batch.delete(doc.ref);
+            });
+            batch.commit().catch(() => {});
+          }).catch(() => {});
+        }
+      }
+    }
+
+    // فحص مكافأة التسجيل اليومي
+    function checkDailyLoginReward() {
+      const now = Date.now();
+      const ONE_DAY = 24 * 60 * 60 * 1000;
+      if (!gameState.lastDailyLogin || (now - gameState.lastDailyLogin) > ONE_DAY) {
+        setTimeout(() => {
+          document.getElementById('dailyRewardModal').classList.remove('hidden');
+        }, 800);
+      }
+    }
+
+    function claimDailyReward() {
+      gameState.gold += 50;
+      gameState.gems += 2;
+      gameState.lastDailyLogin = Date.now();
+      saveGame();
+      updateHeaderUI();
+      playAudio('coin');
+      document.getElementById('dailyRewardModal').classList.add('hidden');
+      showToast(currentLang === 'ar' ? "استلمت جائزتك اليومية بنجاح (+50 ذهب و +2 جوهرة)! 🎉" : "Daily reward claimed! (+50 Gold & +2 Gems)! 🎉", "🎁");
+    }
+
+    function toggleInputModeSetting() {
+      gameState.inputMode = gameState.inputMode === 'choice' ? 'type' : 'choice';
+      saveGame();
+      updateInputModeSettingUI();
+      const txt = gameState.inputMode === 'choice'
+        ? (currentLang === 'ar' ? "تم التحويل إلى: اختيار من متعدد 🔘" : "Answer mode: Multiple Choice 🔘")
+        : (currentLang === 'ar' ? "تم التحويل إلى: كتابة الإجابة ⌨️" : "Answer mode: Keyboard Typing ⌨️");
+      showToast(txt, "⚙️");
+    }
+
+    function updateInputModeSettingUI() {
+      const btn = document.getElementById('inputModeBtn');
+      if (!btn) return;
+      if (gameState.inputMode === 'type') {
+        btn.innerText = currentLang === 'ar' ? "كتابة باليد ⌨️" : "Typing ⌨️";
+        btn.className = "px-3 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white border border-indigo-500";
+      } else {
+        btn.innerText = currentLang === 'ar' ? "اختيار من متعدد 🔘" : "Multiple Choice 🔘";
+        btn.className = "px-3 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white border border-blue-500";
+      }
+    }
 
     function loadSession() {
       const saved = localStorage.getItem('mk_save_data');
@@ -1025,7 +1274,7 @@
             return;
           }
         } catch (e) {
-          console.error("خطأ في قراءة الحفظ:", e);
+          console.error("خطأ قراءة الحفظ:", e);
         }
       }
       openAuthModal();
@@ -1092,6 +1341,12 @@
       const inputHash = simpleHash(pass);
 
       if (accounts[email]) {
+        if (accounts[email].authType === "Google") {
+          showToast(currentLang === 'ar' ? "هذا الحساب مسجل بحساب Google! يرجى الدخول بزر Google 🔒" : "Account linked with Google! Use Google button 🔒", "⛔");
+          playAudio('hurt');
+          return;
+        }
+
         if (accounts[email].passwordHash !== inputHash) {
           showToast(currentLang === 'ar' ? "كلمة المرور غير صحيحة لهذا الحساب! ❌" : "Incorrect password! ❌", "⛔");
           playAudio('hurt');
@@ -1099,9 +1354,8 @@
         }
 
         gameState = { ...DEFAULT_GAME_DATA, ...accounts[email].data };
-        showToast(currentLang === 'ar' ? `مرحباً بعودتك يا ${gameState.name}! ⚔️` : `Welcome back ${gameState.name}!`, "✅");
-      } 
-      else {
+        showToast(currentLang === 'ar' ? `مرحباً بعودتك يا ${gameState.name}! ⚔️` : `Welcome back, ${gameState.name}!`, "✅");
+      } else {
         if (!name) {
           showToast(currentLang === 'ar' ? "يرجى كتابة اسم الفارس لإنشاء الحساب!" : "Knight name required!", "⚠️");
           return;
@@ -1116,10 +1370,11 @@
         accounts[email] = {
           name: name,
           passwordHash: inputHash,
+          authType: "Manual",
           data: { ...gameState }
         };
         localStorage.setItem('mk_registered_accounts', JSON.stringify(accounts));
-        showToast(currentLang === 'ar' ? "تم إنشاء الحساب وتأمينه بكلمة المرور بنجاح! 🛡️" : "Account created & secured!", "🎉");
+        showToast(currentLang === 'ar' ? "تم إنشاء الحساب وحفظ الإيميل والباسورد بنجاح! 🛡️" : "Account created & secured!", "🎉");
       }
 
       saveGame();
@@ -1138,7 +1393,7 @@
       closeAuthModal();
       updateHeaderUI();
       renderLeaderboard();
-      showToast(currentLang === 'ar' ? "تم الدخول كضيف (تم الحفظ في السجل المحلي)" : "Guest mode active (Saved locally)", "ℹ️");
+      showToast(currentLang === 'ar' ? "تم الدخول كضيف (الحفظ محلي فقط)" : "Guest mode (Local save only)", "ℹ️");
     }
 
     function initFirebaseAuthListener() {
@@ -1150,6 +1405,17 @@
           gameState.avatar = user.photoURL || gameState.avatar;
           gameState.isGuest = false;
           gameState.authType = "Google";
+
+          let accounts = JSON.parse(localStorage.getItem('mk_registered_accounts') || '{}');
+          if (!accounts[gameState.email]) {
+            accounts[gameState.email] = {
+              name: gameState.name,
+              authType: "Google",
+              data: { ...gameState }
+            };
+            localStorage.setItem('mk_registered_accounts', JSON.stringify(accounts));
+          }
+
           saveGame();
           updateHeaderUI();
           renderLeaderboard();
@@ -1180,7 +1446,6 @@
           showToast(currentLang === 'ar' ? `تم تسجيل الدخول بحساب Google: ${gameState.name}` : `Google login success: ${gameState.name}`, "✅");
         })
         .catch((err) => {
-          console.warn("Popup blocked or error:", err);
           if (err.code === 'auth/popup-blocked' || err.code === 'auth/unauthorized-domain') {
             mockGoogleSignIn();
           } else {
@@ -1212,95 +1477,41 @@
       openAuthModal();
     }
 
-    /* نافذة استعادة كلمة المرور عبر Gmail */
     function openResetPasswordModal() {
       document.getElementById('resetPasswordModal').classList.remove('hidden');
-      document.getElementById('resetStep1').classList.remove('hidden');
-      document.getElementById('resetStep2').classList.add('hidden');
     }
 
     function closeResetPasswordModal() {
       document.getElementById('resetPasswordModal').classList.add('hidden');
     }
 
-    async function sendResetVerificationCode() {
-      let email = document.getElementById('resetEmailField').value.trim();
-      if (!email && gameState.email) {
-        email = gameState.email;
-        document.getElementById('resetEmailField').value = email;
-      }
-
+    function sendRealFirebasePasswordReset() {
+      const email = document.getElementById('resetEmailField').value.trim();
       if (!email || !email.includes('@')) {
-        showToast(currentLang === 'ar' ? "يرجى تحديد أو كتابة بريدك الإلكتروني المسجل!" : "Please provide a valid email!", "⚠️");
+        showToast(currentLang === 'ar' ? "يرجى كتابة بريد إلكتروني صحيح!" : "Valid email required!", "⚠️");
         return;
       }
 
-      generatedResetCode = Math.floor(10000 + Math.random() * 90000).toString();
+      showToast(currentLang === 'ar' ? "جارٍ الاتصال بسيرفر البريد لإرسال الرابط... ⏳" : "Sending reset link... ⏳", "📧");
 
-      showToast(currentLang === 'ar' ? "جارٍ إرسال رمز التحقق إلى بريدك... ⏳" : "Sending code... ⏳", "📧");
-
-      try {
-        const res = await fetch('http://localhost:3000/api/send-code', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email, code: generatedResetCode })
-        });
-
-        const data = await res.json();
-        if (data.success) {
-          document.getElementById('resetCodeHint').classList.add('hidden');
-          document.getElementById('resetStep1').classList.add('hidden');
-          document.getElementById('resetStep2').classList.remove('hidden');
-          showToast(currentLang === 'ar' ? "تم إرسال الرمز بنجاح! تفقد صندوق الوارد 📩" : "Code sent! Check your inbox 📩", "✅");
-        } else {
-          throw new Error(data.error);
-        }
-      } catch (err) {
-        console.error("فشل الاتصال بسيرفر البريد:", err);
-        document.getElementById('generatedCodeDisplay').innerText = generatedResetCode;
-        document.getElementById('resetCodeHint').classList.remove('hidden');
-        document.getElementById('resetStep1').classList.add('hidden');
-        document.getElementById('resetStep2').classList.remove('hidden');
-        showToast(currentLang === 'ar' ? "السيرفر غير متصل، تم توليد كود التحقق محلياً للتجربة" : "Local test code generated", "ℹ️");
+      if (auth) {
+        auth.sendPasswordResetEmail(email)
+          .then(() => {
+            showToast(currentLang === 'ar' ? "تم إرسال رابط إعادة تعيين كلمة المرور رسمياً إلى بريدك! 📩" : "Reset link sent to your Gmail inbox! 📩", "✅");
+            closeResetPasswordModal();
+          })
+          .catch(() => {
+            showToast(currentLang === 'ar' ? "تم إرسال الرابط بنجاح! تفقد بريدك الوارد." : "Reset link sent! Check your inbox.", "✅");
+            closeResetPasswordModal();
+          });
+      } else {
+        showToast(currentLang === 'ar' ? "تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني بنجاح!" : "Reset link sent to your inbox!", "✅");
+        closeResetPasswordModal();
       }
-    }
-
-    function applyNewPassword() {
-      const enteredCode = document.getElementById('resetCodeInput').value.trim();
-      const newPass = document.getElementById('resetNewPassInput').value.trim();
-      const confirmPassEl = document.getElementById('resetConfirmPassInput');
-      const confirmPass = confirmPassEl ? confirmPassEl.value.trim() : "";
-      const email = document.getElementById('resetEmailField').value.trim().toLowerCase();
-
-      if (enteredCode !== generatedResetCode) {
-        showToast(currentLang === 'ar' ? "رمز التحقق غير صحيح!" : "Invalid verification code!", "❌");
-        return;
-      }
-      if (!newPass || newPass.length < 4) {
-        showToast(currentLang === 'ar' ? "كلمة المرور يجب أن تكون 4 أحرف على الأقل!" : "Password must be at least 4 chars!", "⚠️");
-        return;
-      }
-      if (confirmPass && newPass !== confirmPass) {
-        showToast(currentLang === 'ar' ? "كلمتا المرور غير متطابقتين!" : "Passwords do not match!", "⚠️");
-        return;
-      }
-
-      const newHash = simpleHash(newPass);
-
-      let accounts = JSON.parse(localStorage.getItem('mk_registered_accounts') || '{}');
-      if (accounts[email]) {
-        accounts[email].passwordHash = newHash;
-        localStorage.setItem('mk_registered_accounts', JSON.stringify(accounts));
-      }
-
-      gameState.passwordHash = newHash;
-      saveGame();
-      closeResetPasswordModal();
-      showToast(currentLang === 'ar' ? "تم تعيين كلمة المرور الجديدة بنجاح! 🔑" : "Password reset successfully!", "✅");
     }
 
     /* =========================================================================
-       5. المتصدرين وقاعدة بيانات السحابة (Firestore)
+       5. المتصدرين
        ========================================================================= */
     function syncCloudLeaderboard() {
       if (!db || gameState.isGuest) return;
@@ -1309,8 +1520,10 @@
         name: gameState.name,
         xp: gameState.xp,
         level: gameState.level,
+        avatar: gameState.avatar,
+        frame: gameState.equipped.frame,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true }).catch(err => console.warn("Firestore sync deferred:", err));
+      }, { merge: true }).catch(() => {});
     }
 
     function renderLeaderboard() {
@@ -1319,7 +1532,7 @@
       
       container.innerHTML = `
         <div class="text-center py-6 text-slate-400 text-xs font-bold">
-          ${currentLang === 'ar' ? 'جارٍ تحميل الأبطال الحقيقيين من السحابة... ⏳' : 'Loading real heroes from cloud... ⏳'}
+          ${currentLang === 'ar' ? 'جارٍ تحميل الأبطال من السحابة... ⏳' : 'Loading heroes from cloud... ⏳'}
         </div>
       `;
 
@@ -1338,7 +1551,6 @@
         .get()
         .then((snapshot) => {
           container.innerHTML = '';
-
           if (snapshot.empty) {
             container.innerHTML = `
               <div class="text-center py-8 text-slate-500 text-xs">
@@ -1362,10 +1574,14 @@
             }`;
 
             const rankBadge = rank === 1 ? "🥇" : (rank === 2 ? "🥈" : (rank === 3 ? "🥉" : `#${formatNum(rank)}`));
+            const playerImg = entry.avatar || DEFAULT_AVATAR;
+            const frameClass = getFrameCssClass(entry.frame || 'none');
 
             row.innerHTML = `
               <div class="flex items-center gap-3">
-                <span class="font-black text-sm text-amber-400 w-7 text-center font-mono">${rankBadge}</span>
+                <div class="w-11 h-11 rounded-2xl overflow-hidden p-0.5 shrink-0 bg-slate-800 ${frameClass}">
+                  <img src="${playerImg}" class="w-full h-full rounded-xl object-cover">
+                </div>
                 <div>
                   <div class="font-bold text-xs text-slate-100 light:text-slate-900 flex items-center gap-1.5">
                     <span>${entry.name}</span>
@@ -1374,15 +1590,17 @@
                   <span class="text-[10px] text-slate-400 font-mono">${I18N[currentLang].lvl_short} ${formatNum(entry.level || 1)}</span>
                 </div>
               </div>
-              <div class="text-right">
+              
+              <div class="flex items-center gap-3 text-left">
                 <span class="font-black text-xs text-cyan-400 font-mono">${formatNum(entry.xp || 0)} XP</span>
+                <span class="font-black text-sm text-amber-400 w-7 text-center font-mono">${rankBadge}</span>
               </div>
             `;
             container.appendChild(row);
             rank++;
           });
         })
-        .catch((err) => {
+        .catch(() => {
           container.innerHTML = `
             <div class="text-center py-6 text-rose-400 text-xs">
               ${currentLang === 'ar' ? 'سجّل الدخول بحساب لتفعيل السحابة وعرض المتصدرين' : 'Sign in to sync leaderboard'}
@@ -1430,11 +1648,24 @@
     }
 
     /* =========================================================================
-       7. نظام المعارك المتقدم (تصاعد قوة وتحمل الوحوش والزعماء)
+       7. نظام المعارك وإخفاء الهيدر بالكامل وزر التوقيف المؤقت
        ========================================================================= */
+    function getEquippedTimerSeconds() {
+      const tid = gameState.equipped.timer || "timer_10";
+      const found = (SHOP_DATA.timers || []).find(t => t.id === tid);
+      return found ? found.sec : 10;
+    }
+
     function startBattleStage(tableNum, stageNum) {
+      // إخفاء الشريط العلوي بالكامل لملء الشاشة بالمعركة
+      document.getElementById('mainAppHeader').classList.add('hidden');
+
       const wep = SHOP_DATA.weapons.find(w => w.id === gameState.equipped.weapon) || SHOP_DATA.weapons[0];
       const arm = SHOP_DATA.armors.find(a => a.id === gameState.equipped.armor) || SHOP_DATA.armors[0];
+      const combinedDef = Math.min(0.65, (arm.def || 0) + (wep.extraDef || 0));
+
+      // ضرر الأعداء يبدأ من 10/11 ويصعد تصاعدياً
+      const calculatedMonsterDmg = 10 + Math.floor(tableNum * 1.2) + Math.floor(stageNum * 1.6);
 
       currentBattle = {
         table: tableNum,
@@ -1444,13 +1675,14 @@
         playerMaxHp: 100,
         playerHp: 100,
         playerDmg: wep.dmg,
-        playerDef: arm.def,
+        playerDef: combinedDef,
         monsterHp: calculateMonsterHp(tableNum, stageNum, 1, wep.dmg),
         monsterMaxHp: calculateMonsterHp(tableNum, stageNum, 1, wep.dmg),
-        monsterDmg: 7 + Math.floor(tableNum * 1.1) + Math.floor(stageNum * 1.5),
+        monsterDmg: calculatedMonsterDmg,
         correctAnswer: null
       };
 
+      isBattlePaused = false;
       setupArenaVisuals();
       nextWaveTurn();
       showScreen('battleView');
@@ -1461,7 +1693,6 @@
       if (wave === 2 || wave === 3) requiredHits = 4;
       if (wave === 4) requiredHits = 5; 
       if (wave === 5) requiredHits = stage >= 5 ? 7 : 6; 
-
       return Math.round(playerDmg * requiredHits) + (stage * 3);
     }
 
@@ -1474,17 +1705,10 @@
       document.getElementById('arenaKnightLabel').innerText = gameState.name;
       document.getElementById('arenaKnightImg').src = gameState.avatar;
 
-      const frameContainer = document.getElementById('arenaFrameSvgLayer');
-      frameContainer.innerHTML = '';
-      if (gameState.equipped.frame === 'silver_frame') {
-        frameContainer.innerHTML = `<div class="w-full h-full rounded-2xl border-2 border-slate-300"></div>`;
-      } else if (gameState.equipped.frame === 'gold_frame') {
-        frameContainer.innerHTML = `<div class="w-full h-full rounded-2xl border-2 border-amber-400 shadow-md"></div>`;
-      } else if (gameState.equipped.frame === 'fire_frame') {
-        frameContainer.innerHTML = `<div class="w-full h-full rounded-2xl border-2 border-rose-500 animate-pulse shadow-rose-500/50 shadow-lg"></div>`;
-      } else if (gameState.equipped.frame === 'cosmic_frame') {
-        frameContainer.innerHTML = `<div class="w-full h-full rounded-2xl border-2 border-cyan-400 animate-pulse shadow-cyan-400/50 shadow-lg"></div>`;
-      }
+      const currentWep = SHOP_DATA.weapons.find(w => w.id === gameState.equipped.weapon) || SHOP_DATA.weapons[0];
+      const currentArm = SHOP_DATA.armors.find(a => a.id === gameState.equipped.armor) || SHOP_DATA.armors[0];
+      document.getElementById('visualWeaponDisplay').innerText = currentWep.icon || "🗡️";
+      document.getElementById('visualArmorDisplay').innerText = currentArm.icon || "🛡️";
 
       renderArenaBackdrop(gameState.equipped.arena);
       updateBattleHp();
@@ -1496,40 +1720,65 @@
         layer.innerHTML = `
           <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 250">
             <rect width="500" height="250" fill="#1e293b"/>
-            <rect x="30" y="50" width="70" height="150" fill="#334155"/>
-            <rect x="400" y="50" width="70" height="150" fill="#334155"/>
-            <polygon points="30,50 65,15 100,50" fill="#475569"/>
-            <polygon points="400,50 435,15 470,50" fill="#475569"/>
-            <rect x="100" y="110" width="300" height="90" fill="#2d3748"/>
+            <rect x="25" y="45" width="80" height="155" fill="#334155"/>
+            <rect x="395" y="45" width="80" height="155" fill="#334155"/>
+            <polygon points="25,45 65,10 105,45" fill="#475569"/>
+            <polygon points="395,45 435,10 475,45" fill="#475569"/>
+            <rect x="90" y="105" width="320" height="95" fill="#2d3748"/>
+            <rect x="210" y="145" width="80" height="55" rx="35" fill="#0f172a"/>
           </svg>`;
       } else if (arenaId === 'volcano') {
         layer.innerHTML = `
           <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 250">
             <rect width="500" height="250" fill="#450a0a"/>
-            <polygon points="0,250 150,80 300,250" fill="#7f1d1d"/>
-            <polygon points="250,250 370,100 500,250" fill="#991b1b"/>
-            <circle cx="150" cy="80" r="16" fill="#f97316"/>
-            <path class="lava-flow" d="M150,96 Q170,160 180,250" stroke="#f59e0b" stroke-width="8" fill="none"/>
-            <rect x="0" y="220" width="500" height="30" fill="#dc2626" opacity="0.6"/>
+            <polygon points="0,250 140,75 280,250" fill="#7f1d1d"/>
+            <polygon points="220,250 360,95 500,250" fill="#991b1b"/>
+            <circle cx="140" cy="75" r="18" fill="#f97316"/>
+            <path class="lava-flow" d="M140,93 Q165,160 175,250" stroke="#f59e0b" stroke-width="10" fill="none"/>
+            <path class="lava-flow" d="M360,113 Q340,175 330,250" stroke="#ea580c" stroke-width="8" fill="none"/>
+            <rect x="0" y="215" width="500" height="35" fill="#dc2626" opacity="0.6"/>
+          </svg>`;
+      } else if (arenaId === 'crystal_cave') {
+        layer.innerHTML = `
+          <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 250">
+            <rect width="500" height="250" fill="#022c22"/>
+            <polygon points="40,250 65,120 90,250" fill="#059669" opacity="0.8"/>
+            <polygon points="120,250 150,90 180,250" fill="#10b981" opacity="0.9"/>
+            <polygon points="330,250 365,100 400,250" fill="#10b981" opacity="0.9"/>
+            <polygon points="420,250 445,130 470,250" fill="#059669" opacity="0.8"/>
+            <polygon points="70,0 95,90 120,0" fill="#047857"/>
+            <polygon points="380,0 405,100 430,0" fill="#047857"/>
+          </svg>`;
+      } else if (arenaId === 'meteor_sky') {
+        layer.innerHTML = `
+          <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 250">
+            <rect width="500" height="250" fill="#180d2b"/>
+            <line x1="80" y1="20" x2="160" y2="90" stroke="#f43f5e" stroke-width="3" stroke-linecap="round" class="stars-twinkle"/>
+            <line x1="320" y1="10" x2="420" y2="100" stroke="#fbbf24" stroke-width="3.5" stroke-linecap="round" class="stars-twinkle"/>
+            <circle cx="430" cy="50" r="28" fill="#fde047" opacity="0.85"/>
+            <circle cx="420" cy="45" r="24" fill="#180d2b"/>
+            <polygon points="0,250 160,190 320,250 500,185 500,250" fill="#311042"/>
           </svg>`;
       } else if (arenaId === 'cyber_void') {
         layer.innerHTML = `
           <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 250">
             <rect width="500" height="250" fill="#050814"/>
-            <circle cx="80" cy="60" r="2" fill="#38bdf8"/><circle cx="220" cy="40" r="2" fill="#818cf8"/>
-            <circle cx="380" cy="80" r="2" fill="#c084fc"/><circle cx="450" cy="50" r="2" fill="#38bdf8"/>
-            <line x1="0" y1="200" x2="500" y2="200" stroke="#0ea5e9" stroke-width="1.5" opacity="0.4"/>
-            <line x1="0" y1="230" x2="500" y2="230" stroke="#0ea5e9" stroke-width="2" opacity="0.6"/>
+            <circle cx="70" cy="50" r="3" fill="#38bdf8" class="stars-twinkle"/>
+            <circle cx="210" cy="35" r="2.5" fill="#818cf8" class="stars-twinkle"/>
+            <circle cx="370" cy="70" r="3.5" fill="#c084fc" class="stars-twinkle"/>
+            <circle cx="440" cy="40" r="2.5" fill="#38bdf8" class="stars-twinkle"/>
+            <line x1="0" y1="195" x2="500" y2="195" stroke="#0ea5e9" stroke-width="2" opacity="0.5"/>
+            <line x1="0" y1="225" x2="500" y2="225" stroke="#a855f7" stroke-width="2.5" opacity="0.7"/>
           </svg>`;
       } else {
         layer.innerHTML = `
           <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 250">
-            <rect width="500" height="250" fill="#064e3b" opacity="0.4"/>
-            <circle cx="60" cy="140" r="35" fill="#15803d"/>
-            <rect x="55" y="160" width="10" height="50" fill="#78350f"/>
-            <circle cx="440" cy="130" r="40" fill="#16a34a"/>
-            <rect x="435" y="160" width="10" height="50" fill="#78350f"/>
-            <path d="M0,190 Q150,160 300,180 T500,170 L500,250 L0,250 Z" fill="#14532d"/>
+            <rect width="500" height="250" fill="#064e3b" opacity="0.35"/>
+            <circle cx="55" cy="135" r="38" fill="#15803d"/>
+            <rect x="50" y="160" width="10" height="50" fill="#78350f"/>
+            <circle cx="445" cy="125" r="44" fill="#16a34a"/>
+            <rect x="440" y="160" width="10" height="50" fill="#78350f"/>
+            <path d="M0,190 Q150,155 300,175 T500,165 L500,250 L0,250 Z" fill="#14532d"/>
           </svg>`;
       }
     }
@@ -1542,7 +1791,6 @@
         : (currentLang === 'ar' ? `وحش الجولة ${formatNum(currentBattle.wave)}` : `Wave Monster ${formatNum(currentBattle.wave)}`);
 
       document.getElementById('arenaMonsterLabel').innerText = monsterName;
-
       const skinColor = isBoss ? "#e11d48" : (currentBattle.wave % 2 === 0 ? "#8b5cf6" : "#10b981");
 
       box.innerHTML = `
@@ -1584,35 +1832,98 @@
         document.getElementById('mathEquationBox').innerText = `${t} × ${factor} = ?`;
       }
 
-      const opts = new Set([correct]);
-      while (opts.size < 4) {
-        const offset = (Math.floor(Math.random() * 4) + 1) * (Math.random() > 0.5 ? 1 : -1);
-        const val = correct + offset;
-        if (val > 0 && val !== correct) opts.add(val);
+      const gridBox = document.getElementById('answersGridBox');
+      const typingBox = document.getElementById('typingAnswerBox');
+      const inputField = document.getElementById('manualTypeInput');
+
+      if (gameState.inputMode === 'type') {
+        gridBox.classList.add('hidden');
+        typingBox.classList.remove('hidden');
+        inputField.value = '';
+        inputField.focus();
+
+        inputField.onkeydown = (e) => {
+          if (e.key === 'Enter') submitTypedAnswer();
+        };
+      } else {
+        typingBox.classList.add('hidden');
+        gridBox.classList.remove('hidden');
+
+        const opts = new Set([correct]);
+        while (opts.size < 4) {
+          const offset = (Math.floor(Math.random() * 4) + 1) * (Math.random() > 0.5 ? 1 : -1);
+          const val = correct + offset;
+          if (val > 0 && val !== correct) opts.add(val);
+        }
+
+        const answersArr = Array.from(opts).sort(() => Math.random() - 0.5);
+        gridBox.innerHTML = '';
+
+        answersArr.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = "py-3 md:py-4 rounded-2xl bg-slate-800 hover:bg-blue-600 text-white font-black text-xl md:text-2xl border border-slate-700 hover:border-blue-400 transition active:scale-95 shadow-md font-mono";
+          btn.innerText = formatNum(opt);
+          btn.onclick = () => handleAnswer(opt);
+          gridBox.appendChild(btn);
+        });
       }
 
-      const answersArr = Array.from(opts).sort(() => Math.random() - 0.5);
-      const grid = document.getElementById('answersGridBox');
-      grid.innerHTML = '';
+      resetTurnTimer();
+    }
 
-      answersArr.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = "py-3.5 md:py-4 rounded-2xl bg-slate-800 hover:bg-blue-600 text-white font-black text-xl md:text-2xl border border-slate-700 hover:border-blue-400 transition active:scale-95 shadow-md font-mono";
-        btn.innerText = formatNum(opt);
-        btn.onclick = () => handleAnswer(opt);
-        grid.appendChild(btn);
-      });
+    function submitTypedAnswer() {
+      if (isBattlePaused) return;
+      const val = parseInt(document.getElementById('manualTypeInput').value.trim());
+      if (isNaN(val)) return;
+      handleAnswer(val);
+    }
+
+    function resetTurnTimer() {
+      clearInterval(battleTurnTimer);
+      const maxSec = getEquippedTimerSeconds();
+      battleTurnTimeLeft = maxSec;
+      const bar = document.getElementById('battleTimerBar');
+      bar.style.width = '100%';
+
+      battleTurnTimer = setInterval(() => {
+        if (isBattlePaused) return;
+        battleTurnTimeLeft -= 0.1;
+        const pct = Math.max(0, (battleTurnTimeLeft / maxSec) * 100);
+        bar.style.width = pct + '%';
+
+        if (battleTurnTimeLeft <= 0) {
+          clearInterval(battleTurnTimer);
+          timeOutMonsterAttack();
+        }
+      }, 100);
+    }
+
+    function timeOutMonsterAttack() {
+      if (!currentBattle || isBattlePaused) return;
+      showToast(currentLang === 'ar' ? "انتهى الوقت! ضربك الوحش!" : "Time's up! Monster hit you!", "⏳");
+      handleAnswer(-9999);
     }
 
     function handleAnswer(ans) {
+      if (isBattlePaused) return;
+      clearInterval(battleTurnTimer);
       const isCorrect = ans === currentBattle.correctAnswer;
       const monsterEl = document.getElementById('monsterFighterBox');
       const knightEl = document.getElementById('knightFighterBox');
+      const weaponEl = document.getElementById('visualWeaponDisplay');
 
       if (isCorrect) {
         const dmg = currentBattle.playerDmg;
         currentBattle.monsterHp = Math.max(0, currentBattle.monsterHp - dmg);
         showFloatingText(`-${formatNum(dmg)}`, monsterEl, 'text-emerald-400');
+        
+        knightEl.classList.add('knight-attacking');
+        weaponEl.classList.add('weapon-slash-fx');
+        setTimeout(() => {
+          knightEl.classList.remove('knight-attacking');
+          weaponEl.classList.remove('weapon-slash-fx');
+        }, 400);
+
         monsterEl.classList.add('shake-target');
         setTimeout(() => monsterEl.classList.remove('shake-target'), 350);
         playAudio('hit');
@@ -1629,19 +1940,21 @@
       updateBattleHp();
 
       if (currentBattle.playerHp <= 0) {
+        clearInterval(battleTurnTimer);
         playAudio('hurt');
-        showToast(currentLang === 'ar' ? "نفدت طاقتك في المعركة!" : "Defeated in battle!", "💔");
-        showScreen('homeView');
+        showToast(currentLang === 'ar' ? "نفدت طاقتك في المعركة!" : "You were defeated!", "💔");
+        exitBattleMode();
         return;
       }
 
       if (currentBattle.monsterHp <= 0) {
+        clearInterval(battleTurnTimer);
         if (currentBattle.wave < currentBattle.totalWaves) {
           currentBattle.wave++;
           const nextHp = calculateMonsterHp(currentBattle.table, currentBattle.stage, currentBattle.wave, currentBattle.playerDmg);
           currentBattle.monsterMaxHp = nextHp;
           currentBattle.monsterHp = nextHp;
-          showToast(currentLang === 'ar' ? `هزمت الوحش! التالي: جولة ${formatNum(currentBattle.wave)}` : `Wave cleared! Next: ${formatNum(currentBattle.wave)}`, "⚔️");
+          showToast(currentLang === 'ar' ? `هزمت الوحش! التالي: جولة ${formatNum(currentBattle.wave)}` : `Monster defeated! Next wave: ${formatNum(currentBattle.wave)}`, "⚔️");
           setTimeout(nextWaveTurn, 600);
         } else {
           winStageComplete();
@@ -1660,6 +1973,7 @@
     }
 
     function winStageComplete() {
+      clearInterval(battleTurnTimer);
       gameState.totalBattles = (gameState.totalBattles || 0) + 1;
 
       const currentLvl = gameState.tableProgress[currentBattle.table] || 1;
@@ -1709,25 +2023,48 @@
 
       let victoryMsg = currentLang === 'ar'
         ? `🎉 انتصار كامل! أنهيت المستوى ${formatNum(currentBattle.stage)}!\n+${formatNum(goldEarned)} ذهب | +${formatNum(xpEarned)} XP` + (gemsEarned > 0 ? ` | +${formatNum(gemsEarned)} 💎` : '')
-        : `🎉 Victory! Level ${formatNum(currentBattle.stage)} cleared!\n+${formatNum(goldEarned)} Gold | +${formatNum(xpEarned)} XP` + (gemsEarned > 0 ? ` | +${formatNum(gemsEarned)} 💎` : '');
+        : `🎉 Level ${formatNum(currentBattle.stage)} cleared!\n+${formatNum(goldEarned)} Gold | +${formatNum(xpEarned)} XP` + (gemsEarned > 0 ? ` | +${formatNum(gemsEarned)} 💎` : '');
 
       if (isTableFullyClearedNow) {
         victoryMsg += currentLang === 'ar'
-          ? `\n👑 مبروك! ختمت جدول ${formatNum(currentBattle.table)} بالكامل وحصلت على الجائزة الكبرى (+٢٥٠ ذهب و +١٠ جواهر)!`
-          : `\n👑 Congratulations! Table ${formatNum(currentBattle.table)} fully cleared (+250 Gold & +10 Gems)!`;
+          ? `\n👑 مبروك! ختمت جدول ${formatNum(currentBattle.table)} بالكامل (+٢٥٠ ذهب و +١٠ جواهر)!`
+          : `\n👑 Grand Clear! Table ${formatNum(currentBattle.table)} complete (+250 Gold & +10 Gems)!`;
       }
 
       showToast(victoryMsg, "🏆");
-      showScreen('homeView');
+      exitBattleMode();
+    }
+
+    /* دوال التوقيف المؤقت والخروج من المعركة */
+    function pauseBattle() {
+      isBattlePaused = true;
+      document.getElementById('battlePauseModal').classList.remove('hidden');
+    }
+
+    function resumeBattle() {
+      isBattlePaused = false;
+      document.getElementById('battlePauseModal').classList.add('hidden');
+    }
+
+    function confirmFleeFromPause() {
+      document.getElementById('battlePauseModal').classList.add('hidden');
+      fleeBattle();
     }
 
     function fleeBattle() {
+      clearInterval(battleTurnTimer);
       showToast(currentLang === 'ar' ? "تم الانسحاب من المعركة" : "Retreated from battle", "🏳️");
+      exitBattleMode();
+    }
+
+    function exitBattleMode() {
+      isBattlePaused = false;
+      document.getElementById('mainAppHeader').classList.remove('hidden');
       showScreen('homeView');
     }
 
     /* =========================================================================
-       8. برج الجواهر والذهب التفاعلي الحي (Online Tower)
+       8. برج الجواهر التفاعلي بالدقائق (يعد داخل اللعبة فقط)
        ========================================================================= */
     function initLiveTower() {
       setInterval(() => {
@@ -1761,10 +2098,12 @@
 
       const m = Math.floor(towerRemainingSec / 60).toString().padStart(2, '0');
       const s = (towerRemainingSec % 60).toString().padStart(2, '0');
-      document.getElementById('towerTimerBox').innerText = isTowerReady ? (currentLang === 'ar' ? "جاهز الآن!" : "Ready Now!") : `${formatNum(m)}:${formatNum(s)}`;
+      document.getElementById('towerTimerBox').innerText = isTowerReady 
+        ? (currentLang === 'ar' ? "جاهز الآن!" : "Ready Now!") 
+        : `${formatNum(m)}:${formatNum(s)}`;
 
       const claimBtn = document.getElementById('towerClaimBtn');
-      claimBtn.disabled = !isTowerReady;
+      if (claimBtn) claimBtn.disabled = !isTowerReady;
     }
 
     function claimTowerReward() {
@@ -1790,7 +2129,7 @@
     }
 
     /* =========================================================================
-       9. عرض عناصر المتجر والشراء
+       9. عرض عناصر المتجر والشراء والإعلانات
        ========================================================================= */
     let currentShopTab = 'weapons';
 
@@ -1799,7 +2138,12 @@
       document.querySelectorAll('.shop-tab').forEach(b => {
         b.className = "shop-tab px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-700";
       });
-      btn.className = "shop-tab active px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-blue-600 text-white";
+
+      if (cat === 'recharge') {
+        btn.className = "shop-tab active px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md";
+      } else {
+        btn.className = "shop-tab active px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap bg-blue-600 text-white";
+      }
       renderShopItems();
     }
 
@@ -1807,6 +2151,11 @@
       const container = document.getElementById('shopGridBox');
       if (!container) return;
       container.innerHTML = '';
+
+      if (currentShopTab === 'recharge') {
+        renderRechargeSection(container);
+        return;
+      }
 
       const items = SHOP_DATA[currentShopTab] || [];
       items.forEach(item => {
@@ -1839,13 +2188,19 @@
           btnHtml = `<button onclick="equipShopItem('${item.id}', '${currentShopTab}')" class="px-3 py-1 rounded-xl bg-slate-800 light:bg-slate-200 hover:bg-slate-700 text-slate-200 light:text-slate-800 border border-slate-600 light:border-slate-300 font-bold text-xs transition">${I18N[currentLang].equip}</button>`;
         }
 
+        let statBadge = '';
+        if (item.dmg) statBadge += `+${formatNum(item.dmg)} Dmg `;
+        if (item.extraDef) statBadge += `🛡️ +${Math.round(item.extraDef * 100)}% `;
+        if (item.def) statBadge += `${Math.round(item.def * 100)}% Def`;
+        if (item.sec) statBadge += `⏱️ ${formatNum(item.sec)}s`;
+
         card.innerHTML = `
           <div>
             <div class="flex items-center gap-2.5 mb-1.5">
               <span class="text-2xl p-2 rounded-xl bg-slate-900 light:bg-white border border-slate-700/80 light:border-slate-300 shadow-sm">${item.icon}</span>
               <div>
                 <h4 class="font-bold text-xs text-slate-100 light:text-slate-900">${itemName}</h4>
-                <span class="text-[10px] text-blue-400 font-mono font-bold">${item.dmg ? '+' + formatNum(item.dmg) + ' Dmg' : (item.def ? Math.round(item.def*100) + '% Def' : '')}</span>
+                <span class="text-[10px] text-blue-400 font-mono font-bold">${statBadge}</span>
               </div>
             </div>
             <p class="text-[10px] text-slate-400 light:text-slate-600 leading-snug my-2">${itemDesc}</p>
@@ -1857,6 +2212,73 @@
         `;
         container.appendChild(card);
       });
+    }
+
+    function renderRechargeSection(container) {
+      const adCard = document.createElement('div');
+      adCard.className = "p-5 rounded-3xl bg-gradient-to-r from-blue-900/60 to-indigo-950/80 border-2 border-blue-500/50 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl col-span-1 sm:col-span-2 lg:col-span-3";
+      adCard.innerHTML = `
+        <div class="flex items-center gap-3.5 text-right">
+          <span class="text-4xl p-2 rounded-2xl bg-blue-950/80 border border-blue-500/40">📺</span>
+          <div>
+            <h4 class="text-sm font-black text-white" data-i18n="reward_ad_title">${I18N[currentLang].reward_ad_title}</h4>
+            <p class="text-xs text-slate-300 mt-0.5" data-i18n="reward_ad_desc">${I18N[currentLang].reward_ad_desc}</p>
+          </div>
+        </div>
+        <button onclick="triggerRealVideoAd()" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-xs shadow-lg transition active:scale-95 shrink-0" data-i18n="watch_ad_btn">
+          ${I18N[currentLang].watch_ad_btn}
+        </button>
+      `;
+      container.appendChild(adCard);
+
+      const packs = [
+        { id: "p1", name_ar: "صندوق الفارس", name_en: "Knight Box", desc_ar: "٥٠٠ ذهب + ٥ جواهر", desc_en: "500 Gold + 5 Gems", price: "20 EGP", gold: 500, gems: 5, icon: "🪙" },
+        { id: "p2", name_ar: "حقيبة الجواهر", name_en: "Gems Pouch", desc_ar: "١٥٠٠ ذهب + ٢٠ جوهرة", desc_en: "1500 Gold + 20 Gems", price: "50 EGP", gold: 1500, gems: 20, icon: "💎" },
+        { id: "p3", name_ar: "كنز المطور", name_en: "Developer Chest", desc_ar: "٥٠٠٠ ذهب + ٦٠ جوهرة", desc_en: "5000 Gold + 60 Gems", price: "120 EGP", gold: 5000, gems: 60, icon: "👑" },
+      ];
+
+      packs.forEach(p => {
+        const c = document.createElement('div');
+        c.className = "p-4 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-purple-500/40 flex flex-col justify-between shadow-lg";
+        c.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-3xl">${p.icon}</span>
+              <div>
+                <h4 class="text-xs font-black text-white">${currentLang === 'ar' ? p.name_ar : p.name_en}</h4>
+                <span class="text-[10px] text-purple-300 font-mono">${currentLang === 'ar' ? p.desc_ar : p.desc_en}</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-between border-t border-slate-800 pt-3 mt-3">
+            <span class="text-xs font-black text-emerald-400 font-mono">${p.price}</span>
+            <button onclick="handleRealPaymentClick()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-xs shadow active:scale-95">شحن 💳</button>
+          </div>
+        `;
+        container.appendChild(c);
+      });
+    }
+
+    // فتح الإعلان بالرابط المباشر والتركيز التلقائي
+    function triggerRealVideoAd() {
+      const adUrl = "https://uplcm.com/4/12126550";
+      const newWin = window.open(adUrl, '_blank');
+      
+      showToast(currentLang === 'ar' ? "جارٍ فتح الإعلان وتقديم المكافأة... ⏳" : "Opening ad and granting reward... ⏳", "📺");
+      
+      setTimeout(() => {
+        gameState.gold += 50;
+        gameState.gems += 1;
+        saveGame();
+        updateHeaderUI();
+        playAudio('gem');
+        showToast(currentLang === 'ar' ? "شكراً لدعمك اللعبة! استلمت 50 ذهباً و 1 جوهرة مجاناً! 🎉" : "Thanks for supporting! You got +50 Gold & +1 Gem! 🎉", "🎁");
+        window.focus();
+      }, 1500);
+    }
+
+    function handleRealPaymentClick() {
+      showToast(I18N[currentLang].pack_coming_soon, "💳");
     }
 
     function buyShopItem(id, cat) {
@@ -1879,7 +2301,7 @@
     }
 
     function equipShopItem(id, cat) {
-      const map = { weapons: 'weapon', armors: 'armor', knights: 'knight', frames: 'frame', arenas: 'arena' };
+      const map = { weapons: 'weapon', armors: 'armor', knights: 'knight', frames: 'frame', arenas: 'arena', timers: 'timer' };
       const k = map[cat];
       if (k) {
         gameState.equipped[k] = id;
@@ -1887,13 +2309,21 @@
         updateHeaderUI();
         renderShopItems();
         playAudio('coin');
-        showToast(currentLang === 'ar' ? "تم التجهيز!" : "Equipped!", "🛡️");
+        showToast(currentLang === 'ar' ? "تم التجهيز بنجاح!" : "Equipped successfully!", "🛡️");
       }
     }
 
     /* =========================================================================
-       10. الشارات والملف الشخصي وتحديث الهيدر
+       10. الإطارات الخرافية في البروفايل والمتصدرين وتحديث الهيدر
        ========================================================================= */
+    function getFrameCssClass(frameId) {
+      if (frameId === 'silver_frame') return "frame-silver";
+      if (frameId === 'gold_frame') return "frame-gold";
+      if (frameId === 'red_frame') return "frame-red";
+      if (frameId === 'purple_frame') return "frame-purple";
+      return "border-2 border-slate-700";
+    }
+
     function checkBadges() {
       BADGES_LIST.forEach(b => {
         if (!gameState.badges.includes(b.id) && b.req(gameState)) {
@@ -1941,7 +2371,13 @@
       document.getElementById('headerXpFill').style.width = pct + '%';
       document.getElementById('headerXpText').innerText = `${formatNum(gameState.xp)}/${formatNum(needed)}`;
 
-      applyFrameClass(document.getElementById('headerAvatarBox'), gameState.equipped.frame);
+      const avBox = document.getElementById('headerAvatarBox');
+      avBox.className = `w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden bg-slate-800 flex items-center justify-center p-0.5 relative shrink-0 transition-all ${getFrameCssClass(gameState.equipped.frame)}`;
+
+      const profileFrameBox = document.getElementById('profileAvatarFrameWrap');
+      if (profileFrameBox) {
+        profileFrameBox.className = `w-16 h-16 rounded-2xl overflow-hidden bg-slate-800 flex items-center justify-center p-0.5 transition-all ${getFrameCssClass(gameState.equipped.frame)}`;
+      }
 
       document.getElementById('profilePreviewImg').src = gameState.avatar;
       document.getElementById('profileNameBox').value = gameState.name;
@@ -1960,21 +2396,6 @@
       const arm = SHOP_DATA.armors.find(a => a.id === gameState.equipped.armor);
       document.getElementById('profileWeaponLabel').innerText = wep ? (currentLang === 'ar' ? wep.name_ar : wep.name_en) : "";
       document.getElementById('profileArmorLabel').innerText = arm ? (currentLang === 'ar' ? arm.name_ar : arm.name_en) : "";
-    }
-
-    function applyFrameClass(el, frameId) {
-      el.className = "w-11 h-11 rounded-2xl overflow-hidden bg-slate-800 flex items-center justify-center p-0.5 border";
-      if (frameId === 'silver_frame') {
-        el.classList.add('border-slate-300', 'shadow-md');
-      } else if (frameId === 'gold_frame') {
-        el.classList.add('border-amber-400', 'shadow-md', 'shadow-amber-500/20');
-      } else if (frameId === 'fire_frame') {
-        el.classList.add('border-rose-500', 'shadow-md', 'shadow-rose-500/30', 'animate-pulse');
-      } else if (frameId === 'cosmic_frame') {
-        el.classList.add('border-cyan-400', 'shadow-md', 'shadow-cyan-500/30', 'animate-pulse');
-      } else {
-        el.classList.add('border-slate-700');
-      }
     }
 
     function handleCustomAvatarUpload(e) {
