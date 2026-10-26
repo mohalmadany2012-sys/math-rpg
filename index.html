@@ -1469,42 +1469,21 @@
       }
     }
 
-    /* محرك اللعب الفعلي وإدارة الإعلانات التلقائية والمكافآت */
+    /* إدارة إعلانات المكافآت فقط بدون أي فتح تلقائي */
     function initContinuousAdsEngine() {
       setInterval(() => {
-        sessionContinuousPlaySeconds++;
-
-        // تناقص كول داون إعلان المكافأة (10 دقائق = 600 ثانية من اللعب الفعلي المستمر)
+        // تناقص وقت انتظار إعلان المكافأة فقط إن وجد
         if (rewardedAdCooldownRemaining > 0) {
           rewardedAdCooldownRemaining--;
           updateRewardedAdButtonUI();
         }
-
-        // فحص الإعلانات البينية التلقائية المجدولة (4 إعلانات يومياً: 5د، 15د، 30د، 45د)
-        checkDailyAdsReset();
-        const currentInterstCount = gameState.dailyAdsData.interstitialCount || 0;
-        if (currentInterstCount < 4) {
-          const targetSec = INTERSTITIAL_SCHEDULE_SECONDS[currentInterstCount];
-          if (sessionContinuousPlaySeconds >= targetSec) {
-            triggerAutomaticInterstitialAd();
-          }
-        }
       }, 1000);
     }
 
+    // تفريغ دالة الإعلانات التلقائية حتى لا تفتح أي نوافذ
     function triggerAutomaticInterstitialAd() {
-      gameState.dailyAdsData.interstitialCount = (gameState.dailyAdsData.interstitialCount || 0) + 1;
-      saveGame();
-
-      showToast(currentLang === 'ar' ? "استراحة المحارب: إعلان مميز لدعم اللعبة ⚡" : "Warrior break: Sponsor ad ⚡", "📢");
-      
-      try {
-        window.open(AD_DIRECT_LINK, '_blank');
-      } catch (e) {
-        console.warn("Popup blocked or handled:", e);
-      }
+      // تم إيقافها لمنع فتح تبويبات مفاجئة للاعب
     }
-
     function checkDailyLoginReward() {
       const now = Date.now();
       const ONE_DAY = 24 * 60 * 60 * 1000;
