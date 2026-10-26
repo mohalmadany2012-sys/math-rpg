@@ -185,7 +185,50 @@
         gap: 8px !important;
       }
     }
-  </style>
+  
+    /* Friends/rooms readable in both themes; fixes dark native controls in daylight mode. */
+    .room-field { background:#0b1220; color:#f8fafc; border-color:#475569; color-scheme:dark; }
+    .light #friendsView > div, .light #roomsView > div { background:#fff !important; color:#172033; border-color:#dbe3ef !important; }
+    .light #friendsView h2, .light #friendsView h3, .light #roomsView h2, .light #roomsView h3 { color:#172033; }
+    .light #friendsView p, .light #roomsView p, .light #roomsView label, .light #roomStatusLine { color:#64748b; }
+    .light #friendsView .rounded-2xl.border, .light #roomsView .rounded-2xl.border { border-color:#d7dfeb !important; }
+    .light .room-field, .light #friendsView input, .light #roomsView input, .light #friendsView select, .light #roomsView select { background:#fff !important; color:#172033 !important; border-color:#cbd5e1 !important; color-scheme:light; }
+    .light #friendsView .bg-blue-950\/30 { background:#eff6ff !important; }
+    .light #friendsView .bg-slate-950, .light #friendsView .bg-slate-900, .light #roomsView .bg-slate-950, .light #roomsView .bg-slate-900 { background:#f8fafc !important; }
+    .light #friendsView .text-slate-100, .light #friendsView .text-slate-200, .light #roomsView .text-slate-100, .light #roomsView .text-slate-200 { color:#172033 !important; }
+    .light #friendsView .text-slate-400, .light #friendsView .text-slate-500, .light #roomsView .text-slate-400, .light #roomsView .text-slate-500 { color:#64748b !important; }
+    .light #friendsView button:not(.bg-blue-600):not(.bg-emerald-700):not(.bg-rose-900), .light #roomsView button:not(.bg-blue-600):not(.bg-emerald-600):not(.bg-rose-700):not(.bg-amber-500) { color:#172033; }
+    .light #roomJoinCode, .light #friendSearchTag { background:#fff !important; color:#172033 !important; border-color:#cbd5e1 !important; }
+    .light #activeRoomLobby { background:#f8fafc !important; }
+    .light #blueRoomSlots .bg-slate-900, .light #redRoomSlots .bg-slate-900 { background:#fff !important; }
+    .light #blueRoomSlots .text-slate-100, .light #redRoomSlots .text-slate-100 { color:#172033 !important; }
+    .light #blueRoomSlots .text-slate-400, .light #redRoomSlots .text-slate-400 { color:#64748b !important; }
+
+    /* Daylight theme contrast patch: force light surfaces and readable text in friends/rooms. */
+    html.light #friendsView, html.light #roomsView { color:#172033 !important; }
+    html.light #friendsView .bg-slate-800, html.light #friendsView .bg-slate-900,
+    html.light #friendsView .bg-slate-950, html.light #roomsView .bg-slate-800,
+    html.light #roomsView .bg-slate-900, html.light #roomsView .bg-slate-950,
+    html.light #roomsView .bg-slate-950\/60, html.light #friendsView .bg-slate-950\/50 {
+      background-color:#f8fafc !important;
+    }
+    html.light #friendsView .text-slate-100, html.light #friendsView .text-slate-200,
+    html.light #friendsView .text-white, html.light #roomsView .text-slate-100,
+    html.light #roomsView .text-slate-200, html.light #roomsView .text-white { color:#172033 !important; }
+    html.light #friendsView .border-slate-700, html.light #friendsView .border-slate-800,
+    html.light #roomsView .border-slate-700, html.light #roomsView .border-slate-800 { border-color:#cbd5e1 !important; }
+    html.light #myPlayerTag, html.light #friendsView .rounded-2xl.bg-slate-800,
+    html.light #friendsView .rounded-xl.bg-slate-800 { background:#f1f5f9 !important; }
+    html.light #roomBattlePanel { background:#fff7ed !important; }
+    html.light #roomBattlePanel #roomBattleQuestion { color:#172033 !important; }
+    html.light #friendsView input::placeholder, html.light #roomsView input::placeholder { color:#94a3b8 !important; opacity:1; }
+
+
+    /* Readable room controls in day mode */
+    .light .room-field, body.light .room-field { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+    .light #roomJoinCode, body.light #roomJoinCode { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+
+</style>
 </head>
 <body class="min-h-screen flex flex-col overflow-x-hidden">
 
@@ -324,13 +367,13 @@
       <div class="text-center mb-4">
         <span class="text-3xl">📧</span>
         <h3 class="text-base font-black mt-2">استعادة كلمة المرور عبر Gmail</h3>
-        <p class="text-[11px] text-slate-400 mt-1" id="resetStepDesc">أدخل بريدك الإلكتروني المسجل لإرسال كود التحقق.</p>
+        <p class="text-[11px] text-slate-400 mt-1" id="resetStepDesc">أدخل بريدك الإلكتروني المسجل لإرسال رابط إعادة تعيين كلمة المرور.</p>
       </div>
 
       <div class="space-y-3" id="resetStep1">
         <input type="email" id="resetEmailField" placeholder="your-email@gmail.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white text-center" dir="ltr">
         <button onclick="sendResetVerificationCode()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl text-xs transition shadow">
-          إرسال كود التحقق 📩
+          إرسال رابط الاستعادة 📩
         </button>
       </div>
 
@@ -395,6 +438,8 @@
         <button id="desktopShopBtn" onclick="showScreen('shopView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="المتجر">🛒</button>
         <button onclick="showScreen('leaderboardView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="المتصدرين">🏆</button>
         <button onclick="showScreen('badgesView')" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="الشارات">🎖️</button>
+        <button onclick="showScreen('friendsView'); FriendsSystem.open();" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="الأصدقاء">👥</button>
+        <button onclick="showScreen('roomsView'); RoomsSystem.open();" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="الغرف">⚔️</button>
         <button onclick="openSettingsModal()" class="p-2 rounded-xl bg-slate-800 light:bg-slate-100 light:text-slate-800 border border-slate-700 light:border-slate-300 text-slate-300 hover:text-white" title="الإعدادات">⚙️</button>
       </div>
 
@@ -421,6 +466,8 @@
             <button onclick="showScreen('badgesView'); toggleMobileNavMenu();" class="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-800 text-right">
               <span class="text-lg">🎖️</span> <span data-i18n="badges_title">الشارات</span>
             </button>
+            <button onclick="showScreen('friendsView'); FriendsSystem.open(); toggleMobileNavMenu();" class="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-800 text-right"><span class="text-lg">👥</span><span>الأصدقاء</span></button>
+            <button onclick="showScreen('roomsView'); RoomsSystem.open(); toggleMobileNavMenu();" class="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-800 text-right"><span class="text-lg">⚔️</span><span>الغرف المخصصة</span></button>
             <button onclick="openSettingsModal(); toggleMobileNavMenu();" class="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-800 text-right">
               <span class="text-lg">⚙️</span> <span data-i18n="settings_title">الإعدادات</span>
             </button>
@@ -438,15 +485,23 @@
       <div class="bg-slate-900/80 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl flex flex-col items-center justify-center text-center gap-3">
         <div>
           <h2 class="text-xl md:text-3xl font-black text-slate-100 light:text-slate-900" data-i18n="home_title">ميدان قتال الجداول</h2>
-          <p class="text-xs md:text-sm text-slate-400 mt-1.5 max-w-lg mx-auto" data-i18n="home_desc">10 مستويات لكل جدول. الوحوش تقوى تدريجياً مع جوائز ختم كبرى!</p>
+          <p class="text-xs md:text-sm text-slate-400 mt-1.5 max-w-lg mx-auto" data-i18n="home_desc">30 مستوى لكل جدول. الوحوش تقوى تدريجياً مع جوائز ختم كبرى، والنظام المخصص يبدأ من المستوى 31+!</p>
         </div>
         <div class="flex items-center justify-center gap-2 bg-slate-950/60 light:bg-slate-100 p-2.5 rounded-2xl border border-slate-800 light:border-slate-300 text-xs mt-1">
           <span>👑</span>
-          <span class="text-slate-300 light:text-slate-700" data-i18n="rule_hint">كل مستوى 5 جولات. عند ختم 10 مستويات تحصل على مكافأة الختم الكبرى!</span>
+          <span class="text-slate-300 light:text-slate-700" data-i18n="rule_hint">كل مستوى 5 جولات. عند ختم 30 مستوى في الجدول تحصل على مكافأة الختم الكبرى!</span>
         </div>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4" id="tableCardsGrid"></div>
+      <div id="customTablesMode" class="bg-slate-900/90 light:bg-white border border-violet-500/40 light:border-violet-200 rounded-3xl p-5 md:p-6 shadow-xl space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div><h3 class="text-lg md:text-xl font-black text-violet-300 light:text-violet-700">🎯 النظام المخصص — المستوى ٣١+</h3><p class="text-xs text-slate-400 mt-1">اختر من جدولين إلى ١٢ جدولًا لتتغير الأسئلة بينها عشوائيًا. الجداول العادية ومستوياتها لا تتغير.</p></div>
+          <span class="text-xs rounded-full border border-violet-400/50 px-3 py-1 text-violet-300 light:text-violet-700">من المستوى ٣١</span>
+        </div>
+        <div id="customTablesChoices" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"></div>
+        <div class="flex flex-wrap items-center justify-between gap-3"><p id="customTablesCount" class="text-xs text-slate-400">تم اختيار جدول واحد — اختر جدولًا آخر على الأقل.</p><button id="startCustomTablesBtn" onclick="startCustomTablesBattle()" class="rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed text-white px-5 py-3 font-black text-sm" disabled>بدء النظام المخصص</button></div>
+      </div>
     </div>
 
     <!-- شاشة المعركة -->
@@ -641,7 +696,89 @@
       </div>
     </div>
 
+
+    <!-- نظام مستقل للأصدقاء: لا يعتمد على غرف اللعب -->
+    <section id="friendsView" class="view-screen hidden w-full space-y-4">
+      <div class="bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+          <div><h2 class="text-2xl font-black">👥 مركز الأصدقاء</h2><p class="text-xs text-slate-400 mt-1">ابحث بالمعرّف الدائم وأدر طلباتك وأصدقاءك.</p></div>
+          <button onclick="showScreen('homeView')" class="px-3 py-2 rounded-xl bg-slate-800 text-xs font-bold">الرئيسية ↩</button>
+        </div>
+        <div class="rounded-2xl border border-blue-500/30 bg-blue-950/30 p-4 mb-4">
+          <div class="text-xs text-slate-400 mb-1">معرّفك الدائم (Player Tag)</div>
+          <div class="flex flex-wrap items-center gap-2"><strong id="myPlayerTag" class="text-xl font-black tracking-wider text-cyan-300 font-mono">جارٍ التحقق...</strong><button onclick="FriendsSystem.copyTag()" class="px-3 py-1.5 rounded-lg bg-blue-600 text-xs font-bold">نسخ المعرّف</button></div>
+          <p class="text-[10px] text-slate-400 mt-2">الحسابات المسجلة تحفظ المعرّف في Firestore، والضيف يستخدم معرّفاً محلياً على هذا المتصفح فقط.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="rounded-2xl border border-slate-800 p-4 space-y-3">
+            <h3 class="font-black">🔎 البحث عن لاعب</h3>
+            <div class="flex gap-2"><input id="friendSearchTag" placeholder="#MK-78421" class="min-w-0 flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm font-mono" dir="ltr"><button onclick="FriendsSystem.sendRequest()" class="px-3 py-2 bg-blue-600 rounded-xl text-xs font-black">إرسال طلب</button></div>
+            <p class="text-[10px] text-slate-500">اكتب المعرّف كاملاً كما يظهر للاعب.</p>
+          </div>
+          <div class="rounded-2xl border border-slate-800 p-4">
+            <h3 class="font-black mb-3">📨 الطلبات الواردة <span id="incomingFriendCount" class="text-cyan-300">0</span></h3>
+            <div id="incomingFriendRequests" class="space-y-2 text-xs text-slate-400">جارٍ التحميل...</div>
+          </div>
+        </div>
+        <div class="mt-4 rounded-2xl border border-slate-800 p-4">
+          <h3 class="font-black mb-3">🛡️ أصدقائي</h3><div id="friendsList" class="grid sm:grid-cols-2 gap-3 text-xs text-slate-400">جارٍ التحميل...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- نظام الغرف مستقل: الغرفة تحفظ الفريق والمقاعد والحالة في مستند Firestore واحد -->
+    <section id="roomsView" class="view-screen hidden w-full space-y-4">
+      <div class="bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5"><div><h2 class="text-2xl font-black">⚔️ الغرف المخصصة</h2><p class="text-xs text-slate-400 mt-1">أنشئ غرفة تكتيكية أو انضم باستخدام كودها.</p></div><button onclick="showScreen('homeView')" class="px-3 py-2 rounded-xl bg-slate-800 text-xs font-bold">الرئيسية ↩</button></div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="rounded-2xl border border-slate-800 p-4 space-y-3">
+            <h3 class="font-black">إنشاء غرفة جديدة</h3>
+            <label class="block text-xs text-slate-400">نمط المواجهة</label>
+            <select id="roomModeSelect" class="room-field w-full border rounded-xl p-3 text-sm"><option value="1v1">1 ضد 1 — مقعدان</option><option value="2v2">2 ضد 2 — 4 مقاعد</option><option value="3v3" selected>3 ضد 3 — 6 مقاعد</option></select>
+            <label class="block text-xs text-slate-400">مدة الإجابة لكل سؤال</label>
+            <select id="roomTimerSelect" class="room-field w-full border rounded-xl p-3 text-sm"><option value="10">١٠ ثوانٍ</option><option value="15" selected>١٥ ثانية</option><option value="20">٢٠ ثانية</option><option value="30">٣٠ ثانية</option></select>
+            <label class="block text-xs text-slate-400">قيمة الضرر الأساسية لكل الأسلحة المسموحة (لكل ضربة)</label>
+            <select id="roomWeaponSelect" class="room-field w-full border rounded-xl p-3 text-sm"><option value="10">١٠ ضرر</option><option value="15" selected>١٥ ضرر</option><option value="20">٢٠ ضرر</option><option value="25">٢٥ ضرر</option><option value="30">٣٠ ضرر</option></select>
+            <label class="block text-xs text-slate-400">نسبة تقليل الضرر التي توفرها الدروع المسموحة</label>
+            <select id="roomArmorSelect" class="room-field w-full border rounded-xl p-3 text-sm"><option value="0">٠٪ — بدون امتصاص</option><option value="10">١٠٪</option><option value="20" selected>٢٠٪</option><option value="30">٣٠٪</option><option value="40">٤٠٪</option></select>
+            <label class="block text-xs text-slate-400">الجداول المستخدمة في المعركة</label>
+            <div id="roomTablesSelect" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs"><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="1" checked class="room-table-choice"> جدول 1</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="2" class="room-table-choice"> جدول 2</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="3" class="room-table-choice"> جدول 3</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="4" class="room-table-choice"> جدول 4</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="5" class="room-table-choice"> جدول 5</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="6" class="room-table-choice"> جدول 6</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="7" class="room-table-choice"> جدول 7</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="8" class="room-table-choice"> جدول 8</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="9" class="room-table-choice"> جدول 9</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="10" class="room-table-choice"> جدول 10</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="11" class="room-table-choice"> جدول 11</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="12" class="room-table-choice"> جدول 12</label></div>
+            <button onclick="RoomsSystem.create()" class="w-full rounded-xl bg-blue-600 hover:bg-blue-500 p-3 font-black text-sm">إنشاء غرفة</button>
+          </div>
+          <div class="rounded-2xl border border-slate-800 p-4 space-y-3">
+            <h3 class="font-black">الانضمام إلى غرفة</h3>
+            <input id="roomJoinCode" placeholder="أدخل كود الغرفة" maxlength="8" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-center font-mono uppercase tracking-widest" dir="ltr">
+            <button onclick="RoomsSystem.joinByCode()" class="w-full rounded-xl bg-emerald-600 hover:bg-emerald-500 p-3 font-black text-sm">انضمام بالكود</button>
+          </div>
+        </div>
+        <div id="activeRoomLobby" class="hidden mt-5 rounded-2xl border border-cyan-500/40 bg-slate-950/60 p-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4"><div><div class="text-xs text-slate-400">كود الغرفة</div><div class="flex items-center gap-2"><strong id="activeRoomCode" class="text-xl text-cyan-300 font-mono tracking-widest"></strong><button onclick="RoomsSystem.copyCode()" class="text-xs rounded-lg bg-slate-800 px-2 py-1">نسخ</button></div></div><div class="flex gap-2"><button id="roomCloseBtn" onclick="RoomsSystem.closeRoom()" class="hidden rounded-xl bg-rose-700 text-white px-3 py-2 text-xs font-bold">إغلاق الغرفة</button><button onclick="RoomsSystem.leave()" class="rounded-xl bg-rose-950 border border-rose-800 text-rose-300 px-3 py-2 text-xs font-bold">مغادرة الغرفة</button></div></div>
+          <div class="text-xs text-slate-400 mb-3" id="roomStatusLine">ردهة الانتظار — اختر مقعدك.</div>
+          <div id="roomBattlePanel" class="hidden mb-4 rounded-2xl border border-amber-500/40 bg-amber-50 dark:bg-slate-900 p-4"><div class="flex items-center justify-between gap-3"><strong class="text-amber-600 dark:text-amber-300">⚔️ المعركة الجماعية</strong><span id="roomBattleTimer" class="font-black text-lg">--</span></div><p id="roomBattleMessage" class="text-sm mt-2">بدأت المعركة.</p><div id="roomBattleQuestion" class="mt-3 text-xl font-black text-center"></div><div id="roomBattleAnswers" class="grid grid-cols-2 gap-2 mt-3"></div><p id="roomBattleFeedback" class="text-xs mt-2 text-center"></p></div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="rounded-2xl border border-blue-500/40 bg-blue-950/20 p-3"><h3 class="font-black text-blue-300 mb-3">🔵 الفريق الأزرق — Alpha</h3><div id="blueRoomSlots" class="grid grid-cols-1 gap-2"></div></div>
+            <div class="rounded-2xl border border-rose-500/40 bg-rose-950/20 p-3"><h3 class="font-black text-rose-300 mb-3">🔴 الفريق الأحمر — Beta</h3><div id="redRoomSlots" class="grid grid-cols-1 gap-2"></div></div>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-4"><button id="roomReadyBtn" onclick="RoomsSystem.toggleReady()" class="flex-1 rounded-xl bg-emerald-600 p-3 text-sm font-black">أنا مستعد ✓</button><button id="roomStartBtn" onclick="RoomsSystem.startMatch()" class="hidden flex-1 rounded-xl bg-amber-500 text-slate-950 p-3 text-sm font-black">بدء المعركة ⚔️</button></div>
+          <p class="text-[10px] text-slate-500 mt-3">تبدأ المعركة عندما يكون كل لاعب في مقعده ومستعداً. يظل بدء المعركة متاحاً لمنشئ الغرفة فقط.</p>
+        </div>
+        <div id="roomCloudNotice" class="mt-4 text-xs text-slate-500"></div>
+      </div>
+    </section>
+
   </main>
+
+  <div id="friendGiftModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/80 p-4">
+    <div class="w-full max-w-lg rounded-3xl bg-white text-slate-900 p-5 shadow-2xl">
+      <div class="flex items-center justify-between gap-3"><h3 class="text-xl font-black">🎁 متجر هدايا الأصدقاء</h3><button onclick="FriendsSystem.closeGiftMenu()" class="rounded-lg bg-slate-100 px-3 py-2">إغلاق ✕</button></div>
+      <p id="friendGiftRecipient" class="mt-2 text-sm text-slate-500">اختيار صديق</p>
+      <div class="grid sm:grid-cols-2 gap-3 mt-4">
+        <div class="rounded-xl border p-3"><strong>🪙 إرسال ذهب</strong><input id="friendGiftGoldAmount" type="number" min="1" max="1000" value="10" class="mt-2 w-full rounded-lg border p-2"><button onclick="FriendsSystem.sendCurrencyGift('gold')" class="mt-2 w-full rounded-lg bg-amber-500 p-2 font-bold">إرسال الذهب</button></div>
+        <div class="rounded-xl border p-3"><strong>💎 إرسال جواهر</strong><input id="friendGiftGemAmount" type="number" min="1" max="100" value="1" class="mt-2 w-full rounded-lg border p-2"><button onclick="FriendsSystem.sendCurrencyGift('gems')" class="mt-2 w-full rounded-lg bg-cyan-600 p-2 font-bold text-white">إرسال الجواهر</button></div>
+      </div>
+      <div class="mt-3 rounded-xl border p-3"><strong>🛒 هدايا المتجر</strong><p class="text-xs text-slate-500 mt-1">اختيار عنصر وإرسال طلب هدية منفصل عن مشترياتك الشخصية. التسليم الفعلي يتطلب قواعد Firestore آمنة ومعالجة موثوقة من الخادم.</p><select id="friendGiftItem" class="mt-2 w-full rounded-lg border p-2"></select><button onclick="FriendsSystem.sendStoreGift()" class="mt-2 w-full rounded-lg bg-blue-600 p-2 font-bold text-white">إرسال هدية من المتجر</button></div>
+    </div>
+  </div>
 
   <!-- نافذة برج الجواهر -->
   <div id="towerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
@@ -743,8 +880,8 @@
         lvl_short: "م",
         tower_nav: "البرج",
         home_title: "ميدان قتال الجداول",
-        home_desc: "10 مستويات لكل جدول. الوحوش تقوى تدريجياً مع جوائز ختم كبرى!",
-        rule_hint: "كل مستوى 5 جولات. عند ختم 10 مستويات تحصل على مكافأة الختم الكبرى!",
+        home_desc: "30 مستوى لكل جدول. الوحوش تقوى تدريجياً مع جوائز ختم كبرى، والنظام المخصص يبدأ من المستوى 31+!",
+        rule_hint: "كل مستوى 5 جولات. عند ختم 30 مستوى في الجدول تحصل على مكافأة الختم الكبرى!",
         stage_prefix: "مستوى",
         flee_btn: "انسحاب",
         wave_text: "الجولة",
@@ -768,7 +905,7 @@
         knight_name_lbl: "اسم الفارس",
         save_btn: "حفظ",
         stat_account: "نوع الحساب",
-        stat_completed_tables: "الجداول المكتملة كلياً (10/10)",
+        stat_completed_tables: "الجداول المكتملة كلياً (30/30)",
         stat_total_stages: "المستويات المكتملة",
         stat_weapon: "السلاح الحالي",
         stat_armor: "الدرع الحالي",
@@ -824,8 +961,8 @@
         lvl_short: "Lvl",
         tower_nav: "Tower",
         home_title: "Multiplication Arena",
-        home_desc: "10 levels per table. Scaling monster difficulty with grand completion rewards!",
-        rule_hint: "5 waves per level. Clear all 10 levels to earn grand completion rewards!",
+        home_desc: "30 levels per table. Scaling monster difficulty with grand completion rewards!",
+        rule_hint: "5 waves per level. Clear all 30 levels to earn grand completion rewards!",
         stage_prefix: "Level",
         flee_btn: "Flee",
         wave_text: "Wave",
@@ -849,7 +986,7 @@
         knight_name_lbl: "Knight Name",
         save_btn: "Save",
         stat_account: "Account Type",
-        stat_completed_tables: "Cleared Tables (10/10)",
+        stat_completed_tables: "Cleared Tables (30/30)",
         stat_total_stages: "Total Levels Completed",
         stat_weapon: "Current Weapon",
         stat_armor: "Current Armor",
@@ -926,6 +1063,7 @@
 
       updateHeaderUI();
       renderTableCards();
+      renderCustomTablesChoices();
       renderShopItems();
       renderBadges();
       renderLeaderboard();
@@ -1155,9 +1293,9 @@
         id: "b_8_first_clear",
         name_ar: "فاتح الجداول",
         name_en: "Table Finisher",
-        desc_ar: "ختم 10 مستويات كاملة في أي جدول ضرب",
-        desc_en: "Complete all 10 levels of any table",
-        req: s => Object.values(s.tableProgress).some(lvl => lvl > 10),
+        desc_ar: "ختم 30 مستوى كاملة في أي جدول ضرب",
+        desc_en: "Complete all 30 levels of any table",
+        req: s => Object.values(s.tableProgress).some(lvl => lvl > 30),
         gem: 5
       },
       {
@@ -1175,7 +1313,7 @@
         name_en: "Math King",
         desc_ar: "ختم 5 جداول ضرب مختلفة بالكامل (10/10)",
         desc_en: "Fully clear 5 different tables",
-        req: s => Object.values(s.tableProgress).filter(lvl => lvl > 10).length >= 5,
+        req: s => Object.values(s.tableProgress).filter(lvl => lvl > 30).length >= 5,
         gem: 10
       }
     ];
@@ -1254,10 +1392,10 @@
     }
 
     const TOWER_SCHEDULE = [
-      { min: 10, gold: 60, gems: 2 },
-      { min: 15, gold: 100, gems: 3 },
-      { min: 30, gold: 180, gems: 5 },
-      { min: 50, gold: 300, gems: 8 }
+      { min: 10, gold: 10, gems: 1 },
+      { min: 15, gold: 15, gems: 1 },
+      { min: 30, gold: 25, gems: 2 },
+      { min: 50, gold: 40, gems: 3 }
     ];
     let towerRemainingSec = TOWER_SCHEDULE[0].min * 60;
     let isTowerReady = false;
@@ -1495,38 +1633,36 @@
       document.getElementById('resetPasswordModal').classList.remove('hidden');
       document.getElementById('resetStep1').classList.remove('hidden');
       document.getElementById('resetStep2').classList.add('hidden');
-      document.getElementById('resetStepDesc').innerText = "أدخل بريدك الإلكتروني المسجل لإرسال كود التحقق.";
+      document.getElementById('resetStepDesc').innerText = "أدخل بريدك الإلكتروني المسجل لإرسال رابط إعادة تعيين كلمة المرور.";
     }
 
     function closeResetPasswordModal() {
       document.getElementById('resetPasswordModal').classList.add('hidden');
     }
 
-    function sendResetVerificationCode() {
-      const email = document.getElementById('resetEmailField').value.trim().toLowerCase();
-      let accounts = JSON.parse(localStorage.getItem('mk_registered_accounts') || '{}');
-
-      if (!email || !email.includes('@')) {
+    async function sendResetVerificationCode() {
+      const email = document.getElementById('resetEmailField').value.trim();
+      if (!email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
         showToast("يرجى كتابة بريد إلكتروني صحيح!", "⚠️");
         return;
       }
-      if (!accounts[email]) {
-        showToast("هذا البريد غير مسجل! يرجى إنشاء حساب جديد.", "⚠️");
+      if (!auth || typeof auth.sendPasswordResetEmail !== 'function') {
+        showToast("خدمة استعادة كلمة المرور غير متاحة حالياً. تحقق من إعداد Firebase.", "⚠️");
         return;
       }
-
-      resetCodeGenerated = Math.floor(10000 + Math.random() * 90000).toString();
-
-      fetch('http://localhost:3000/api/send-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, code: resetCodeGenerated })
-      }).catch(() => {});
-
-      document.getElementById('resetStep1').classList.add('hidden');
-      document.getElementById('resetStep2').classList.remove('hidden');
-      document.getElementById('resetStepDesc').innerText = `أدخل كود التحقق المرسل إلى: ${email}`;
-      showToast(`تم إرسال كود التحقق بنجاح! 📩`, "✅");
+      try {
+        await auth.sendPasswordResetEmail(email);
+        document.getElementById('resetStepDesc').innerText = `تم إرسال رابط الاستعادة إلى: ${email}`;
+        document.getElementById('resetPasswordModal').classList.add('hidden');
+        showToast(`تم إرسال رابط إعادة تعيين كلمة المرور إلى ${email}. تحقق من بريدك الإلكتروني.`, "📧");
+      } catch (error) {
+        const message = error?.code === 'auth/user-not-found'
+          ? "لا يوجد حساب مسجل بهذا البريد الإلكتروني."
+          : error?.code === 'auth/invalid-email'
+            ? "صيغة البريد الإلكتروني غير صحيحة."
+            : "تعذر إرسال رابط الاستعادة. تحقق من البريد وإعدادات Firebase ثم حاول مجدداً.";
+        showToast(message, "⚠️");
+      }
     }
 
     function applyNewPasswordWithCode() {
@@ -1691,6 +1827,7 @@
           saveGame();
           updateHeaderUI();
           renderLeaderboard();
+          if (!gameState.isGuest) FriendsSystem.open();
         }
       });
     }
@@ -1851,6 +1988,43 @@
     /* =========================================================================
        6. شاشة اختيار الجداول والمراحل
        ========================================================================= */
+    let customBattleTables = [];
+    let isCustomTableBattle = false;
+
+    function renderCustomTablesChoices() {
+      const box = document.getElementById('customTablesChoices');
+      if (!box) return;
+      box.innerHTML = '';
+      for (let table = 1; table <= 12; table++) {
+        const label = document.createElement('label');
+        label.className = 'flex items-center gap-2 rounded-xl border border-slate-700 light:border-slate-300 p-3 text-sm text-slate-200 light:text-slate-700 cursor-pointer hover:border-violet-400';
+        label.innerHTML = `<input type="checkbox" class="custom-table-choice accent-violet-600" value="${table}" ${table === 1 ? 'checked' : ''}> <span>جدول ${formatNum(table)}</span>`;
+        box.appendChild(label);
+      }
+      box.querySelectorAll('.custom-table-choice').forEach(input => input.addEventListener('change', updateCustomTablesCount));
+      updateCustomTablesCount();
+    }
+
+    function updateCustomTablesCount() {
+      const selected = Array.from(document.querySelectorAll('.custom-table-choice:checked')).map(x => Number(x.value));
+      const count = document.getElementById('customTablesCount');
+      const button = document.getElementById('startCustomTablesBtn');
+      if (count) count.textContent = selected.length < 2 ? `تم اختيار ${formatNum(selected.length)} — اختر جدولين على الأقل.` : `تم اختيار ${formatNum(selected.length)} جدولًا من أصل ١٢.`;
+      if (button) button.disabled = selected.length < 2 || selected.length > 12;
+    }
+
+    function startCustomTablesBattle() {
+      const selected = Array.from(document.querySelectorAll('.custom-table-choice:checked')).map(x => Number(x.value)).filter(n => n >= 1 && n <= 12);
+      if (selected.length < 2 || selected.length > 12) {
+        showToast('اختر جدولين على الأقل، وبحد أقصى ١٢ جدولًا.', '⚠️');
+        return;
+      }
+      customBattleTables = selected;
+      isCustomTableBattle = true;
+      const firstTable = selected[Math.floor(Math.random() * selected.length)];
+      startBattleStage(firstTable, 31);
+    }
+
     function renderTableCards() {
       const container = document.getElementById('tableCardsGrid');
       if (!container) return;
@@ -1858,8 +2032,8 @@
 
       for (let t = 1; t <= 12; t++) {
         const currentLvl = gameState.tableProgress[t] || 1;
-        const isCompletedAll = currentLvl > 10;
-        const displayStage = isCompletedAll ? 10 : currentLvl;
+        const isCompletedAll = currentLvl > 30;
+        const displayStage = isCompletedAll ? 30 : currentLvl;
 
         const card = document.createElement('div');
         card.className = "bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-4 flex flex-col justify-between hover:border-slate-700 transition shadow-lg";
@@ -1867,7 +2041,7 @@
         const tableText = `${I18N[currentLang].table_label} ${formatNum(t)}`;
         const stageText = isCompletedAll 
           ? I18N[currentLang].max_stage_done 
-          : `${I18N[currentLang].stage_prefix} ${formatNum(displayStage)} / ${formatNum(10)}`;
+          : `${I18N[currentLang].stage_prefix} ${formatNum(displayStage)} / ${formatNum(30)}`;
 
         card.innerHTML = `
           <div>
@@ -2058,6 +2232,10 @@
 
       document.getElementById('battleWaveNum').innerText = formatNum(currentBattle.wave);
 
+      if (isCustomTableBattle && customBattleTables.length >= 2) {
+        currentBattle.table = customBattleTables[Math.floor(Math.random() * customBattleTables.length)];
+        document.getElementById('battleTableText').innerText = `نظام مخصص · جدول ${formatNum(currentBattle.table)}`;
+      }
       const t = currentBattle.table;
       const factor = Math.floor(Math.random() * 10) + 1;
       const correct = t * factor;
@@ -2203,22 +2381,23 @@
       const currentLvl = gameState.tableProgress[currentBattle.table] || 1;
       let isTableFullyClearedNow = false;
 
-      if (currentBattle.stage >= currentLvl) {
-        if (currentLvl === 10) {
-          gameState.tableProgress[currentBattle.table] = 11;
+      if (!isCustomTableBattle && currentBattle.stage >= currentLvl) {
+        if (currentLvl === 30) {
+          gameState.tableProgress[currentBattle.table] = 31;
           isTableFullyClearedNow = true;
         } else {
           gameState.tableProgress[currentBattle.table] = currentLvl + 1;
         }
       }
 
-      let goldEarned = 25 + (currentBattle.table * 3) + (currentBattle.stage * 12);
+      let goldEarned = Math.max(1, Math.floor((8 + (currentBattle.table * 1) + (currentBattle.stage * 2)) * 0.5));
+      if (isCustomTableBattle) goldEarned = Math.max(1, Math.floor(goldEarned * 0.25));
       let xpEarned = 35 + (currentBattle.stage * 20);
       let gemsEarned = currentBattle.stage >= 5 ? 1 : 0;
 
       if (isTableFullyClearedNow) {
-        goldEarned += 250;
-        gemsEarned += 10;
+        goldEarned += 25;
+        gemsEarned += 2;
         xpEarned += 200;
       }
 
@@ -2233,8 +2412,8 @@
       while (gameState.xp >= gameState.level * 100) {
         gameState.xp -= gameState.level * 100;
         gameState.level++;
-        gameState.gold += 50;
-        gameState.gems += 2;
+        gameState.gold += 5;
+        gameState.gems += 1;
       }
 
       checkBadges();
@@ -2256,6 +2435,8 @@
       }
 
       showToast(victoryMsg, "🏆");
+      isCustomTableBattle = false;
+      customBattleTables = [];
       exitBattleMode();
     }
 
@@ -2282,6 +2463,8 @@
 
     function exitBattleMode() {
       isBattlePaused = false;
+      isCustomTableBattle = false;
+      customBattleTables = [];
       document.getElementById('mainAppHeader').classList.remove('hidden');
       showScreen('homeView');
     }
@@ -2725,12 +2908,12 @@
       document.getElementById('profileNameBox').value = gameState.name;
       document.getElementById('profileAccountType').innerText = gameState.isGuest ? I18N[currentLang].guest_text : gameState.authType;
 
-      const completedTables = Object.values(gameState.tableProgress).filter(lvl => lvl > 10).length;
+      const completedTables = Object.values(gameState.tableProgress).filter(lvl => lvl > 30).length;
       document.getElementById('profileCompletedTablesCount').innerText = `${formatNum(completedTables)} / ${formatNum(12)}`;
 
       let totalCompletedStages = 0;
       Object.values(gameState.tableProgress).forEach(lvl => {
-        totalCompletedStages += (lvl > 10 ? 10 : (lvl - 1));
+        totalCompletedStages += (lvl > 30 ? 10 : (lvl - 1));
       });
       document.getElementById('profileCompletedStagesCount').innerText = formatNum(totalCompletedStages);
 
@@ -2767,7 +2950,13 @@
       saveGame();
       updateHeaderUI();
       renderLeaderboard();
-      showToast(currentLang === 'ar' ? "تم حفظ الاسم!" : "Name saved!", "✨");
+      // حفظ الاسم في Firebase Auth حتى يبقى مع الحساب عند فتح اللعبة من جهاز آخر.
+      if (auth && auth.currentUser && !gameState.isGuest && typeof auth.currentUser.updateProfile === 'function') {
+        auth.currentUser.updateProfile({ displayName: val }).then(() => {
+          if (db) return db.collection('players').doc(auth.currentUser.uid).set({ name: val, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+        }).catch(err => console.warn('تعذر مزامنة اسم الحساب إلى Firebase:', err));
+      }
+      showToast(currentLang === 'ar' ? "تم حفظ الاسم على هذا الجهاز، وجرت محاولة مزامنته مع الحساب." : "Name saved locally; cloud sync attempted.", "✨");
     }
 
     function showScreen(screenId) {
@@ -2798,6 +2987,443 @@
         t.classList.remove('translate-y-0', 'opacity-100');
       }, 3400);
     }
+
+    /* =========================================================================
+       20. Dedicated Friends System
+       - يعتمد على Firebase Auth + Firestore عند توفر حساب مسجل.
+       - المعرفات محجوزة بمستندات playerTags لمنع تكرارها.
+       - بيانات الضيف محلية فقط ولا يتم عرضها كأنها حساب سحابي.
+       ========================================================================= */
+    const FriendsSystem = (() => {
+      let unsubProfile = null, unsubIncoming = null, unsubFriends = null;
+      let incomingCache = [], friendsCache = [];
+      const localTagKey = 'mk_player_tag_v1';
+      const uid = () => (auth && auth.currentUser && !gameState.isGuest) ? auth.currentUser.uid : null;
+      const me = () => uid();
+      const tagForLocal = () => {
+        let tag = localStorage.getItem(localTagKey);
+        if (!tag) {
+          tag = '#MK-' + String(Math.floor(10000 + Math.random() * 90000));
+          localStorage.setItem(localTagKey, tag);
+        }
+        return tag;
+      };
+      const profileData = () => ({
+        uid: me(), tag: localStorage.getItem(localTagKey) || tagForLocal(),
+        name: gameState.name || 'فارس الحساب', avatar: gameState.avatar || DEFAULT_AVATAR,
+        level: Number(gameState.level || 1), xp: Number(gameState.xp || 0),
+        online: true, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      async function ensureTag() {
+        const tagNode = document.getElementById('myPlayerTag');
+        if (!db || !me()) {
+          const tag = tagForLocal();
+          if (tagNode) tagNode.textContent = tag;
+          return tag;
+        }
+        const profileRef = db.collection('players').doc(me());
+        const existing = await profileRef.get();
+        if (existing.exists && existing.data().tag) {
+          localStorage.setItem(localTagKey, existing.data().tag);
+          if (tagNode) tagNode.textContent = existing.data().tag;
+          await profileRef.set(profileData(), { merge: true });
+          return existing.data().tag;
+        }
+        // Reserve a unique tag transactionally. A collision retries with a new candidate.
+        for (let attempt = 0; attempt < 12; attempt++) {
+          const candidate = '#MK-' + String(Math.floor(10000 + Math.random() * 90000));
+          const tagRef = db.collection('playerTags').doc(candidate.replace('#',''));
+          const reserved = await db.runTransaction(async tx => {
+            const snap = await tx.get(tagRef);
+            if (snap.exists && snap.data().uid !== me()) return false;
+            tx.set(tagRef, { uid: me(), tag: candidate, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+            tx.set(profileRef, { ...profileData(), tag: candidate }, { merge: true });
+            return true;
+          });
+          if (reserved) {
+            localStorage.setItem(localTagKey, candidate);
+            if (tagNode) tagNode.textContent = candidate;
+            return candidate;
+          }
+        }
+        throw new Error('تعذر حجز معرّف فريد؛ حاول مرة أخرى.');
+      }
+      function requireRegistered() {
+        if (!db || !me()) {
+          showToast('تحتاج إلى تسجيل الدخول بحساب مسجل لاستخدام الأصدقاء السحابيين.', '🔐');
+          return false;
+        }
+        return true;
+      }
+      function stopListeners() {
+        [unsubProfile, unsubIncoming, unsubFriends].forEach(fn => { if (typeof fn === 'function') fn(); });
+        unsubProfile = unsubIncoming = unsubFriends = null;
+      }
+      async function open() {
+        try { await ensureTag(); } catch (e) { showToast(e.message || 'تعذر تجهيز المعرّف.', '⚠️'); }
+        if (!requireRegistered()) {
+          renderIncoming([]); renderFriends([]);
+          document.getElementById('roomCloudNotice')?.replaceChildren();
+          return;
+        }
+        stopListeners();
+        const id = me();
+        // Requests are separate documents so accept/reject operations remain atomic.
+        unsubIncoming = db.collection('friendRequests').where('toUid','==',id).where('status','==','pending')
+          .onSnapshot(s => renderIncoming(s.docs.map(d => ({ id:d.id, ...d.data() }))), err => showToast('تعذر تحميل طلبات الصداقة.', '⚠️'));
+        unsubFriends = db.collection('players').doc(id).collection('friends')
+          .onSnapshot(async s => {
+            const list = [];
+            for (const d of s.docs) {
+              const friendId = d.id;
+              try { const p = await db.collection('players').doc(friendId).get(); if (p.exists) list.push({ uid:friendId, ...p.data() }); }
+              catch (_) {}
+            }
+            renderFriends(list);
+          }, () => renderFriends([]));
+      }
+      async function sendRequest() {
+        if (!requireRegistered()) return;
+        const tag = document.getElementById('friendSearchTag').value.trim().toUpperCase();
+        if (!/^#MK-\d{5}$/.test(tag)) { showToast('صيغة المعرّف غير صحيحة. مثال: #MK-78421', '⚠️'); return; }
+        try {
+          const tagSnap = await db.collection('playerTags').doc(tag.slice(1)).get();
+          if (!tagSnap.exists) { showToast('لم يتم العثور على هذا المعرّف.', '🔎'); return; }
+          const targetUid = tagSnap.data().uid;
+          if (!targetUid || targetUid === me()) { showToast('لا يمكنك إرسال طلب إلى نفسك.', '⚠️'); return; }
+          const existingFriend = await db.collection('players').doc(me()).collection('friends').doc(targetUid).get();
+          if (existingFriend.exists) { showToast('هذا اللاعب موجود بالفعل في قائمة أصدقائك.', 'ℹ️'); return; }
+          const requestId = me() + '_' + targetUid;
+          const reverseId = targetUid + '_' + me();
+          const reverse = await db.collection('friendRequests').doc(reverseId).get();
+          if (reverse.exists && reverse.data().status === 'pending') { showToast('لديك طلب وارد من هذا اللاعب؛ اقبله من القائمة.', 'ℹ️'); return; }
+          await db.collection('friendRequests').doc(requestId).set({
+            fromUid: me(), toUid: targetUid, fromTag: localStorage.getItem(localTagKey),
+            fromName: gameState.name, fromAvatar: gameState.avatar || DEFAULT_AVATAR,
+            fromLevel: gameState.level || 1, status: 'pending',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          document.getElementById('friendSearchTag').value = '';
+          showToast('تم إرسال طلب الصداقة.', '✅');
+        } catch (e) { showToast('فشل إرسال الطلب. تحقق من صلاحيات Firestore.', '⚠️'); }
+      }
+      async function respond(requestId, accept) {
+        if (!requireRegistered()) return;
+        try {
+          const ref = db.collection('friendRequests').doc(requestId);
+          await db.runTransaction(async tx => {
+            const snap = await tx.get(ref);
+            if (!snap.exists || snap.data().toUid !== me() || snap.data().status !== 'pending') throw new Error('الطلب لم يعد متاحاً.');
+            const req = snap.data();
+            tx.update(ref, { status: accept ? 'accepted' : 'rejected', respondedAt: firebase.firestore.FieldValue.serverTimestamp() });
+            if (accept) {
+              tx.set(db.collection('players').doc(me()).collection('friends').doc(req.fromUid), { since: firebase.firestore.FieldValue.serverTimestamp() });
+              tx.set(db.collection('players').doc(req.fromUid).collection('friends').doc(me()), { since: firebase.firestore.FieldValue.serverTimestamp() });
+            }
+          });
+          showToast(accept ? 'تم قبول طلب الصداقة.' : 'تم رفض طلب الصداقة.', accept ? '✅' : '🗑️');
+        } catch (e) { showToast(e.message || 'تعذر تحديث الطلب.', '⚠️'); }
+      }
+      function safe(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+      function renderIncoming(items) {
+        incomingCache = items;
+        const box = document.getElementById('incomingFriendRequests'); if (!box) return;
+        document.getElementById('incomingFriendCount').textContent = items.length;
+        box.innerHTML = items.length ? items.map(r => `<div class="rounded-xl border border-slate-800 bg-slate-900 p-3 flex items-center gap-2"><img src="${safe(r.fromAvatar || DEFAULT_AVATAR)}" class="w-10 h-10 rounded-xl object-cover"><div class="flex-1 min-w-0"><div class="font-bold text-slate-100 truncate">${safe(r.fromName || 'لاعب')}</div><div class="font-mono text-cyan-300">${safe(r.fromTag || '')} · المستوى ${safe(r.fromLevel || 1)}</div></div><button onclick="FriendsSystem.respond('${safe(r.id)}',true)" class="bg-emerald-700 rounded-lg px-2 py-1">قبول</button><button onclick="FriendsSystem.respond('${safe(r.id)}',false)" class="bg-rose-900 rounded-lg px-2 py-1">رفض</button></div>`).join('') : '<div class="text-slate-500 py-3">لا توجد طلبات واردة.</div>';
+      }
+      function renderFriends(items) {
+        friendsCache = items;
+        const box = document.getElementById('friendsList'); if (!box) return;
+        box.innerHTML = items.length ? items.map(f => `<div class="rounded-2xl border border-slate-800 bg-slate-950/50 p-3 flex gap-3 items-center"><img src="${safe(f.avatar || DEFAULT_AVATAR)}" class="w-12 h-12 rounded-xl object-cover"><div class="flex-1 min-w-0"><div class="font-black text-slate-100 truncate">${safe(f.name || 'فارس')}</div><div class="text-cyan-300 font-mono">${safe(f.tag || '')}</div><div class="text-slate-400">المستوى ${safe(f.level || 1)} · <span class="${f.online ? 'text-emerald-400' : 'text-slate-500'}">${f.online ? 'متصل' : 'غير متصل'}</span></div></div><div class="flex flex-col gap-1"><button onclick="FriendsSystem.openGiftMenu('${safe(f.uid)}','${safe(f.name || 'صديق')}')" class="rounded-lg bg-amber-600 text-white px-2 py-1">🎁 إرسال هدية</button></div></div>`).join('') : '<div class="text-slate-500 py-3">لم تضف أصدقاء بعد.</div>';
+      }
+      let giftTargetUid = null;
+      function openGiftMenu(targetUid, targetName) {
+        giftTargetUid = targetUid;
+        const modal = document.getElementById('friendGiftModal');
+        const recipient = document.getElementById('friendGiftRecipient');
+        const select = document.getElementById('friendGiftItem');
+        if (recipient) recipient.textContent = 'إرسال هدية إلى: ' + (targetName || 'صديق');
+        if (select) {
+          const allItems = [...(SHOP_DATA.weapons||[]), ...(SHOP_DATA.armors||[]), ...(SHOP_DATA.knights||[]), ...(SHOP_DATA.frames||[]), ...(SHOP_DATA.arenas||[]), ...(SHOP_DATA.timers||[])];
+          select.innerHTML = allItems.map(x => `<option value="${String(x.id).replace(/[&<>"]/g,'')}">${String(x.name_ar||x.name||x.id).replace(/[&<>]/g,'')}</option>`).join('');
+        }
+        if (modal) modal.classList.remove('hidden');
+      }
+      function closeGiftMenu() { document.getElementById('friendGiftModal')?.classList.add('hidden'); giftTargetUid = null; }
+      async function sendCurrencyGift(kind) {
+        if (!giftTargetUid || !requireRegistered()) return;
+        const input = document.getElementById(kind === 'gold' ? 'friendGiftGoldAmount' : 'friendGiftGemAmount');
+        const amount = Math.floor(Number(input?.value || 1));
+        const field = kind === 'gold' ? 'gold' : 'gems';
+        const max = kind === 'gold' ? 1000 : 100;
+        if (!Number.isInteger(amount) || amount < 1 || amount > max) { showToast('كمية الهدية غير صحيحة.', '⚠️'); return; }
+        if (Number(gameState[field] || 0) < amount) { showToast(`رصيد ${kind === 'gold' ? 'الذهب' : 'الجواهر'} غير كافٍ.`, '⚠️'); return; }
+        try {
+          await db.collection('giftRequests').add({ fromUid:me(), toUid:giftTargetUid, kind, amount, status:'pending', createdAt:firebase.firestore.FieldValue.serverTimestamp() });
+          gameState[field] = Number(gameState[field] || 0) - amount;
+          saveGame();
+          updateHeaderUI();
+          showToast('تم إرسال طلب الهدية وخصم المبلغ من رصيدك المحلي.', '🎁');
+        } catch (_) { showToast('تعذر إرسال الطلب؛ لم يتم خصم الرصيد. تحقق من إعدادات Firestore.', '⚠️'); }
+      }
+      async function sendStoreGift() {
+        if (!giftTargetUid || !requireRegistered()) return;
+        const itemId = document.getElementById('friendGiftItem')?.value;
+        if (!itemId) { showToast('لا توجد عناصر متجر متاحة.', '⚠️'); return; }
+        try {
+          await db.collection('giftRequests').add({ fromUid:me(), toUid:giftTargetUid, kind:'store_item', itemId, status:'pending', createdAt:firebase.firestore.FieldValue.serverTimestamp() });
+          showToast('تم تسجيل طلب هدية المتجر منفصلًا عن مشترياتك الشخصية؛ التسليم يحتاج وظيفة خادم آمنة.', '🎁');
+        } catch (_) { showToast('تعذر تسجيل الهدية. تحقق من إعدادات Firestore.', '⚠️'); }
+      }
+      async function gift(targetUid, kind) {
+        if (!requireRegistered()) return;
+        const currencyField = kind === 'gems' || kind === 'gem' ? 'gems' : 'gold';
+        const isCurrency = kind === 'gold' || kind === 'gems' || kind === 'gem';
+        const amount = isCurrency
+          ? Number(prompt(`كمية ${currencyField === 'gold' ? 'الذهب' : 'الجواهر'} (من 1 إلى ${currencyField === 'gold' ? '100' : '10'})؟`, '10'))
+          : 0;
+        const maxAmount = currencyField === 'gold' ? 100 : 10;
+        if (isCurrency && (!Number.isInteger(amount) || amount < 1 || amount > maxAmount)) {
+          showToast('كمية الهدية غير صحيحة.', '⚠️'); return;
+        }
+        if (isCurrency && Number(gameState[currencyField] || 0) < amount) {
+          showToast(`رصيد ${currencyField === 'gold' ? 'الذهب' : 'الجواهر'} غير كافٍ لإرسال الهدية.`, '⚠️'); return;
+        }
+        const gear = kind === 'gear' ? prompt('اكتب معرّف العتاد المملوك الذي تريد إهداءه:') : null;
+        if (kind === 'gear' && (!gear || !(gameState.inventory || []).includes(gear))) {
+          showToast('يمكن إهداء عتاد تملكه فقط.', '⚠️'); return;
+        }
+        try {
+          await db.collection('giftRequests').add({
+            fromUid:me(), toUid:targetUid, kind: currencyField === 'gems' && isCurrency ? 'gems' : kind,
+            amount, gearId:gear || null, status:'pending',
+            createdAt:firebase.firestore.FieldValue.serverTimestamp()
+          });
+          if (isCurrency) gameState[currencyField] = Number(gameState[currencyField] || 0) - amount;
+          if (kind === 'gear') gameState.inventory = (gameState.inventory || []).filter(id => id !== gear);
+          saveGame();
+          updateHeaderUI();
+          showToast('تم إرسال الهدية وخصمها من رصيدك المحلي.', '🎁');
+        } catch (_) {
+          showToast('تعذر إرسال الهدية؛ لم يتم خصم الرصيد. تحقق من صلاحيات Firestore.', '⚠️');
+        }
+      }
+      async function copyTag() {
+        const tag = document.getElementById('myPlayerTag')?.textContent || tagForLocal();
+        try { await navigator.clipboard.writeText(tag); showToast('تم نسخ المعرّف.', '📋'); }
+        catch (_) { showToast('معرّفك: ' + tag, '📋'); }
+      }
+      return { open, sendRequest, respond, gift, copyTag, openGiftMenu, closeGiftMenu, sendCurrencyGift, sendStoreGift };
+    })();
+
+    /* =========================================================================
+       21. Custom Rooms & Tactical Lobby
+       - مقاعد ثابتة لكل نمط: 1v1=2، 2v2=4، 3v3=6.
+       - onSnapshot يحدّث الردهة لحظياً؛ المعاملات تمنع حجز المقعد مرتين.
+       - إغلاق التبويب يحاول تحرير المقعد؛ انقطاع الشبكة يُعالج أيضاً عبر expiresAt
+         عند إعادة فتح الغرفة/تنظيفها، لأن beforeunload وحده ليس ضماناً موثوقاً.
+       ========================================================================= */
+    const RoomsSystem = (() => {
+      let roomId = null, unsubscribe = null, currentRoom = null;
+      const myUid = () => (auth && auth.currentUser && !gameState.isGuest) ? auth.currentUser.uid : null;
+      const localPlayerId = () => myUid() || ('guest_' + (localStorage.getItem('mk_guest_room_id') || (localStorage.setItem('mk_guest_room_id', Math.random().toString(36).slice(2)), localStorage.getItem('mk_guest_room_id'))));
+      const registered = () => {
+        if (!db || !myUid()) { showToast('الغرف السحابية تحتاج إلى تسجيل الدخول بحساب مسجل.', '🔐'); return false; }
+        return true;
+      };
+      const modeSeats = { '1v1':2, '2v2':4, '3v3':6 };
+      const makeCode = () => Array.from(crypto.getRandomValues(new Uint8Array(6)), n => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[n % 32]).join('');
+      const playerInfo = () => ({ uid:localPlayerId(), name:gameState.name || 'فارس', avatar:gameState.avatar || DEFAULT_AVATAR, level:Number(gameState.level || 1), ready:false, joinedAt:Date.now(), lastSeen:Date.now() });
+      function open() {
+        document.getElementById('roomCloudNotice').textContent = registered() ? 'متصل بالسحابة. سيتم تحديث المقاعد لحظياً.' : 'سجّل الدخول بحساب مسجل لاستخدام الغرف متعددة اللاعبين.';
+        if (roomId) attachRoom(roomId);
+      }
+      async function create() {
+        if (!registered()) return;
+        const mode = document.getElementById('roomModeSelect').value, count = modeSeats[mode];
+        try {
+          const ref = db.collection('customRooms').doc();
+          const code = makeCode();
+          const slots = Array.from({length:count}, (_,i) => ({ team:i < count/2 ? 'blue' : 'red', player:i === 0 ? playerInfo() : null }));
+          slots[0].player.uid = myUid(); slots[0].player.ready = false;
+          await ref.set({ code, mode, timerSeconds:Number(document.getElementById('roomTimerSelect').value||15), weaponDamage:Number(document.getElementById('roomWeaponSelect').value||15), allWeaponsDamage:Number(document.getElementById('roomWeaponSelect').value||15), armorReduction:Number(document.getElementById('roomArmorSelect').value||20), allArmorReduction:Number(document.getElementById('roomArmorSelect').value||20), selectedTables:(Array.from(document.querySelectorAll('.room-table-choice:checked')).map(x=>Number(x.value)).length ? Array.from(document.querySelectorAll('.room-table-choice:checked')).map(x=>Number(x.value)) : [1]), levelCap:30, hostUid:myUid(), status:'waiting', round:0, slots, createdAt:firebase.firestore.FieldValue.serverTimestamp(), updatedAt:firebase.firestore.FieldValue.serverTimestamp() });
+          await db.collection('roomCodes').doc(code).set({ roomId:ref.id, createdAt:firebase.firestore.FieldValue.serverTimestamp() });
+          roomId = ref.id; attachRoom(roomId); showToast('تم إنشاء الغرفة. شارك الكود مع اللاعبين.', '⚔️');
+        } catch (_) { showToast('تعذر إنشاء الغرفة. تحقق من صلاحيات Firestore.', '⚠️'); }
+      }
+      async function joinByCode() {
+        if (!registered()) return;
+        const code = document.getElementById('roomJoinCode').value.trim().toUpperCase();
+        if (!/^[A-Z0-9]{6}$/.test(code)) { showToast('كود الغرفة يجب أن يتكون من 6 أحرف/أرقام.', '⚠️'); return; }
+        try {
+          const codeSnap = await db.collection('roomCodes').doc(code).get();
+          if (!codeSnap.exists) { showToast('لم يتم العثور على الغرفة.', '🔎'); return; }
+          roomId = codeSnap.data().roomId;
+          await takeFirstAvailable(roomId);
+          attachRoom(roomId);
+        } catch (e) { showToast(e.message || 'تعذر الانضمام للغرفة.', '⚠️'); }
+      }
+      async function takeFirstAvailable(id) {
+        await db.runTransaction(async tx => {
+          const ref = db.collection('customRooms').doc(id), snap = await tx.get(ref);
+          if (!snap.exists) throw new Error('الغرفة غير موجودة.');
+          const data = snap.data();
+          if (data.status !== 'waiting') throw new Error('المعركة بدأت بالفعل.');
+          const slots = data.slots || [];
+          const existing = slots.find(s => s.player && s.player.uid === myUid());
+          if (existing) return;
+          const idx = slots.findIndex(s => !s.player);
+          if (idx < 0) throw new Error('الغرفة ممتلئة.');
+          slots[idx].player = playerInfo(); slots[idx].player.uid = myUid();
+          tx.update(ref, { slots, updatedAt:firebase.firestore.FieldValue.serverTimestamp() });
+        });
+      }
+      function attachRoom(id) {
+        if (unsubscribe) unsubscribe();
+        unsubscribe = db.collection('customRooms').doc(id).onSnapshot(snap => {
+          if (!snap.exists) { showToast('الغرفة لم تعد موجودة.', '⚠️'); clearRoom(); return; }
+          currentRoom = { id:snap.id, ...snap.data() }; renderRoom();
+        }, () => showToast('انقطع تحديث الغرفة السحابي.', '⚠️'));
+      }
+      function renderRoom() {
+        if (!currentRoom) return;
+        document.getElementById('activeRoomLobby').classList.remove('hidden');
+        document.getElementById('activeRoomCode').textContent = currentRoom.code;
+        const slots = currentRoom.slots || [];
+        const renderTeam = (team, target) => {
+          const teamSlots = slots.map((s,i)=>({...s,index:i})).filter(s=>s.team===team);
+          document.getElementById(target).innerHTML = teamSlots.map(s => {
+            const p=s.player;
+            return p ? `<div class="flex items-center gap-3 rounded-xl border ${team==='blue'?'border-blue-500/40':'border-rose-500/40'} bg-slate-900 p-2"><img src="${String(p.avatar || DEFAULT_AVATAR).replace(/"/g,'&quot;')}" class="w-10 h-10 rounded-xl object-cover"><div class="flex-1 min-w-0"><div class="font-black text-slate-100 truncate">${String(p.name || 'فارس').replace(/[&<>"]/g,'')}</div><div class="text-[10px] text-slate-400">المستوى ${Number(p.level||1)} · ${p.ready?'مستعد ✓':'ينتظر...'}</div></div>${p.uid===myUid()?'<span class="text-cyan-300 text-[10px]">أنت</span><button onclick="RoomsSystem.leaveSlot('+s.index+')" class="text-[10px] bg-slate-800 rounded-lg px-2 py-1">ترك المقعد</button>':''}</div>` : `<button onclick="RoomsSystem.takeSlot(${s.index})" class="rounded-xl border-2 border-dashed ${team==='blue'?'border-blue-500/40 text-blue-300':'border-rose-500/40 text-rose-300'} p-3 text-sm font-bold hover:bg-slate-800">＋ انضم هنا — مقعد ${s.index+1}</button>`;
+          }).join('');
+        };
+        renderTeam('blue','blueRoomSlots'); renderTeam('red','redRoomSlots');
+        const mine = slots.find(s=>s.player && s.player.uid===myUid());
+        document.getElementById('roomReadyBtn').disabled = !mine || currentRoom.status !== 'waiting';
+        document.getElementById('roomReadyBtn').classList.toggle('opacity-40', !mine);
+        document.getElementById('roomReadyBtn').textContent = mine?.player.ready ? 'إلغاء الاستعداد ↩' : 'أنا مستعد ✓';
+        const isHost = currentRoom.hostUid === myUid();
+        document.getElementById('roomCloseBtn').classList.toggle('hidden', !isHost);
+        document.getElementById('roomStartBtn').classList.toggle('hidden', !isHost);
+        const allFilled = slots.length && slots.every(s=>s.player);
+        const allReady = allFilled && slots.every(s=>s.player.ready);
+        document.getElementById('roomStartBtn').disabled = !allReady || currentRoom.status !== 'waiting';
+        document.getElementById('roomStartBtn').classList.toggle('opacity-40', !allReady);
+        document.getElementById('roomStatusLine').textContent = currentRoom.status === 'started' ? 'المعركة بدأت — إعدادات الجولة متزامنة.' : currentRoom.status === 'closed' ? 'أغلق المالك هذه الغرفة.' : `النمط ${currentRoom.mode} · ${slots.filter(s=>s.player).length}/${slots.length} لاعب · المؤقت ${currentRoom.timerSeconds||15} ثانية · ${allReady?'الجميع مستعد':'بانتظار اكتمال المقاعد والاستعداد'}`;
+        const battle = document.getElementById('roomBattlePanel');
+        battle.classList.toggle('hidden', currentRoom.status !== 'started');
+        document.getElementById('roomBattleTimer').textContent = (currentRoom.timerSeconds || 15) + ' ث';
+        document.getElementById('roomBattleMessage').textContent = `السلاح: ${({all:'كل الأسلحة',sword:'السيف فقط',bow:'القوس فقط',staff:'العصا فقط'})[currentRoom.allowedWeapon||'all']} · الدروع: ${({all:'كل الدروع',none:'بدون دروع',basic:'الدرع الأساسي فقط'})[currentRoom.allowedArmor||'all']}`;
+        document.getElementById('roomBattleQuestion').textContent = currentRoom.questionText || 'تم فتح حالة المعركة السحابية';
+        document.getElementById('roomBattleAnswers').innerHTML = '';
+        document.getElementById('roomBattleFeedback').textContent = 'مزامنة اللوبي تعمل. يلزم ربط مولّد الأسئلة ونظام الضرر الحالي لتفعيل الإجابات والهجمات الفعلية.';
+      }
+      async function mutateSlots(mutator) {
+        if (!registered() || !roomId) return;
+        try {
+          await db.runTransaction(async tx => {
+            const ref=db.collection('customRooms').doc(roomId), snap=await tx.get(ref);
+            if (!snap.exists) throw new Error('الغرفة غير موجودة.');
+            const data=snap.data(); if (data.status!=='waiting') throw new Error('لا يمكن تعديل المقاعد بعد بدء المعركة.');
+            const slots=data.slots || []; mutator(slots,data); tx.update(ref,{slots,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+          });
+        } catch(e) { showToast(e.message || 'تعذر تحديث المقعد.', '⚠️'); }
+      }
+      function takeSlot(index) {
+        mutateSlots((slots) => {
+          if (slots.some(s=>s.player && s.player.uid===myUid())) throw new Error('غادر مقعدك الحالي أولاً.');
+          if (!slots[index] || slots[index].player) throw new Error('هذا المقعد لم يعد شاغراً.');
+          slots[index].player=playerInfo(); slots[index].player.uid=myUid();
+        });
+      }
+      function leaveSlot(index) {
+        mutateSlots((slots) => {
+          if (!slots[index]?.player || slots[index].player.uid!==myUid()) throw new Error('يمكنك تحرير مقعدك فقط.');
+          slots[index].player=null;
+        });
+      }
+      function toggleReady() {
+        mutateSlots((slots) => {
+          const mine=slots.find(s=>s.player && s.player.uid===myUid());
+          if (!mine) throw new Error('اختر مقعداً أولاً.');
+          mine.player.ready=!mine.player.ready; mine.player.lastSeen=Date.now();
+        });
+      }
+      async function startMatch() {
+        if (!registered() || !roomId) return;
+        try {
+          await db.runTransaction(async tx => {
+            const ref=db.collection('customRooms').doc(roomId), snap=await tx.get(ref);
+            if (!snap.exists) throw new Error('الغرفة غير موجودة.');
+            const d=snap.data();
+            if (d.hostUid!==myUid()) throw new Error('بدء المعركة متاح لمنشئ الغرفة فقط.');
+            if (!(d.slots||[]).length || !d.slots.every(s=>s.player && s.player.ready)) throw new Error('يجب أن يمتلئ كل مقعد ويستعد جميع اللاعبين.');
+            tx.update(ref,{status:'started',startedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+          });
+          showToast('تم بدء الغرفة. اربط هذه الحالة بمشغّل المعركة الجماعية لتشغيل قتال متزامن.', '⚔️');
+        } catch(e) { showToast(e.message || 'تعذر بدء المعركة.', '⚠️'); }
+      }
+      async function closeRoom() {
+        if (!registered() || !roomId) return;
+        try {
+          await db.runTransaction(async tx => {
+            const ref=db.collection('customRooms').doc(roomId), snap=await tx.get(ref);
+            if (!snap.exists) throw new Error('الغرفة غير موجودة.');
+            const d=snap.data();
+            if (d.hostUid !== myUid()) throw new Error('إغلاق الغرفة متاح للمالك فقط.');
+            tx.update(ref,{status:'closed',slots:(d.slots||[]).map(s=>({...s,player:null})),closedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+          });
+          try { await db.collection('roomCodes').doc(currentRoom.code).delete(); } catch (_) {}
+          showToast('تم إغلاق الغرفة.', '🔒'); clearRoom();
+        } catch(e) { showToast(e.message || 'تعذر إغلاق الغرفة.', '⚠️'); }
+      }
+      async function copyCode() {
+        if (!currentRoom) return;
+        try { await navigator.clipboard.writeText(currentRoom.code); showToast('تم نسخ كود الغرفة.', '📋'); }
+        catch (_) { showToast('كود الغرفة: '+currentRoom.code, '📋'); }
+      }
+      async function leave() {
+        if (roomId && myUid()) {
+          const id=roomId;
+          try {
+            await db.runTransaction(async tx => {
+              const ref=db.collection('customRooms').doc(id), snap=await tx.get(ref);
+              if (!snap.exists) return;
+              const d=snap.data(), slots=d.slots||[];
+              const mine=slots.find(s=>s.player && s.player.uid===myUid());
+              if (mine) mine.player=null;
+              if (d.hostUid===myUid()) {
+                const next=slots.find(s=>s.player);
+                if (next) tx.update(ref,{slots,hostUid:next.player.uid,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+                else {
+                  tx.delete(ref);
+                  if (d.code) tx.delete(db.collection('roomCodes').doc(d.code));
+                }
+              } else tx.update(ref,{slots,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+            });
+          } catch (_) {}
+        }
+        clearRoom();
+      }
+      function clearRoom() {
+        if (unsubscribe) unsubscribe(); unsubscribe=null; roomId=null; currentRoom=null;
+        document.getElementById('activeRoomLobby')?.classList.add('hidden');
+      }
+      // Best-effort cleanup only; browsers do not guarantee async Firestore writes during unload.
+      window.addEventListener('beforeunload', () => {
+        if (!roomId || !myUid() || !db) return;
+        const id=roomId, user=myUid();
+        db.collection('customRooms').doc(id).get().then(snap => {
+          if (!snap.exists) return;
+          const slots=snap.data().slots||[];
+          const mine=slots.find(s=>s.player && s.player.uid===user);
+          if (mine) { mine.player=null; return db.collection('customRooms').doc(id).update({slots,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); }
+        }).catch(()=>{});
+      });
+      return { open, create, joinByCode, takeSlot, leaveSlot, toggleReady, startMatch, closeRoom, copyCode, leave };
+    })();
+
+    // تتم تهيئة نظام الأصدقاء من مراقب حالة المصادقة بعد التأكد من تسجيل الدخول.
   </script>
 </body>
 </html>
