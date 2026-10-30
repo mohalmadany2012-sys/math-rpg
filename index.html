@@ -32,17 +32,25 @@
           }
         }
       },
-      plugins: [
-        function({ addVariant }) {
-          addVariant('light', '.light &');
-        }
-      ]
-    };
-  </script>
+    plugins: [
+            function({ addVariant }) {
+              addVariant('light', '.light &');
+            }
+          ]
+        };
+      </script>
 
-  <link rel="stylesheet" href="style.css">
-</head>
-<body class="min-h-screen flex flex-col overflow-x-hidden">
+      <link rel="stylesheet" href="style.css">
+
+      <!-- EmailJS SDK -->
+      <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+      <script>
+        (function(){
+          emailjs.init("5UB1FSLnR1Br77LqH");
+        })();
+      </script>
+    </head>
+    <body class="min-h-screen flex flex-col overflow-x-hidden">
 
   <!-- شاشة التحميل الافتتاحية -->
   <div id="appPreloader">
@@ -140,18 +148,18 @@
         <button id="tabGuestBtn" onclick="switchManualSubMode('guest')" class="py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">دخول ضيف</button>
       </div>
 
-      <div id="manualLoginSection" class="space-y-3">
+<div id="manualLoginSection" class="space-y-3">
         <div id="authKnightNameContainer" class="hidden">
           <label class="block text-[11px] text-slate-400 mb-1 font-bold" data-i18n="label_knight_name">اسم الفارس</label>
-          <input type="text" id="manualNameInput" placeholder="مثال: الفارس الأسطوري" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 font-bold">
+          <input type="text" id="manualNameInput" placeholder="اسمك هيبقي ظاهر كده في اللعبة وممكن تغيره بعدين عادي" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 font-bold">
         </div>
         <div>
           <label class="block text-[11px] text-slate-400 mb-1 font-bold" data-i18n="label_email">البريد الإلكتروني (Gmail)</label>
-          <input type="email" id="manualEmailInput" placeholder="your-email@gmail.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 font-bold" dir="ltr">
+          <input type="email" id="manualEmailInput" oninput="this.value = this.value.replace(/\s+/g, '').toLowerCase()" placeholder="your-email@gmail.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 font-bold font-mono" dir="ltr">
         </div>
         <div>
           <label class="block text-[11px] text-slate-400 mb-1 font-bold" data-i18n="label_pass">كلمة المرور</label>
-          <input type="password" id="manualPassInput" placeholder="••••••••" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 font-bold" dir="ltr">
+          <input type="password" id="manualPassInput" oninput="this.value = this.value.replace(/\s+/g, '')" placeholder="••••••••" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 font-bold font-mono" dir="ltr">
         </div>
 
         <div class="flex justify-between items-center text-[11px]" id="forgotPassLinkWrap">
@@ -183,8 +191,7 @@
       </div>
 
       <div class="space-y-3" id="resetStep1">
-        <input type="email" id="resetEmailField" placeholder="your-email@gmail.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white text-center" dir="ltr">
-        <button onclick="sendResetVerificationCode()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl text-xs transition shadow">
+<input type="email" id="resetEmailField" placeholder="your-email@gmail.com" oninput="this.value = this.value.replace(/\s+/g, '').toLowerCase()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white text-center font-mono" dir="ltr">        <button onclick="sendResetVerificationCode()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl text-xs transition shadow">
           إرسال رابط الاستعادة 📩
         </button>
       </div>
@@ -488,8 +495,7 @@
               <span id="profileAccountType" class="font-bold text-emerald-400">Google</span>
             </div>
             <div class="flex justify-between p-2.5 bg-slate-900 light:bg-white rounded-xl border border-slate-800 light:border-slate-200">
-              <span class="text-slate-400 light:text-slate-600" data-i18n="stat_completed_tables">الجداول المكتملة كلياً (10/10)</span>
-              <span id="profileCompletedTablesCount" class="font-bold text-amber-400 font-mono">0 / 12</span>
+<span class="text-slate-400 light:text-slate-600" data-i18n="stat_completed_tables">الجداول المكتملة كلياً (30/30)</span>              <span id="profileCompletedTablesCount" class="font-bold text-amber-400 font-mono">0 / 12</span>
             </div>
             <div class="flex justify-between p-2.5 bg-slate-900 light:bg-white rounded-xl border border-slate-800 light:border-slate-200">
               <span class="text-slate-400 light:text-slate-600" data-i18n="stat_total_stages">المستويات المكتملة</span>
@@ -514,7 +520,11 @@
       <div class="bg-slate-900/90 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-5 md:p-6 shadow-xl">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
           <div><h2 class="text-2xl font-black">👥 مركز الأصدقاء</h2><p class="text-xs text-slate-400 mt-1">ابحث بالمعرّف الدائم وأدر طلباتك وأصدقاءك.</p></div>
-          <button onclick="showScreen('homeView')" class="px-3 py-2 rounded-xl bg-slate-800 text-xs font-bold">الرئيسية ↩</button>
+          <div class="flex flex-wrap items-center gap-2"><button id="friendNotificationsBtn" onclick="FriendsSystem.toggleNotifications()" class="relative rounded-xl border border-blue-500 bg-blue-600 px-3 py-2 text-xs font-black text-white">🔔 الإشعارات <span id="friendNotificationCount" class="hidden absolute -top-2 -left-2 min-w-5 rounded-full bg-rose-600 px-1.5 py-0.5 text-[10px] text-white">0</span></button><button onclick="showScreen('homeView')" class="px-3 py-2 rounded-xl bg-slate-800 text-xs font-bold">الرئيسية ↩</button></div>
+        </div>
+        <div id="giftNotificationsPanel" class="hidden mb-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
+          <div class="mb-2 flex items-center justify-between gap-2"><h3 class="font-black text-slate-800">🔔 إشعارات التحويلات</h3><span class="text-[10px] text-slate-500">الذهب والجواهر المستلمة</span></div>
+          <div id="giftNotificationsList" class="space-y-2"><p class="py-3 text-sm text-slate-500">جارٍ تحميل الإشعارات...</p></div>
         </div>
         <div class="rounded-2xl border border-blue-500/30 bg-blue-950/30 p-4 mb-4">
           <div class="text-xs text-slate-400 mb-1">معرّفك الدائم (Player Tag)</div>
@@ -550,15 +560,21 @@
           <div id="roomCreatePanel" class="hidden rounded-2xl border border-slate-800 p-4 space-y-3">
             <h3 class="font-black">إنشاء غرفة جديدة</h3>
             <label class="block text-xs text-slate-400">نمط المواجهة</label>
-            <select id="roomModeSelect" class="room-field w-full border rounded-xl p-3 text-sm"><option value="1v1">1 ضد 1 — مقعدان</option><option value="2v2">2 ضد 2 — 4 مقاعد</option><option value="3v3" selected>3 ضد 3 — 6 مقاعد</option></select>
+            <select id="roomModeSelect" class="room-field w-full border rounded-xl p-3 text-sm"><option value="1v1" selected>1 ضد 1 — مقعدان</option><option value="2v2">2 ضد 2 — 4 مقاعد</option><option value="3v3">3 ضد 3 — 6 مقاعد</option></select>
             <div class="grid grid-cols-2 gap-2"><label class="block text-xs text-slate-400">اسم الفريق الأول<input id="roomBlueName" maxlength="18" value="الفريق الأزرق" class="room-field mt-1 w-full border rounded-xl p-2 text-sm"></label><label class="block text-xs text-slate-400">اسم الفريق الثاني<input id="roomRedName" maxlength="18" value="الفريق الأحمر" class="room-field mt-1 w-full border rounded-xl p-2 text-sm"></label></div>
             <label class="block text-xs text-slate-400">مدة الإجابة لكل سؤال</label>
             <select id="roomTimerSelect" class="room-field w-full border rounded-xl p-3 text-sm"><option value="10">١٠ ثوانٍ</option><option value="15" selected>١٥ ثانية</option><option value="20">٢٠ ثانية</option><option value="30">٣٠ ثانية</option></select>
             <label class="block text-xs text-slate-400">قيمة الضرر الأساسية لكل الأسلحة المسموحة (لكل ضربة)</label>
             <select id="roomWeaponSelect" class="room-field w-full border rounded-xl p-3 text-sm"><option value="5">5 damage</option><option value="10">10 damage</option><option value="15" selected>15 damage</option><option value="20">20 damage</option><option value="25">25 damage</option><option value="30">30 damage</option><option value="35">35 damage</option><option value="40">40 damage</option><option value="45">45 damage</option></select>
-            <label class="block text-xs text-slate-400" data-room-ar="الضرر الذي يتلقاه الفريق عند الإجابة الخاطئة" data-room-en="Damage received by a team for a wrong answer">الضرر الذي يتلقاه الفريق عند الإجابة الخاطئة</label>
-            <select id="roomArmorSelect" class="room-field w-full border rounded-xl p-3 text-sm"><option value="0">0 damage</option><option value="5" selected>5 damage</option><option value="10">10 damage</option><option value="15">15 damage</option><option value="20">20 damage</option><option value="25">25 damage</option><option value="30">30 damage</option><option value="35">35 damage</option><option value="40">40 damage</option><option value="45">45 damage</option></select>
-            <label class="block text-xs text-slate-400" data-room-ar="خلفية ساحة المعركة" data-room-en="Battle arena background">خلفية ساحة المعركة</label>
+          <label class="block text-xs text-slate-400"> قيمة خصم نقاط الصحة عند الإجابة الخاطئة غير متعلق بضرر السلاح عند الاجابة الصحيحة</label>
+          <select id="roomWrongPenaltySelect" class="room-field w-full border rounded-xl p-3 text-sm">
+            <option value="5" selected>خصم 5 نقاط صحة</option>
+            <option value="10">خصم 10 نقاط صحة</option>
+            <option value="15">خصم 15 نقطة صحة</option>
+            <option value="20">خصم 20 نقطة صحة</option>
+            <option value="25">خصم 25 نقطة صحة</option>
+          </select>            
+           <label class="block text-xs text-slate-400" data-room-ar="خلفية ساحة المعركة" data-room-en="Battle arena background">خلفية ساحة المعركة</label>
             <select id="roomBackgroundSelect" class="room-field w-full border rounded-xl p-3 text-sm"><option value="arena">Arena — أزرق داكن</option><option value="forest">Forest — غابة</option><option value="sunset">Sunset — غروب</option><option value="ice">Ice — جليد</option><option value="lava">Lava — حمم</option></select>
             <label class="block text-xs text-slate-400">الجداول المستخدمة في المعركة</label>
             <div id="roomTablesSelect" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs"><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="1" checked class="room-table-choice"> جدول 1</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="2" class="room-table-choice"> جدول 2</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="3" class="room-table-choice"> جدول 3</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="4" class="room-table-choice"> جدول 4</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="5" class="room-table-choice"> جدول 5</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="6" class="room-table-choice"> جدول 6</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="7" class="room-table-choice"> جدول 7</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="8" class="room-table-choice"> جدول 8</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="9" class="room-table-choice"> جدول 9</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="10" class="room-table-choice"> جدول 10</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="11" class="room-table-choice"> جدول 11</label><label class="flex items-center gap-1 rounded-lg border border-slate-300 p-2"><input type="checkbox" value="12" class="room-table-choice"> جدول 12</label></div>
@@ -574,13 +590,18 @@
           <div class="flex flex-wrap items-center justify-between gap-3 mb-4"><div><div class="text-xs text-slate-400">كود الغرفة</div><div class="flex items-center gap-2"><strong id="activeRoomCode" class="text-xl text-cyan-300 font-mono tracking-widest"></strong><button onclick="RoomsSystem.copyCode()" class="text-xs rounded-lg bg-slate-800 px-2 py-1">نسخ</button></div></div><div class="flex gap-2"><button id="roomCloseBtn" onclick="RoomsSystem.closeRoom()" class="hidden rounded-xl bg-rose-700 text-white px-3 py-2 text-xs font-bold">إغلاق الغرفة</button><button onclick="RoomsSystem.leave()" class="rounded-xl bg-rose-950 border border-rose-800 text-rose-300 px-3 py-2 text-xs font-bold">مغادرة الغرفة</button></div></div>
           <div class="text-xs text-slate-400 mb-3" id="roomStatusLine">ردهة الانتظار — اختر مقعدك.</div>
           <div id="roomBattlePanel" class="hidden mb-4 rounded-2xl border border-amber-500/40 bg-amber-50 dark:bg-slate-900 p-4"><div class="flex items-center justify-between gap-3"><strong class="text-amber-600 dark:text-amber-300">⚔️ المعركة الجماعية</strong><span id="roomBattleTimer" class="font-black text-lg">--</span></div><p id="roomBattleMessage" class="text-sm mt-2">بدأت المعركة.</p><div id="roomBattleTeams" class="room-battle-teams grid grid-cols-2 gap-3 mt-3"><div id="roomBattleBlue" class="room-battle-team blue"><strong id="roomBattleBlueName">Blue Team</strong><div id="roomBattleBlueHp">100 HP</div></div><div id="roomBattleRed" class="room-battle-team red"><strong id="roomBattleRedName">Red Team</strong><div id="roomBattleRedHp">100 HP</div></div></div><div id="roomBattleQuestion" class="mt-3 text-xl font-black text-center"></div><div id="roomBattleAnswers" class="grid grid-cols-2 gap-2 mt-3"></div><p id="roomBattleFeedback" class="text-xs mt-2 text-center"></p></div>
+          <div id="roomTeamNamesEditor" class="hidden mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-xl border border-slate-700 p-3">
+            <label class="text-xs font-bold text-slate-500"><span data-room-ar="اسم الفريق الأزرق" data-room-en="Blue team name">اسم الفريق الأزرق</span><input id="activeRoomBlueName" maxlength="18" class="room-field mt-1 w-full rounded-lg border p-2"></label>
+            <label class="text-xs font-bold text-slate-500"><span data-room-ar="اسم الفريق الأحمر" data-room-en="Red team name">اسم الفريق الأحمر</span><input id="activeRoomRedName" maxlength="18" class="room-field mt-1 w-full rounded-lg border p-2"></label>
+            <button onclick="RoomsSystem.saveTeamNames()" class="sm:col-span-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-black text-white">حفظ أسماء الفريقين</button>
+          </div>
           <div id="roomLobbyTeams" class="grid md:grid-cols-2 gap-4">
             <div class="rounded-2xl border border-blue-500/40 bg-blue-950/20 p-3"><h3 class="font-black text-blue-300 mb-3">🔵 الفريق الأزرق — Alpha</h3><div id="blueRoomSlots" class="grid grid-cols-1 gap-2"></div></div>
             <div class="rounded-2xl border border-rose-500/40 bg-rose-950/20 p-3"><h3 class="font-black text-rose-300 mb-3">🔴 الفريق الأحمر — Beta</h3><div id="redRoomSlots" class="grid grid-cols-1 gap-2"></div></div>
           </div>
           <div id="roomGlobalNotice" class="room-global-notice hidden" aria-live="polite"></div>
           <div class="flex flex-wrap gap-2 mt-4"><button id="roomReadyBtn" onclick="RoomsSystem.toggleReady()" class="flex-1 rounded-xl bg-emerald-600 p-3 text-sm font-black">أنا مستعد ✓</button><button id="roomStartBtn" onclick="RoomsSystem.startMatch()" class="hidden flex-1 rounded-xl bg-amber-500 text-slate-950 p-3 text-sm font-black">بدء المعركة ⚔️</button></div>
-          <p class="text-[10px] text-slate-500 mt-3">تبدأ المعركة عندما يكون كل لاعب في مقعده ومستعداً. يظل بدء المعركة متاحاً لمنشئ الغرفة فقط.</p>
+          <p class="text-[10px] text-slate-500 mt-3">تبدأ المعركة عند وجود لاعب في كل فريق واستعداد جميع اللاعبين الموجودين. منشئ الغرفة هو من يبدأ المعركة.</p>
         </div>
         <div id="roomCloudNotice" class="mt-4 text-xs text-slate-500"></div>
       </div>
@@ -590,13 +611,12 @@
 
   <div id="friendGiftModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/80 p-4">
     <div class="w-full max-w-lg rounded-3xl bg-white text-slate-900 p-5 shadow-2xl">
-      <div class="flex items-center justify-between gap-3"><h3 class="text-xl font-black">🎁 متجر هدايا الأصدقاء</h3><button onclick="FriendsSystem.closeGiftMenu()" class="rounded-lg bg-slate-100 px-3 py-2">إغلاق ✕</button></div>
+      <div class="flex items-center justify-between gap-3"><h3 class="text-xl font-black">🎁 إرسال ذهب وجواهر</h3><button onclick="FriendsSystem.closeGiftMenu()" class="rounded-lg bg-slate-100 px-3 py-2">إغلاق ✕</button></div>
       <p id="friendGiftRecipient" class="mt-2 text-sm text-slate-500">اختيار صديق</p>
       <div class="grid sm:grid-cols-2 gap-3 mt-4">
         <div class="rounded-xl border p-3"><strong>🪙 إرسال ذهب</strong><input id="friendGiftGoldAmount" type="number" min="1" max="1000" value="10" class="mt-2 w-full rounded-lg border p-2"><button onclick="FriendsSystem.sendCurrencyGift('gold')" class="mt-2 w-full rounded-lg bg-amber-500 p-2 font-bold">إرسال الذهب</button></div>
         <div class="rounded-xl border p-3"><strong>💎 إرسال جواهر</strong><input id="friendGiftGemAmount" type="number" min="1" max="100" value="1" class="mt-2 w-full rounded-lg border p-2"><button onclick="FriendsSystem.sendCurrencyGift('gems')" class="mt-2 w-full rounded-lg bg-cyan-600 p-2 font-bold text-white">إرسال الجواهر</button></div>
       </div>
-      <div class="mt-3 rounded-xl border p-3"><strong>🛒 هدايا المتجر</strong><p class="text-xs text-slate-500 mt-1">اختيار عنصر وإرسال طلب هدية منفصل عن مشترياتك الشخصية. التسليم الفعلي يتطلب قواعد Firestore آمنة ومعالجة موثوقة من الخادم.</p><select id="friendGiftItem" class="mt-2 w-full rounded-lg border p-2"></select><button onclick="FriendsSystem.sendStoreGift()" class="mt-2 w-full rounded-lg bg-blue-600 p-2 font-bold text-white">إرسال هدية من المتجر</button></div>
     </div>
   </div>
 
