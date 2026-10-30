@@ -224,7 +224,7 @@
       if (!root) return;
       root.querySelectorAll('[data-room-ar][data-room-en]').forEach(el => { el.textContent = en ? el.dataset.roomEn : el.dataset.roomAr; });
       const pairs = [
-        ['⚔️ الغرف المخصصة','⚔️ Custom Rooms'],['أنشئ غرفة تكتيكية أو انضم باستخدام كودها.','Create a tactical room or join with its code.'],['الرئيسية ↩','Home ↩'],['➕ إنشاء غرفة','➕ Create Room'],['🔑 الانضمام إلى غرفة','🔑 Join Room'],['إنشاء غرفة جديدة','Create New Room'],['نمط المواجهة','Match Format'],['اسم الفريق الأول','Blue team name'],['اسم الفريق الثاني','Red team name'],['الفريق الأزرق','Blue Team'],['الفريق الأحمر','Red Team'],['مدة الإجابة لكل سؤال','Answer time per question'],['قيمة الضرر الأساسية لكل الأسلحة المسموحة (لكل ضربة)','Base damage for all allowed weapons (per hit)'],['الجداول المستخدمة في المعركة','Tables used in battle'],['إنشاء غرفة','Create Room'],['الانضمام إلى غرفة','Join a Room'],['أدخل كود الغرفة','Enter room code'],['انضمام بالكود','Join with Code'],['كود الغرفة','Room Code'],['نسخ','Copy'],['إغلاق الغرفة','Close Room'],['مغادرة الغرفة','Leave Room'],['أنا مستعد ✓','I’m Ready ✓'],['بدء المعركة ⚔️','Start Battle ⚔️'],['تبدأ المعركة عندما يكون كل لاعب في مقعده ومستعداً. يظل بدء المعركة متاحاً لمنشئ الغرفة فقط.','The battle starts when every seat is filled and every player is ready. Only the room host can start it.']
+        ['⚔️ الغرف المخصصة','⚔️ Custom Rooms'],['أنشئ غرفة تكتيكية أو انضم باستخدام كودها.','Create a tactical room or join with its code.'],['الرئيسية ↩','Home ↩'],['➕ إنشاء غرفة','➕ Create Room'],['🔑 الانضمام إلى غرفة','🔑 Join Room'],['إنشاء غرفة جديدة','Create New Room'],['نمط المواجهة','Match Format'],['اسم الفريق الأول','Blue team name'],['اسم الفريق الثاني','Red team name'],['الفريق الأزرق','Blue Team'],['الفريق الأحمر','Red Team'],['مدة الإجابة لكل سؤال','Answer time per question'],['قيمة الضرر الأساسية لكل الأسلحة المسموحة (لكل ضربة)','Base damage for all allowed weapons (per hit)'],['الجداول المستخدمة في المعركة','Tables used in battle'],['إنشاء غرفة','Create Room'],['الانضمام إلى غرفة','Join a Room'],['أدخل كود الغرفة','Enter room code'],['انضمام بالكود','Join with Code'],['كود الغرفة','Room Code'],['نسخ','Copy'],['إغلاق الغرفة','Close Room'],['مغادرة الغرفة','Leave Room'],['أنا مستعد ✓','I’m Ready ✓'],['بدء المعركة ⚔️','Start Battle ⚔️'],['حفظ أسماء الفريقين','Save team names'],['الإجابة الخاطئة تخصم 5 نقاط صحة تلقائيًا من فريقك.','A wrong answer automatically removes 5 HP from your team.'],['تبدأ المعركة عند وجود لاعب في كل فريق واستعداد جميع اللاعبين الموجودين. منشئ الغرفة هو من يبدأ المعركة.','The battle starts when both teams have a player and all seated players are ready. The room host starts it.']
       ];
       root.querySelectorAll('h2,h3,p,label,button,div,span,strong,option').forEach(el => {
         if (el.children.length) return;
@@ -584,7 +584,7 @@
        4. التشغيل والضبط الشامل
        ========================================================================= */
     window.addEventListener('DOMContentLoaded', () => {
-      forceFullGameReset();
+      //forceFullGameReset();
       
       setTimeout(() => {
         loadSession();
@@ -604,25 +604,18 @@
       }, 1000);
     });
 
-    /* تصفير وحذف تقدم اللاعبين والحسابات وقائمة المتصدرين */
+    /* تصفير التقدم المحلي لهذا الإصدار دون حذف بيانات اللاعبين المشتركة في السحابة */
     function forceFullGameReset() {
-      const TOTAL_WIPE_VERSION_KEY = "mk_full_wipe_v10_reset_all_data";
+      const TOTAL_WIPE_VERSION_KEY = "mk_full_wipe_v11_personal_profile_reset";
       if (localStorage.getItem('mk_cloud_wipe_done') !== TOTAL_WIPE_VERSION_KEY) {
-        localStorage.removeItem('mk_save_data');
-        localStorage.removeItem('mk_registered_accounts');
-        localStorage.removeItem('mk_finger_tour_done');
+        // Reset this browser's game profile and app-owned local state once.
+        // Keep language/theme preferences and never clear the shared global leaderboard.
+        [
+          'mk_save_data', 'mk_registered_accounts', 'mk_finger_tour_done',
+          'mk_player_tag_v1', 'mk_received_gifts_v1', 'mk_seen_gift_notifications_v1', 'mk_active_room_id', 'mk_guest_room_id'
+        ].forEach(key => localStorage.removeItem(key));
         localStorage.setItem('mk_cloud_wipe_done', TOTAL_WIPE_VERSION_KEY);
         gameState = JSON.parse(JSON.stringify(DEFAULT_GAME_DATA));
-
-        if (db) {
-          db.collection("leaderboard").get().then((snapshot) => {
-            const batch = db.batch();
-            snapshot.forEach((doc) => {
-              batch.delete(doc.ref);
-            });
-            batch.commit().catch(() => {});
-          }).catch(() => {});
-        }
       }
     }
 
@@ -711,18 +704,19 @@
       }
     }
 
-    function handleManualAuthAction() {
-      const email = document.getElementById('manualEmailInput').value.trim().toLowerCase();
-      const pass = document.getElementById('manualPassInput').value.trim();
+function handleManualAuthAction() {
+      // إزالة أي مسافات نهائياً وتحويل الإيميل لحروف صغيرة
+      const email = document.getElementById('manualEmailInput').value.replace(/\s+/g, '').toLowerCase();
+      const pass = document.getElementById('manualPassInput').value.replace(/\s+/g, '');
       const name = document.getElementById('manualNameInput').value.trim();
       let accounts = JSON.parse(localStorage.getItem('mk_registered_accounts') || '{}');
 
       if (!email || !email.includes('@')) {
-        showToast("يرجى كتابة بريد إلكتروني صحيح!", "⚠️");
+        showToast("يرجى كتابة بريد إلكتروني صحيح بدون مسافات!", "⚠️");
         return;
       }
       if (!pass || pass.length < 4) {
-        showToast("كلمة المرور يجب أن تكون 4 خانات على الأقل!", "⚠️");
+        showToast("كلمة المرور يجب أن تكون 4 خانات على الأقل وبدون مسافات!", "⚠️");
         return;
       }
 
@@ -788,32 +782,46 @@
     function closeResetPasswordModal() {
       document.getElementById('resetPasswordModal').classList.add('hidden');
     }
+async function sendResetVerificationCode() {
+      // إزالة أي مسافات زائدة وتحويل الحروف لصغيرة
+      const email = document.getElementById('resetEmailField').value.replace(/\s+/g, '').toLowerCase();
 
-    async function sendResetVerificationCode() {
-      const email = document.getElementById('resetEmailField').value.trim();
-      if (!email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
-        showToast("يرجى كتابة بريد إلكتروني صحيح!", "⚠️");
+      // التحقق من صيغة البريد الإلكتروني
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast("يرجى كتابة بريد إلكتروني صحيح بدون مسافات!", "⚠️");
         return;
       }
-      if (!auth || typeof auth.sendPasswordResetEmail !== 'function') {
-        showToast("خدمة استعادة كلمة المرور غير متاحة حالياً. تحقق من إعداد Firebase.", "⚠️");
+
+      // التحقق الصارم من وجود الإيميل في الحسابات المسجلة
+      let accounts = JSON.parse(localStorage.getItem('mk_registered_accounts') || '{}');
+      if (!accounts[email]) {
+        showToast("هذا البريد غير مسجل في اللعبة!", "⚠️");
         return;
       }
+
+      // توليد كود عشوائي مكون من 5 أرقام
+      resetCodeGenerated = Math.floor(10000 + Math.random() * 90000).toString();
+
+      const templateParams = {
+        to_email: email,
+        email: email,
+        pass_code: resetCodeGenerated
+      };
+
       try {
-        await auth.sendPasswordResetEmail(email);
-        document.getElementById('resetStepDesc').innerText = `تم إرسال رابط الاستعادة إلى: ${email}`;
-        document.getElementById('resetPasswordModal').classList.add('hidden');
-        showToast(`تم إرسال رابط إعادة تعيين كلمة المرور إلى ${email}. تحقق من بريدك الإلكتروني.`, "📧");
+        showToast("جارٍ إرسال كود التحقق إلى بريدك... ⏳", "📩");
+        
+        await emailjs.send('service_smk99dk', 'template_u9betxg', templateParams);
+
+        document.getElementById('resetStep1').classList.add('hidden');
+        document.getElementById('resetStep2').classList.remove('hidden');
+        document.getElementById('resetStepDesc').innerText = `تم إرسال كود التحقق بنجاح إلى: ${email}`;
+        showToast("تم إرسال كود التحقق بنجاح! تفقد بريدك الوارد.", "✅");
       } catch (error) {
-        const message = error?.code === 'auth/user-not-found'
-          ? "لا يوجد حساب مسجل بهذا البريد الإلكتروني."
-          : error?.code === 'auth/invalid-email'
-            ? "صيغة البريد الإلكتروني غير صحيحة."
-            : "تعذر إرسال رابط الاستعادة. تحقق من البريد وإعدادات Firebase ثم حاول مجدداً.";
-        showToast(message, "⚠️");
+        console.error("EmailJS Error:", error);
+        showToast("تعذر إرسال الكود. تحقق من اتصالك بالإنترنت.", "❌");
       }
     }
-
     function applyNewPasswordWithCode() {
       const code = document.getElementById('resetCodeInput').value.trim();
       const p1 = document.getElementById('resetNewPassInput').value.trim();
@@ -1043,6 +1051,7 @@
       const uid = (auth && auth.currentUser) ? auth.currentUser.uid : ("user_" + simpleHash(gameState.email || gameState.name));
       db.collection("leaderboard").doc(uid).set({
         name: gameState.name,
+        profileKey: (String(gameState.email || (auth && auth.currentUser && auth.currentUser.email) || '').trim().toLowerCase() ? simpleHash(String(gameState.email || (auth && auth.currentUser && auth.currentUser.email) || '').trim().toLowerCase()) : null),
         xp: gameState.xp,
         level: gameState.level,
         avatar: gameState.avatar,
@@ -1072,7 +1081,7 @@
 
       db.collection("leaderboard")
         .orderBy("xp", "desc")
-        .limit(10)
+        .limit(100)
         .get()
         .then((snapshot) => {
           container.innerHTML = '';
@@ -1085,11 +1094,44 @@
             return;
           }
 
-          let rank = 1;
+          // Collapse duplicate logins for the same player (desktop/mobile) into one row.
+          // Prefer the most recently updated profile so a deliberate profile reset is reflected.
+          const uniquePlayers = [];
+          const identityAliases = new Map();
+          const updatedAtMs = value => {
+            if (value && typeof value.toMillis === 'function') return value.toMillis();
+            const parsed = value ? Date.parse(value) : 0;
+            return Number.isFinite(parsed) ? parsed : 0;
+          };
           snapshot.forEach((doc) => {
-            const entry = doc.data();
+            const entry = doc.data() || {};
+            const normalizedName = String(entry.name || '').trim().toLocaleLowerCase().replace(/[\s\u200f\u200e]+/g, ' ');
+            const aliases = normalizedName ? [`legacy:${normalizedName}|${String(entry.avatar || '').trim()}`] : [];
+            if (entry.profileKey) aliases.push(`profile:${entry.profileKey}`);
+            let group = aliases.map(key => identityAliases.get(key)).find(Boolean);
+            if (!group) {
+              group = { id:doc.id, entry };
+              uniquePlayers.push(group);
+            } else {
+              const currentTime = updatedAtMs(entry.updatedAt);
+              const groupedTime = updatedAtMs(group.entry.updatedAt);
+              if (currentTime > groupedTime || (currentTime === groupedTime && Number(entry.xp || 0) > Number(group.entry.xp || 0))) {
+                group.id = doc.id;
+                group.entry = entry;
+              }
+            }
+            aliases.forEach(key => identityAliases.set(key, group));
+          });
+          const players = uniquePlayers.sort((a,b) => Number(b.entry.xp || 0) - Number(a.entry.xp || 0)).slice(0, 10);
+          if (!players.length) {
+            container.innerHTML = `<div class="text-center py-8 text-slate-500 text-xs">${currentLang === 'ar' ? 'لا يوجد لاعبون مسجلون بعد.' : 'No players yet.'}</div>`;
+            return;
+          }
+          let rank = 1;
+          players.forEach(({ id, entry }) => {
             const currentUid = (auth && auth.currentUser) ? auth.currentUser.uid : ("user_" + simpleHash(gameState.email || gameState.name));
-            const isCurrent = !gameState.isGuest && (doc.id === currentUid || entry.name === gameState.name);
+            const currentEmail = String(gameState.email || (auth && auth.currentUser && auth.currentUser.email) || '').trim().toLowerCase();
+            const isCurrent = !gameState.isGuest && (id === currentUid || (!!currentEmail && entry.profileKey === simpleHash(currentEmail)));
             
             const row = document.createElement('div');
             row.className = `flex items-center justify-between p-3 rounded-2xl border transition ${
@@ -1385,8 +1427,14 @@
         currentBattle.table = customBattleTables[Math.floor(Math.random() * customBattleTables.length)];
         document.getElementById('battleTableText').innerText = `نظام مخصص · جدول ${formatNum(currentBattle.table)}`;
       }
-      const t = currentBattle.table;
-      const factor = Math.floor(Math.random() * 10) + 1;
+const t = currentBattle.table;
+      // اختيار رقم لا يطابق السؤال السابق لمنع التكرار وراء بعض
+      let factor;
+      do {
+        factor = Math.floor(Math.random() * 10) + 1;
+      } while (factor === currentBattle.lastFactor);
+      currentBattle.lastFactor = factor;
+
       const correct = t * factor;
       currentBattle.correctAnswer = correct;
 
@@ -1407,11 +1455,21 @@
         typingBox.classList.add('hidden');
         gridBox.classList.remove('hidden');
 
+        // توليد خيارات آمنة وذكية بدون تعليق
         const opts = new Set([correct]);
-        while (opts.size < 4) {
-          const offset = (Math.floor(Math.random() * 4) + 1) * (Math.random() > 0.5 ? 1 : -1);
+        let attempts = 0;
+        while (opts.size < 4 && attempts < 40) {
+          attempts++;
+          const offset = (Math.floor(Math.random() * 6) + 1) * (Math.random() > 0.5 ? 1 : -1);
           const val = correct + offset;
           if (val > 0 && val !== correct) opts.add(val);
+        }
+
+        // خيارات احتياطية في حال لم تكتمل
+        let fallback = 1;
+        while (opts.size < 4) {
+          if (fallback !== correct) opts.add(fallback);
+          fallback++;
         }
 
         const answersArr = Array.from(opts).sort(() => Math.random() - 0.5);
@@ -1425,7 +1483,7 @@
           gridBox.appendChild(btn);
         });
       }
-
+      
       resetTurnTimer();
     }
 
@@ -2065,10 +2123,11 @@
       const completedTables = Object.values(gameState.tableProgress).filter(lvl => lvl > 30).length;
       document.getElementById('profileCompletedTablesCount').innerText = `${formatNum(completedTables)} / ${formatNum(12)}`;
 
-      let totalCompletedStages = 0;
+let totalCompletedStages = 0;
       Object.values(gameState.tableProgress).forEach(lvl => {
-        totalCompletedStages += (lvl > 30 ? 10 : (lvl - 1));
+        totalCompletedStages += (lvl > 30 ? 30 : (lvl - 1));
       });
+
       document.getElementById('profileCompletedStagesCount').innerText = formatNum(totalCompletedStages);
 
       const wep = SHOP_DATA.weapons.find(w => w.id === gameState.equipped.weapon);
@@ -2152,7 +2211,7 @@
        ========================================================================= */
     const FriendsSystem = (() => {
       let unsubProfile = null, unsubIncoming = null, unsubFriends = null, unsubGifts = null;
-      let incomingCache = [], friendsCache = [];
+      let incomingCache = [], friendsCache = [], giftNotificationCache = [];
       const localTagKey = 'mk_player_tag_v1';
       const uid = () => (auth && auth.currentUser && !gameState.isGuest) ? auth.currentUser.uid : null;
       const me = () => uid();
@@ -2223,6 +2282,8 @@
           return;
         }
         stopListeners();
+        giftNotificationCache = [];
+        renderGiftNotifications([]);
         const id = me();
         // Requests are separate documents so accept/reject operations remain atomic.
         unsubIncoming = db.collection('friendRequests').where('toUid','==',id).where('status','==','pending')
@@ -2237,9 +2298,13 @@
             }
             renderFriends(list);
           }, () => renderFriends([]));
-        // Deliver incoming gifts to the recipient's game save exactly once per request.
-        unsubGifts = db.collection('giftRequests').where('toUid','==',id).where('status','==','pending')
-          .onSnapshot(s => { s.docChanges().forEach(change => { if(change.type==='added' || change.type==='modified') deliverGiftRequest(change.doc.id, change.doc.data()); }); }, () => {});
+        // One simple query powers both delivery and the inbox (avoids a composite-index dependency).
+        unsubGifts = db.collection('giftRequests').where('toUid','==',id)
+          .onSnapshot(s => {
+            const all = s.docs.map(d => ({ id:d.id, ...d.data() }));
+            renderGiftNotifications(all.filter(g => g.status === 'delivered' && ['gold','gems','gem'].includes(g.kind)));
+            all.forEach(g => { if (g.status === 'pending' && ['gold','gems','gem'].includes(g.kind)) deliverGiftRequest(g.id, g); });
+          }, () => showToast('تعذر تحميل إشعارات التحويلات.', '⚠️'));
       }
       async function sendRequest() {
         if (!requireRegistered()) return;
@@ -2300,12 +2365,7 @@
         giftTargetUid = targetUid;
         const modal = document.getElementById('friendGiftModal');
         const recipient = document.getElementById('friendGiftRecipient');
-        const select = document.getElementById('friendGiftItem');
-        if (recipient) recipient.textContent = 'إرسال هدية إلى: ' + (targetName || 'صديق');
-        if (select) {
-          const allItems = [...(SHOP_DATA.weapons||[]), ...(SHOP_DATA.armors||[]), ...(SHOP_DATA.knights||[]), ...(SHOP_DATA.frames||[]), ...(SHOP_DATA.arenas||[]), ...(SHOP_DATA.timers||[])];
-          select.innerHTML = allItems.map(x => `<option value="${String(x.id).replace(/[&<>"]/g,'')}">${String(x.name_ar||x.name||x.id).replace(/[&<>]/g,'')}</option>`).join('');
-        }
+        if (recipient) recipient.textContent = 'إرسال ذهب أو جواهر إلى: ' + (targetName || 'صديق');
         if (modal) modal.classList.remove('hidden');
       }
       function closeGiftMenu() { document.getElementById('friendGiftModal')?.classList.add('hidden'); giftTargetUid = null; }
@@ -2326,17 +2386,55 @@
           if(gift.kind==='gold' || gift.kind==='gems' || gift.kind==='gem') {
             const field=gift.kind==='gold'?'gold':'gems';
             gameState[field]=Number(gameState[field]||0)+Math.max(0,Math.floor(Number(gift.amount||0)));
-          } else if(gift.kind==='store_item' && gift.itemId) {
-            gameState.inventory=Array.isArray(gameState.inventory)?gameState.inventory:[];
-            if(!gameState.inventory.includes(gift.itemId)) gameState.inventory.push(gift.itemId);
-          } else if(gift.kind==='gear' && gift.gearId) {
-            gameState.inventory=Array.isArray(gameState.inventory)?gameState.inventory:[];
-            if(!gameState.inventory.includes(gift.gearId)) gameState.inventory.push(gift.gearId);
           }
           received.push(requestId); localStorage.setItem(localKey,JSON.stringify(received.slice(-500)));
           saveGame(); updateHeaderUI(); renderShopItems();
           showToast('وصلتك هدية من صديق! 🎁', '🎁');
         } catch (_) { /* Firestore rules may require a trusted server function for delivery. */ }
+      }
+      function renderGiftNotifications(items) {
+        giftNotificationCache = (items || []).filter(g => ['gold','gems','gem'].includes(g.kind))
+          .sort((a,b) => {
+            const at = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+            const bt = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+            return bt - at;
+          });
+        let seenIds = [];
+        try { seenIds = JSON.parse(localStorage.getItem('mk_seen_gift_notifications_v1') || '[]'); } catch (_) { seenIds = []; }
+        const seen = new Set(Array.isArray(seenIds) ? seenIds : []);
+        const unread = giftNotificationCache.filter(g => !seen.has(g.id)).length;
+        const count = document.getElementById('friendNotificationCount');
+        if (count) { count.textContent = unread > 99 ? '99+' : String(unread); count.classList.toggle('hidden', unread === 0); }
+        const box = document.getElementById('giftNotificationsList');
+        if (!box) return;
+        if (!giftNotificationCache.length) {
+          box.innerHTML = `<p class="py-3 text-sm text-slate-500">${currentLang==='en'?'No money transfers yet.':'لا توجد تحويلات واردة حتى الآن.'}</p>`;
+          return;
+        }
+        box.innerHTML = giftNotificationCache.slice(0,30).map(g => {
+          const isGold = g.kind === 'gold';
+          const amount = Math.max(0, Math.floor(Number(g.amount || 0)));
+          const sender = String(g.fromName || 'صديق').replace(/[&<>"]/g, '');
+          const label = isGold ? (currentLang==='en'?'Gold':'ذهب') : (currentLang==='en'?'Gems':'جواهر');
+          const time = g.createdAt && g.createdAt.toDate ? g.createdAt.toDate().toLocaleString(currentLang==='en'?'en-US':'ar-EG') : '';
+          return `<div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 ${!seen.has(g.id)?'ring-1 ring-blue-400':''}"><span class="text-2xl">${isGold?'🪙':'💎'}</span><div class="min-w-0 flex-1"><div class="font-bold text-slate-800">${currentLang==='en'?'From':'من'} ${sender}</div><div class="text-sm text-slate-600">${currentLang==='en'?'You received':'وصلك'} ${amount} ${label}</div><div class="text-[10px] text-slate-400">${time}</div></div>${!seen.has(g.id)?'<span class="rounded-full bg-blue-600 px-2 py-1 text-[10px] font-bold text-white">جديد</span>':''}</div>`;
+        }).join('');
+      }
+      async function markNotificationsRead() {
+        const ids = giftNotificationCache.map(g => g.id).filter(Boolean);
+        if (!ids.length) return;
+        let seen = [];
+        try { seen = JSON.parse(localStorage.getItem('mk_seen_gift_notifications_v1') || '[]'); } catch (_) { seen = []; }
+        const merged = [...new Set([...(Array.isArray(seen) ? seen : []), ...ids])].slice(-500);
+        localStorage.setItem('mk_seen_gift_notifications_v1', JSON.stringify(merged));
+        renderGiftNotifications(giftNotificationCache);
+      }
+      async function toggleNotifications() {
+        const panel = document.getElementById('giftNotificationsPanel');
+        if (!panel) return;
+        const willOpen = panel.classList.contains('hidden');
+        panel.classList.toggle('hidden', !willOpen);
+        if (willOpen) await markNotificationsRead();
       }
       async function sendCurrencyGift(kind) {
         if (!giftTargetUid || !requireRegistered()) return;
@@ -2347,54 +2445,12 @@
         if (!Number.isInteger(amount) || amount < 1 || amount > max) { showToast('كمية الهدية غير صحيحة.', '⚠️'); return; }
         if (Number(gameState[field] || 0) < amount) { showToast(`رصيد ${kind === 'gold' ? 'الذهب' : 'الجواهر'} غير كافٍ.`, '⚠️'); return; }
         try {
-          await db.collection('giftRequests').add({ fromUid:me(), toUid:giftTargetUid, kind, amount, status:'pending', createdAt:firebase.firestore.FieldValue.serverTimestamp() });
+          await db.collection('giftRequests').add({ fromUid:me(), toUid:giftTargetUid, fromName:gameState.name || 'صديق', fromAvatar:gameState.avatar || DEFAULT_AVATAR, kind, amount, status:'pending', createdAt:firebase.firestore.FieldValue.serverTimestamp() });
           gameState[field] = Number(gameState[field] || 0) - amount;
           saveGame();
           updateHeaderUI();
           showToast('تم إرسال طلب الهدية وخصم المبلغ من رصيدك المحلي.', '🎁');
         } catch (_) { showToast('تعذر إرسال الطلب؛ لم يتم خصم الرصيد. تحقق من إعدادات Firestore.', '⚠️'); }
-      }
-      async function sendStoreGift() {
-        if (!giftTargetUid || !requireRegistered()) return;
-        const itemId = document.getElementById('friendGiftItem')?.value;
-        if (!itemId) { showToast('لا توجد عناصر متجر متاحة.', '⚠️'); return; }
-        try {
-          await db.collection('giftRequests').add({ fromUid:me(), toUid:giftTargetUid, kind:'store_item', itemId, status:'pending', createdAt:firebase.firestore.FieldValue.serverTimestamp() });
-          showToast('تم تسجيل طلب هدية المتجر منفصلًا عن مشترياتك الشخصية؛ التسليم يحتاج وظيفة خادم آمنة.', '🎁');
-        } catch (_) { showToast('تعذر تسجيل الهدية. تحقق من إعدادات Firestore.', '⚠️'); }
-      }
-      async function gift(targetUid, kind) {
-        if (!requireRegistered()) return;
-        const currencyField = kind === 'gems' || kind === 'gem' ? 'gems' : 'gold';
-        const isCurrency = kind === 'gold' || kind === 'gems' || kind === 'gem';
-        const amount = isCurrency
-          ? Number(prompt(`كمية ${currencyField === 'gold' ? 'الذهب' : 'الجواهر'} (من 1 إلى ${currencyField === 'gold' ? '100' : '10'})؟`, '10'))
-          : 0;
-        const maxAmount = currencyField === 'gold' ? 100 : 10;
-        if (isCurrency && (!Number.isInteger(amount) || amount < 1 || amount > maxAmount)) {
-          showToast('كمية الهدية غير صحيحة.', '⚠️'); return;
-        }
-        if (isCurrency && Number(gameState[currencyField] || 0) < amount) {
-          showToast(`رصيد ${currencyField === 'gold' ? 'الذهب' : 'الجواهر'} غير كافٍ لإرسال الهدية.`, '⚠️'); return;
-        }
-        const gear = kind === 'gear' ? prompt('اكتب معرّف العتاد المملوك الذي تريد إهداءه:') : null;
-        if (kind === 'gear' && (!gear || !(gameState.inventory || []).includes(gear))) {
-          showToast('يمكن إهداء عتاد تملكه فقط.', '⚠️'); return;
-        }
-        try {
-          await db.collection('giftRequests').add({
-            fromUid:me(), toUid:targetUid, kind: currencyField === 'gems' && isCurrency ? 'gems' : kind,
-            amount, gearId:gear || null, status:'pending',
-            createdAt:firebase.firestore.FieldValue.serverTimestamp()
-          });
-          if (isCurrency) gameState[currencyField] = Number(gameState[currencyField] || 0) - amount;
-          if (kind === 'gear') gameState.inventory = (gameState.inventory || []).filter(id => id !== gear);
-          saveGame();
-          updateHeaderUI();
-          showToast('تم إرسال الهدية وخصمها من رصيدك المحلي.', '🎁');
-        } catch (_) {
-          showToast('تعذر إرسال الهدية؛ لم يتم خصم الرصيد. تحقق من صلاحيات Firestore.', '⚠️');
-        }
       }
       async function removeFriend(targetUid) {
         if (!requireRegistered() || !targetUid) return;
@@ -2412,7 +2468,7 @@
         try { await navigator.clipboard.writeText(tag); showToast('تم نسخ المعرّف.', '📋'); }
         catch (_) { showToast('معرّفك: ' + tag, '📋'); }
       }
-      return { open, sendRequest, respond, gift, copyTag, openGiftMenu, closeGiftMenu, sendCurrencyGift, sendStoreGift, removeFriend };
+      return { open, sendRequest, respond, copyTag, openGiftMenu, closeGiftMenu, sendCurrencyGift, toggleNotifications, removeFriend };
     })();
 
     /* =========================================================================
@@ -2446,7 +2502,7 @@
           const code = makeCode();
           const slots = Array.from({length:count}, (_,i) => ({ team:i < count/2 ? 'blue' : 'red', player:i === 0 ? playerInfo() : null }));
           slots[0].player.uid = myUid(); slots[0].player.ready = false;
-          await ref.set({ code, mode, teamNames:{blue:(document.getElementById('roomBlueName')?.value||'الفريق الأزرق').trim().slice(0,18),red:(document.getElementById('roomRedName')?.value||'الفريق الأحمر').trim().slice(0,18)}, timerSeconds:Number(document.getElementById('roomTimerSelect').value||15), weaponDamage:Math.min(45,Math.max(5,Number(document.getElementById('roomWeaponSelect').value||15))), allWeaponsDamage:Math.min(45,Math.max(5,Number(document.getElementById('roomWeaponSelect').value||15))), armorReduction:Math.min(45,Math.max(0,Number(document.getElementById('roomArmorSelect').value||5))), allArmorReduction:Math.min(45,Math.max(0,Number(document.getElementById('roomArmorSelect').value||5))), battleBackground:(document.getElementById('roomBackgroundSelect')?.value||'arena'), selectedTables:(Array.from(document.querySelectorAll('.room-table-choice:checked')).map(x=>Number(x.value)).length ? Array.from(document.querySelectorAll('.room-table-choice:checked')).map(x=>Number(x.value)) : [1]), levelCap:30, hostUid:myUid(), status:'waiting', round:0, slots, createdAt:firebase.firestore.FieldValue.serverTimestamp(), updatedAt:firebase.firestore.FieldValue.serverTimestamp() });
+          await ref.set({ code, mode, teamNames:{blue:(document.getElementById('roomBlueName')?.value||'الفريق الأزرق').trim().slice(0,18),red:(document.getElementById('roomRedName')?.value||'الفريق الأحمر').trim().slice(0,18)}, timerSeconds:Number(document.getElementById('roomTimerSelect').value||15), weaponDamage:Math.min(45,Math.max(5,Number(document.getElementById('roomWeaponSelect').value||15))), allWeaponsDamage:Math.min(45,Math.max(5,Number(document.getElementById('roomWeaponSelect').value||15))), wrongAnswerDamage: Number(document.getElementById('roomWrongPenaltySelect')?.value || 5), battleBackground:(document.getElementById('roomBackgroundSelect')?.value||'arena'), selectedTables:(Array.from(document.querySelectorAll('.room-table-choice:checked')).map(x=>Number(x.value)).length ? Array.from(document.querySelectorAll('.room-table-choice:checked')).map(x=>Number(x.value)) : [1]), levelCap:30, hostUid:myUid(), status:'waiting', round:0, slots, createdAt:firebase.firestore.FieldValue.serverTimestamp(), updatedAt:firebase.firestore.FieldValue.serverTimestamp() });
           await db.collection('roomCodes').doc(code).set({ roomId:ref.id, createdAt:firebase.firestore.FieldValue.serverTimestamp() });
           roomId = ref.id; localStorage.setItem('mk_active_room_id', roomId); attachRoom(roomId); document.getElementById('roomCreatePanel')?.classList.add('hidden'); document.getElementById('roomJoinPanel')?.classList.add('hidden'); document.getElementById('roomEntryActions')?.classList.add('hidden'); showToast('تم إنشاء الغرفة. شارك الكود مع اللاعبين.', '⚔️');
         } catch (_) { showToast('تعذر إنشاء الغرفة. تحقق من صلاحيات Firestore.', '⚠️'); }
@@ -2473,7 +2529,11 @@
           const slots = data.slots || [];
           const existing = slots.find(s => s.player && s.player.uid === myUid());
           if (existing) return;
-          const idx = slots.findIndex(s => !s.player);
+          const blueCount = slots.filter(s => s.team === 'blue' && s.player).length;
+          const redCount = slots.filter(s => s.team === 'red' && s.player).length;
+          const preferredTeam = blueCount <= redCount ? 'blue' : 'red';
+          let idx = slots.findIndex(s => s.team === preferredTeam && !s.player);
+          if (idx < 0) idx = slots.findIndex(s => !s.player);
           if (idx < 0) throw new Error('الغرفة ممتلئة.');
           slots[idx].player = playerInfo(); slots[idx].player.uid = myUid();
           tx.update(ref, { slots, updatedAt:firebase.firestore.FieldValue.serverTimestamp() });
@@ -2487,10 +2547,11 @@
         }, () => showToast('انقطع تحديث الغرفة السحابي.', '⚠️'));
       }
       function renderRoom() {
-        if (!currentRoom) return;
+if (!currentRoom) return;
         document.getElementById('activeRoomLobby').classList.remove('hidden');
-        document.getElementById('roomEntryActions')?.classList.add('hidden'); document.getElementById('roomCreatePanel')?.classList.add('hidden'); document.getElementById('roomJoinPanel')?.classList.add('hidden');
-        document.getElementById('roomEntryActions')?.classList.add('hidden'); document.getElementById('roomCreatePanel')?.classList.add('hidden'); document.getElementById('roomJoinPanel')?.classList.add('hidden');
+        document.getElementById('roomEntryActions')?.classList.add('hidden');
+        document.getElementById('roomCreatePanel')?.classList.add('hidden');
+        document.getElementById('roomJoinPanel')?.classList.add('hidden');
         document.getElementById('activeRoomCode').textContent = currentRoom.code;
         const slots = currentRoom.slots || [];
         const renderTeam = (team, target) => {
@@ -2511,13 +2572,22 @@
         document.getElementById('roomReadyBtn').classList.toggle('opacity-40', !mine);
         document.getElementById('roomReadyBtn').textContent = mine?.player.ready ? 'إلغاء الاستعداد ↩' : 'أنا مستعد ✓';
         const isHost = currentRoom.hostUid === myUid();
+        const nameEditor = document.getElementById('roomTeamNamesEditor');
+        nameEditor?.classList.toggle('hidden', !isHost || currentRoom.status !== 'waiting');
+        const blueNameInput = document.getElementById('activeRoomBlueName');
+        const redNameInput = document.getElementById('activeRoomRedName');
+        if (blueNameInput && document.activeElement !== blueNameInput) blueNameInput.value = tn.blue || 'الفريق الأزرق';
+        if (redNameInput && document.activeElement !== redNameInput) redNameInput.value = tn.red || 'الفريق الأحمر';
         document.getElementById('roomCloseBtn').classList.toggle('hidden', !isHost);
-        document.getElementById('roomStartBtn').classList.toggle('hidden', !isHost || currentRoom.status !== 'waiting');
-        const allFilled = slots.length && slots.every(s=>s.player);
-        const allReady = allFilled && slots.every(s=>s.player.ready);
-        document.getElementById('roomStartBtn').disabled = !allReady || currentRoom.status !== 'waiting';
-        document.getElementById('roomStartBtn').classList.toggle('opacity-40', !allReady);
-        document.getElementById('roomStatusLine').textContent = currentLang==='en' ? (currentRoom.status==='started'?'Battle started — round settings are synchronized.':currentRoom.status==='closed'?'The host closed this room.':`${currentRoom.mode} · ${slots.filter(s=>s.player).length}/${slots.length} players · ${currentRoom.timerSeconds||15}s timer · ${allReady?'Everyone is ready':'Waiting for all seats and players to be ready'}`) : (currentRoom.status === 'started' ? 'المعركة بدأت — إعدادات الجولة متزامنة.' : currentRoom.status === 'closed' ? 'أغلق المالك هذه الغرفة.' : `النمط ${currentRoom.mode} · ${slots.filter(s=>s.player).length}/${slots.length} لاعب · المؤقت ${currentRoom.timerSeconds||15} ثانية · ${allReady?'الجميع مستعد':'بانتظار اكتمال المقاعد والاستعداد'}`);
+        document.getElementById('roomStartBtn').classList.toggle('hidden', !mine || !isHost || currentRoom.status !== 'waiting');
+        const occupiedSlots = slots.filter(s=>s.player);
+        const blueHasPlayer = occupiedSlots.some(s=>s.team==='blue');
+        const redHasPlayer = occupiedSlots.some(s=>s.team==='red');
+        const allReady = occupiedSlots.length >= 2 && blueHasPlayer && redHasPlayer && occupiedSlots.every(s=>s.player.ready);
+        const canStart = isHost && !!mine && allReady && currentRoom.status === 'waiting';
+        document.getElementById('roomStartBtn').disabled = !canStart;
+        document.getElementById('roomStartBtn').classList.toggle('opacity-40', !canStart);
+        document.getElementById('roomStatusLine').textContent = currentLang==='en' ? (currentRoom.status==='started'?'Battle started — round settings are synchronized.':currentRoom.status==='closed'?'The host closed this room.':`${currentRoom.mode} · ${occupiedSlots.length} players · ${currentRoom.timerSeconds||15}s timer · ${allReady?'Everyone is ready':'Both teams need a player and all players must be ready'}`) : (currentRoom.status === 'started' ? 'المعركة بدأت — إعدادات الجولة متزامنة.' : currentRoom.status === 'closed' ? 'أغلق المالك هذه الغرفة.' : `النمط ${currentRoom.mode} · ${occupiedSlots.length} لاعبين · المؤقت ${currentRoom.timerSeconds||15} ثانية · ${allReady?'الجميع مستعد':'يجب وجود لاعب بكل فريق واستعداد كل اللاعبين'}`);
         const battle = document.getElementById('roomBattlePanel');
         battle.classList.toggle('hidden', currentRoom.status !== 'started' && currentRoom.status !== 'finished');
         document.getElementById('roomLobbyTeams')?.classList.toggle('hidden', currentRoom.status === 'started' || currentRoom.status === 'finished');
@@ -2555,94 +2625,204 @@
           });
         } catch(e) { showToast(e.message || 'تعذر تحديث المقعد.', '⚠️'); }
       }
-      function takeSlot(index) {
-        mutateSlots((slots) => {
-          if (slots.some(s=>s.player && s.player.uid===myUid())) throw new Error('غادر مقعدك الحالي أولاً.');
-          if (!slots[index] || slots[index].player) throw new Error('هذا المقعد لم يعد شاغراً.');
-          slots[index].player=playerInfo(); slots[index].player.uid=myUid();
+function takeSlot(index) {
+        if (!currentRoom || currentRoom.status !== 'waiting') return;
+        const slots = currentRoom.slots || [];
+        if (slots.some(s => s.player && s.player.uid === myUid())) {
+          showToast('غادر مقعدك الحالي أولاً.', '⚠️');
+          return;
+        }
+        if (!slots[index] || slots[index].player) {
+          showToast('هذا المقعد لم يعد موجودا.', '⚠️');
+          return;
+        }
+        
+        // تحديث محلي فوري
+        slots[index].player = playerInfo();
+        slots[index].player.uid = myUid();
+        renderRoom();
+
+        // إرسال للسحابة
+        mutateSlots((cloudSlots) => {
+          if (cloudSlots.some(s => s.player && s.player.uid === myUid())) throw new Error('غادر مقعدك الحالي أولاً.');
+          if (!cloudSlots[index] || cloudSlots[index].player) throw new Error('هذا المقعد لم يعد موجدا.');
+          cloudSlots[index].player = playerInfo();
+          cloudSlots[index].player.uid = myUid();
         });
       }
+
       function leaveSlot(index) {
-        mutateSlots((slots) => {
-          if (!slots[index]?.player || slots[index].player.uid!==myUid()) throw new Error('يمكنك تحرير مقعدك فقط.');
-          slots[index].player=null;
+        if (!currentRoom) return;
+        const slots = currentRoom.slots || [];
+        if (!slots[index]?.player || slots[index].player.uid !== myUid()) return;
+        
+        // تحديث محلي فوري
+        slots[index].player = null;
+        renderRoom();
+
+        // إرسال للسحابة
+        mutateSlots((cloudSlots) => {
+          if (!cloudSlots[index]?.player || cloudSlots[index].player.uid !== myUid()) throw new Error('يمكنك تحرير مقعدك فقط.');
+          cloudSlots[index].player = null;
         });
       }
       function toggleReady() {
-        mutateSlots((slots) => {
-          const mine=slots.find(s=>s.player && s.player.uid===myUid());
-          if (!mine) throw new Error('اختر مقعداً أولاً.');
-          mine.player.ready=!mine.player.ready; mine.player.lastSeen=Date.now();
-        });
-      }
-      function makeRound(tables, roundNo, seconds=15) {
+              if (!currentRoom || !registered() || !roomId) return;
+              const slots = currentRoom.slots || [];
+              const mine = slots.find(s => s.player && s.player.uid === myUid());
+              if (!mine) {
+                showToast('اختر مقعداً أولاً.', '⚠️');
+                return;
+              }
+
+              // تحديث لحظي على الشاشة فوراً دون انتظار السيرفر
+              mine.player.ready = !mine.player.ready;
+              mine.player.lastSeen = Date.now();
+              document.getElementById('roomReadyBtn').textContent = mine.player.ready ? 'إلغاء الاستعداد ↩' : 'أنا مستعد ✓';
+              renderRoom();
+
+              // إرسال التحديث للسحابة بأمر خفيف ومباشر
+              db.collection('customRooms').doc(roomId).update({
+                slots: slots,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+              }).catch(err => {
+                console.warn('تعذر تحديث الجاهزية:', err);
+              });
+            }
+function makeRound(tables, roundNo, seconds=15) {
         const list = (tables || [1]).map(Number).filter(n => n >= 1 && n <= 12);
         const table = list[Math.floor(Math.random() * Math.max(1, list.length))] || 1;
-        const a = Math.floor(1 + Math.random() * 12), answer = a * table;
+        let a = Math.floor(1 + Math.random() * 12);
+        // تجنب تكرار نفس الرقم في الجولة التالية
+        if (currentRoom?.roundData?.a === a) {
+          a = (a % 12) + 1;
+        }
+        const answer = a * table;
         const wrong = new Set([answer]);
         while (wrong.size < 4) wrong.add(Math.max(1, answer + Math.floor(Math.random()*17) - 8));
         return { id:String(roundNo)+'_'+Date.now(), table, a, answer, options:Array.from(wrong).sort(()=>Math.random()-.5), expiresAt:Date.now()+Math.max(5,Number(seconds)||15)*1000, answeredBy:{}, resolved:false };
       }
+let roomNoticeTimer = null;
       function showRoomNotice(message, good) {
         const n = document.getElementById('roomGlobalNotice');
         if (!n) return;
-        n.textContent = message; n.classList.remove('hidden');
+        clearTimeout(roomNoticeTimer);
+        n.textContent = message; 
+        n.classList.remove('hidden');
         n.className = 'room-global-notice ' + (good ? 'good' : 'bad');
+        roomNoticeTimer = setTimeout(() => {
+          n.classList.add('hidden');
+        }, 3000);
       }
-      async function submitAnswer(value) {
+async function submitAnswer(value) {
         if (!currentRoom || currentRoom.status !== 'started' || !registered()) return;
         const id = currentRoom.id, user = myUid();
+        const answersBox = document.getElementById('roomBattleAnswers');
+        
+        // تعطيل الأزرار مؤقتاً لحين تسجيل الإجابة
+        if (answersBox) {
+          answersBox.querySelectorAll('button').forEach(btn => {
+            btn.disabled = true;
+            if (Number(btn.innerText) === Number(value)) {
+              btn.classList.add('ring-4', 'ring-amber-400');
+            }
+          });
+        }
+
         try {
           await db.runTransaction(async tx => {
-            const ref=db.collection('customRooms').doc(id), snap=await tx.get(ref);
+            const ref = db.collection('customRooms').doc(id);
+            const snap = await tx.get(ref);
             if (!snap.exists) throw new Error('الغرفة غير موجودة.');
-            const d=snap.data(), round=d.roundData, slots=d.slots||[];
-            if (d.status!=='started' || !round || round.resolved) throw new Error('انتهى السؤال؛ انتظر السؤال التالي.');
-            if (Date.now() > Number(round.expiresAt||0)) throw new Error('انتهى وقت الإجابة.');
-            const mine=slots.find(s=>s.player && s.player.uid===user);
+            const d = snap.data(), round = d.roundData, slots = d.slots || [];
+            if (d.status !== 'started' || !round || round.resolved) throw new Error('انتهى السؤال؛ انتظر السؤال التالي.');
+            if (Date.now() > Number(round.expiresAt || 0)) throw new Error('انتهى وقت الإجابة.');
+            const mine = slots.find(s => s.player && s.player.uid === user);
             if (!mine) throw new Error('أنت لست في مقعد داخل هذه الغرفة.');
-            const teamPlayers=slots.filter(s=>s.team===mine.team && s.player);
-            const limit=teamPlayers.length>=3 ? 2 : teamPlayers.length===2 ? 1 : 1;
-            const answered=round.answeredBy||{};
-            const teamAnswers=Object.values(answered).filter(x=>x.team===mine.team);
+            
+            const teamPlayers = slots.filter(s => s.team === mine.team && s.player);
+            const limit = teamPlayers.length >= 3 ? 2 : 1;
+            const answered = round.answeredBy || {};
+            const teamAnswers = Object.values(answered).filter(x => x.team === mine.team);
+            
             if (answered[user]) throw new Error('لقد أجبت عن هذا السؤال بالفعل.');
-            if (teamAnswers.length>=limit) throw new Error('اكتمل عدد إجابات فريقك لهذا السؤال.');
-            const correct=Number(value)===Number(round.answer);
-            answered[user]={team:mine.team,correct,answer:Number(value),name:mine.player.name||'لاعب',at:Date.now()};
-            const hp={...(d.teamHp||{blue:100,red:100})};
-            if (correct) hp[mine.team==='blue'?'red':'blue']=Math.max(0,(hp[mine.team==='blue'?'red':'blue']||100)-Number(d.weaponDamage||15));
-            else hp[mine.team]=Math.max(0,(hp[mine.team]||100)-Math.max(0,Math.min(45,Number(d.armorReduction ?? 5))));
-            const events=[...(d.events||[]),{id:Date.now()+'_'+user,uid:user,name:mine.player.name||'لاعب',team:mine.team,correct,at:Date.now()}].slice(-12);
-            const allTeamPlayers=slots.filter(s=>s.player);
-            const allAnswered=['blue','red'].every(team=>{ const members=allTeamPlayers.filter(s=>s.team===team); const limit=members.length>=3?2:members.length===2?1:1; return members.length===0 || Object.values(answered).filter(x=>x.team===team).length>=Math.min(limit,members.length); });
-            const hpDone=hp.blue<=0||hp.red<=0;
-            if (allAnswered || hpDone) {
-              round.resolved=true;
-              round.nextAt=Date.now()+2200;
+            if (teamAnswers.length >= limit) throw new Error('اكتمل عدد إجابات فريقك لهذا السؤال.');
+
+            const correct = Number(value) === Number(round.answer);
+            answered[user] = { team: mine.team, correct, answer: Number(value), name: mine.player.name || 'لاعب', at: Date.now() };
+            const hp = { ...(d.teamHp || { blue: 100, red: 100 }) };
+
+            if (correct) {
+              hp[mine.team === 'blue' ? 'red' : 'blue'] = Math.max(0, (hp[mine.team === 'blue' ? 'red' : 'blue'] || 100) - Number(d.weaponDamage || 15));
+            } else {
+              hp[mine.team] = Math.max(0, (hp[mine.team] || 100) - Math.max(1, Math.min(45, Number(d.wrongAnswerDamage ?? 5))));
             }
-            tx.update(ref,{roundData:{...round,answeredBy:answered},teamHp:hp,events,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+
+            const events = [...(d.events || []), { id: Date.now() + '_' + user, uid: user, name: mine.player.name || 'لاعب', team: mine.team, correct, at: Date.now() }].slice(-12);
+
+            const teamAnswerCount = teamAnswers.length + 1; 
+            const teamExhausted = teamAnswerCount >= limit;
+            const hpDone = hp.blue <= 0 || hp.red <= 0;
+
+            if (correct || teamExhausted || hpDone) {
+              round.resolved = true;
+              round.nextAt = Date.now() + 2500;
+            }
+
+            tx.update(ref, {
+              roundData: { ...round, answeredBy: answered },
+              teamHp: hp,
+              events: events,
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
           });
-        } catch(e) { showToast(e.message||'تعذرت مزامنة الإجابة.', '⚠️'); }
+        } catch(e) { 
+          // إذا كان السؤال لم ينته بعد وحدث خطأ شبكة، أعد تشغيل الأزرار
+          if (answersBox && currentRoom?.roundData && !currentRoom.roundData.resolved) {
+            answersBox.querySelectorAll('button').forEach(btn => {
+              btn.disabled = false;
+              btn.classList.remove('ring-4', 'ring-amber-400');
+            });
+          }
+          showToast(e.message || 'تعذرت مزامنة الإجابة.', '⚠️'); 
+        }
       }
+
       async function advanceRoundIfNeeded() {
-        if (!currentRoom || !registered() || currentRoom.hostUid!==myUid()) return;
-        const rd=currentRoom.roundData;
-        if (currentRoom.status!=='started' || !rd) return;
-        if (rd.resolved && Date.now()<Number(rd.nextAt||0)) return;
-        if (!rd.resolved && Date.now()<Number(rd.expiresAt||0)) return;
+        if (!currentRoom || !registered() || currentRoom.hostUid !== myUid()) return;
+        if (!(currentRoom.slots || []).some(s => s.player && s.player.uid === myUid())) return;
+        const rd = currentRoom.roundData;
+        if (currentRoom.status !== 'started' || !rd) return;
+        if (rd.resolved && Date.now() < Number(rd.nextAt || 0)) return;
+        if (!rd.resolved && Date.now() < Number(rd.expiresAt || 0)) return;
+        
         try {
-          await db.runTransaction(async tx=>{
-            const ref=db.collection('customRooms').doc(roomId), snap=await tx.get(ref);
+          await db.runTransaction(async tx => {
+            const ref = db.collection('customRooms').doc(roomId), snap = await tx.get(ref);
             if (!snap.exists) return;
-            const d=snap.data(), r=d.roundData;
-            if (!r || d.status!=='started') return;
-            if (!r.resolved && Date.now()>=Number(r.expiresAt||0)) { const hp={...(d.teamHp||{blue:100,red:100})}; hp.blue=Math.max(0,(hp.blue||100)-5); hp.red=Math.max(0,(hp.red||100)-5); r.resolved=true; r.nextAt=Date.now()+1800; tx.update(ref,{roundData:r,teamHp:hp,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); return; }
-            if (!r.resolved || Date.now()<Number(r.nextAt||0)) return;
-            if ((d.teamHp||{}).blue<=0 || (d.teamHp||{}).red<=0) { tx.update(ref,{status:'finished',winner:(d.teamHp||{}).blue>(d.teamHp||{}).red?'blue':'red',updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); return; }
-            const now=Date.now();
-            if (!r.resolved && now<Number(r.expiresAt||0)) return;
-            const tables=d.selectedTables||[1], next=makeRound(tables,Number(d.round||1)+1,d.timerSeconds||15);
-            tx.update(ref,{round:Number(d.round||1)+1,roundData:next,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+            const d = snap.data(), r = d.roundData;
+            if (!r || d.status !== 'started') return;
+            
+            // خصم القيمة المخصصة للغرفة عند انتهاء التايمر بدون إجابة
+            const penalty = Number(d.wrongAnswerDamage ?? 5);
+            if (!r.resolved && Date.now() >= Number(r.expiresAt || 0)) { 
+              const hp = { ...(d.teamHp || { blue: 100, red: 100 }) }; 
+              hp.blue = Math.max(0, (hp.blue || 100) - penalty); 
+              hp.red = Math.max(0, (hp.red || 100) - penalty); 
+              r.resolved = true; 
+              r.nextAt = Date.now() + 1800; 
+              tx.update(ref, { roundData: r, teamHp: hp, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); 
+              return; 
+            }
+            if (!r.resolved || Date.now() < Number(r.nextAt || 0)) return;
+            if ((d.teamHp || {}).blue <= 0 || (d.teamHp || {}).red <= 0) { 
+              tx.update(ref, { status: 'finished', winner: (d.teamHp || {}).blue > (d.teamHp || {}).red ? 'blue' : 'red', updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); 
+              return; 
+            }
+            const now = Date.now();
+            if (!r.resolved && now < Number(r.expiresAt || 0)) return;
+            const tables = d.selectedTables || [1], next = makeRound(tables, Number(d.round || 1) + 1, d.timerSeconds || 15);
+            tx.update(ref, { round: Number(d.round || 1) + 1, roundData: next, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
           });
         } catch (_) {}
       }
@@ -2653,13 +2833,29 @@
             const ref=db.collection('customRooms').doc(roomId), snap=await tx.get(ref);
             if (!snap.exists) throw new Error('الغرفة غير موجودة.');
             const d=snap.data();
-            if (d.hostUid!==myUid()) throw new Error('بدء المعركة متاح لمنشئ الغرفة فقط.');
-            if (!(d.slots||[]).length || !d.slots.every(s=>s.player && s.player.ready)) throw new Error('يجب أن يمتلئ كل مقعد ويستعد جميع اللاعبين.');
+            if (d.status !== 'waiting') throw new Error('المعركة بدأت بالفعل.');
+            const slots = d.slots || [];
+            const occupied = slots.filter(s => s.player);
+            const teamsReady = ['blue','red'].every(team => occupied.some(s => s.team === team));
+            if (d.hostUid !== myUid()) throw new Error('بدء المعركة متاح لمنشئ الغرفة فقط.');
+            if (!occupied.some(s => s.player.uid === myUid())) throw new Error('يجب أن تكون داخل الغرفة لبدء المعركة.');
+            if (occupied.length < 2 || !teamsReady || !occupied.every(s => s.player.ready)) throw new Error('يجب وجود لاعب في كل فريق وأن يكون جميع اللاعبين مستعدين.');
             const firstRound = makeRound(d.selectedTables || [1], 1, d.timerSeconds || 15);
             tx.update(ref,{status:'started',startedAt:firebase.firestore.FieldValue.serverTimestamp(),round:1,roundData:firstRound,teamHp:{blue:100,red:100},events:[],updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
           });
           showToast(currentLang==='en'?'Battle started!':'بدأت المعركة!', '⚔️');
         } catch(e) { showToast(e.message || 'تعذر بدء المعركة.', '⚠️'); }
+      }
+      async function saveTeamNames() {
+        if (!registered() || !roomId || !currentRoom || currentRoom.hostUid !== myUid() || currentRoom.status !== 'waiting') return;
+        const blue = String(document.getElementById('activeRoomBlueName')?.value || '').trim().slice(0,18) || 'الفريق الأزرق';
+        const red = String(document.getElementById('activeRoomRedName')?.value || '').trim().slice(0,18) || 'الفريق الأحمر';
+        try {
+          await db.collection('customRooms').doc(roomId).set({
+            teamNames:{blue,red}, updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+          showToast('تم حفظ اسمي الفريقين.', '✅');
+        } catch (_) { showToast('تعذر حفظ أسماء الفريقين.', '⚠️'); }
       }
       async function hostMovePlayer(index, team) {
         if (!registered() || !roomId || !currentRoom || currentRoom.hostUid!==myUid()) return;
@@ -2722,14 +2918,25 @@
         if (db && myUid()) db.collection('players').doc(myUid()).set({online:false,lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(()=>{});
       });
       setInterval(() => { if (db && myUid()) db.collection('players').doc(myUid()).set({online:true,lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(()=>{}); }, 30000);
-      setInterval(() => { if (currentRoom) { const timer=document.getElementById('roomBattleTimer'); if(timer && currentRoom.roundData && currentRoom.status==='started') timer.textContent=Math.max(0,Math.ceil((Number(currentRoom.roundData.expiresAt||Date.now())-Date.now())/1000))+' ث'; advanceRoundIfNeeded(); } }, 500);
-      return { open, create, joinByCode, takeSlot, leaveSlot, toggleReady, startMatch, closeRoom, copyCode, leave, submitAnswer, hostMovePlayer, hostKickPlayer, refreshLanguage: () => { if (currentRoom) renderRoom(); }, isActive: () => !!roomId && !!currentRoom && currentRoom.status !== 'closed' };
+setInterval(() => {
+        if (currentRoom) {
+          const timer = document.getElementById('roomBattleTimer');
+          if (timer && currentRoom.roundData && currentRoom.status === 'started') {
+            timer.textContent = Math.max(0, Math.ceil((Number(currentRoom.roundData.expiresAt || Date.now()) - Date.now()) / 1000)) + ' ث';
+          }
+          if (currentRoom.hostUid === myUid()) {
+            advanceRoundIfNeeded();
+          }
+        }
+      }, 1000);
+    return { open, create, joinByCode, takeSlot, leaveSlot, toggleReady, startMatch, closeRoom, copyCode, leave, submitAnswer, hostMovePlayer, hostKickPlayer, saveTeamNames, refreshLanguage: () => { if (currentRoom) renderRoom(); }, isActive: () => !!roomId && !!currentRoom && currentRoom.status !== 'closed' };
     })();
 
     document.addEventListener('click', (event) => {
       if (typeof RoomsSystem === 'undefined' || !RoomsSystem.isActive()) return;
       const lobby = document.getElementById('activeRoomLobby');
-      if (lobby && lobby.contains(event.target)) return;
+      const battle = document.getElementById('roomBattlePanel');
+      if ((lobby && lobby.contains(event.target)) || (battle && battle.contains(event.target))) return;
       const target = event.target.closest('button, a, [role="button"]');
       if (!target) return;
       event.preventDefault(); event.stopPropagation();
