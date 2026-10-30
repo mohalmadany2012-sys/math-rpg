@@ -1,0 +1,274 @@
+:root {
+      --font-family: 'Cairo', sans-serif;
+      --bg-primary: #030712;
+      --bg-secondary: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --border-main: #334155;
+    }
+
+    html.light {
+      --bg-primary: #f1f5f9;
+      --bg-secondary: #ffffff;
+      --card-bg: #f8fafc;
+      --text-main: #0f172a;
+      --border-main: #cbd5e1;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    html[dir="ltr"] {
+      --font-family: 'Inter', sans-serif;
+    }
+
+    #appPreloader {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: #030712;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    @keyframes damageFloat {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-45px) scale(1.3); }
+    }
+    .damage-indicator {
+      animation: damageFloat 0.8s ease-out forwards;
+    }
+
+    @keyframes shakeFx {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px) rotate(-1.5deg); }
+      40% { transform: translateX(6px) rotate(1.5deg); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .shake-target {
+      animation: shakeFx 0.35s ease-in-out;
+    }
+
+    @keyframes knightAttackSlash {
+      0% { transform: scale(1) translateX(0); }
+      40% { transform: scale(1.15) translateX(-25px) rotate(-10deg); }
+      100% { transform: scale(1) translateX(0); }
+    }
+    .knight-attacking {
+      animation: knightAttackSlash 0.4s ease-out;
+    }
+
+    @keyframes weaponSlash {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(-55deg) scale(1.35); filter: drop-shadow(0 0 10px #38bdf8); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+    .weapon-slash-fx {
+      animation: weaponSlash 0.35s ease-in-out;
+    }
+
+    .lava-flow {
+      animation: lavaAnim 4s ease-in-out infinite alternate;
+    }
+    @keyframes lavaAnim {
+      0% { opacity: 0.7; transform: scaleY(1); }
+      100% { opacity: 1; transform: scaleY(1.08); }
+    }
+
+    .stars-twinkle {
+      animation: twinkleAnim 2.5s infinite ease-in-out alternate;
+    }
+    @keyframes twinkleAnim {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+
+    .frame-silver {
+      border: 4px solid #cbd5e1 !important;
+      box-shadow: 0 0 15px rgba(203, 213, 225, 0.6), inset 0 0 6px rgba(255, 255, 255, 0.8) !important;
+    }
+    .frame-gold {
+      border: 4px solid #f59e0b !important;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.8), inset 0 0 8px rgba(251, 191, 36, 0.9) !important;
+    }
+    .frame-red {
+      border: 4px solid #ef4444 !important;
+      box-shadow: 0 0 22px rgba(239, 68, 68, 0.85), inset 0 0 8px rgba(248, 113, 113, 0.9) !important;
+      animation: pulse 1.8s infinite;
+    }
+    .frame-purple {
+      border: 4px solid #a855f7 !important;
+      box-shadow: 0 0 24px rgba(168, 85, 247, 0.9), inset 0 0 10px rgba(192, 132, 252, 0.9) !important;
+      animation: pulse 1.8s infinite;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 9999px; }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 6px 8px !important;
+      }
+      #arenaBox {
+        height: 260px !important;
+        padding: 10px !important;
+      }
+      #arenaKnightImg, #arenaMonsterSvg {
+        width: 60px !important;
+        height: 60px !important;
+      }
+      #mathEquationBox {
+        font-size: 26px !important;
+        margin-bottom: 8px !important;
+      }
+      #answersGridBox button {
+        padding: 12px 6px !important;
+        font-size: 16px !important;
+        border-radius: 12px !important;
+      }
+      #tableCardsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+      }
+    }
+  
+    /* Friends/rooms readable in both themes; fixes dark native controls in daylight mode. */
+    .room-field { background:#0b1220; color:#f8fafc; border-color:#475569; color-scheme:dark; }
+    .light #friendsView > div, .light #roomsView > div { background:#fff !important; color:#172033; border-color:#dbe3ef !important; }
+    .light #friendsView h2, .light #friendsView h3, .light #roomsView h2, .light #roomsView h3 { color:#172033; }
+    .light #friendsView p, .light #roomsView p, .light #roomsView label, .light #roomStatusLine { color:#64748b; }
+    .light #friendsView .rounded-2xl.border, .light #roomsView .rounded-2xl.border { border-color:#d7dfeb !important; }
+    .light .room-field, .light #friendsView input, .light #roomsView input, .light #friendsView select, .light #roomsView select { background:#fff !important; color:#172033 !important; border-color:#cbd5e1 !important; color-scheme:light; }
+    .light #friendsView .bg-blue-950\/30 { background:#eff6ff !important; }
+    .light #friendsView .bg-slate-950, .light #friendsView .bg-slate-900, .light #roomsView .bg-slate-950, .light #roomsView .bg-slate-900 { background:#f8fafc !important; }
+    .light #friendsView .text-slate-100, .light #friendsView .text-slate-200, .light #roomsView .text-slate-100, .light #roomsView .text-slate-200 { color:#172033 !important; }
+    .light #friendsView .text-slate-400, .light #friendsView .text-slate-500, .light #roomsView .text-slate-400, .light #roomsView .text-slate-500 { color:#64748b !important; }
+    .light #friendsView button:not(.bg-blue-600):not(.bg-emerald-700):not(.bg-rose-900), .light #roomsView button:not(.bg-blue-600):not(.bg-emerald-600):not(.bg-rose-700):not(.bg-amber-500) { color:#172033; }
+    .light #roomJoinCode, .light #friendSearchTag { background:#fff !important; color:#172033 !important; border-color:#cbd5e1 !important; }
+    .light #activeRoomLobby { background:#f8fafc !important; }
+    .light #blueRoomSlots .bg-slate-900, .light #redRoomSlots .bg-slate-900 { background:#fff !important; }
+    .light #blueRoomSlots .text-slate-100, .light #redRoomSlots .text-slate-100 { color:#172033 !important; }
+    .light #blueRoomSlots .text-slate-400, .light #redRoomSlots .text-slate-400 { color:#64748b !important; }
+
+    /* Daylight theme contrast patch: force light surfaces and readable text in friends/rooms. */
+    html.light #friendsView, html.light #roomsView { color:#172033 !important; }
+    html.light #friendsView .bg-slate-800, html.light #friendsView .bg-slate-900,
+    html.light #friendsView .bg-slate-950, html.light #roomsView .bg-slate-800,
+    html.light #roomsView .bg-slate-900, html.light #roomsView .bg-slate-950,
+    html.light #roomsView .bg-slate-950\/60, html.light #friendsView .bg-slate-950\/50 {
+      background-color:#f8fafc !important;
+    }
+    html.light #friendsView .text-slate-100, html.light #friendsView .text-slate-200,
+    html.light #friendsView .text-white, html.light #roomsView .text-slate-100,
+    html.light #roomsView .text-slate-200, html.light #roomsView .text-white { color:#172033 !important; }
+    html.light #friendsView .border-slate-700, html.light #friendsView .border-slate-800,
+    html.light #roomsView .border-slate-700, html.light #roomsView .border-slate-800 { border-color:#cbd5e1 !important; }
+    html.light #myPlayerTag, html.light #friendsView .rounded-2xl.bg-slate-800,
+    html.light #friendsView .rounded-xl.bg-slate-800 { background:#f1f5f9 !important; }
+    html.light #roomBattlePanel { background:#fff7ed !important; }
+    html.light #roomBattlePanel #roomBattleQuestion { color:#172033 !important; }
+    html.light #friendsView input::placeholder, html.light #roomsView input::placeholder { color:#94a3b8 !important; opacity:1; }
+
+
+    /* Readable room controls in day mode */
+    .light .room-field, body.light .room-field { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+    .light #roomJoinCode, body.light #roomJoinCode { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+
+
+/* Responsive room battle and touch-friendly controls */
+.room-global-notice { position: sticky; top: 8px; z-index: 30; margin: 10px 0; padding: 12px 14px; border-radius: 14px; font-weight: 900; text-align: center; box-shadow: 0 8px 28px #0003; }
+.room-global-notice.good { background:#064e3b; color:#d1fae5; border:1px solid #10b981; }
+.room-global-notice.bad { background:#7f1d1d; color:#fee2e2; border:1px solid #f87171; }
+#roomBattleAnswers button { min-height: 48px; touch-action: manipulation; }
+#blueRoomSlots img, #redRoomSlots img { width:36px !important; height:36px !important; flex-shrink:0; }
+#blueRoomSlots > div, #redRoomSlots > div { flex-wrap:wrap; min-width:0; }
+#roomsView button, #friendsView button { touch-action: manipulation; }
+@media (max-width:640px) {
+  #roomsView { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  #roomsView .room-field, #roomsView input, #roomsView select { max-width:100%; min-width:0; }
+  #activeRoomLobby { padding:10px !important; }
+  #activeRoomLobby > div:first-child { align-items:flex-start; }
+  #roomCloseBtn, #activeRoomLobby button { min-height:40px; }
+  #blueRoomSlots .flex, #redRoomSlots .flex { gap:6px; }
+  #roomGlobalNotice { top:4px; }
+  #friendsList > div { min-width:0; flex-wrap:wrap; }
+  #friendsList img { width:40px; height:40px; }
+  #friendGiftModal { align-items:flex-end; padding:8px; }
+  #friendGiftModal > div { max-height:88dvh; overflow-y:auto; padding-bottom:max(16px,env(safe-area-inset-bottom)); }
+  #toastNotification { top:max(8px,env(safe-area-inset-top)); }
+}
+
+/* Prevent absolute back buttons from covering headings on narrow phones. */
+@media (max-width: 640px) {
+  #shopView .relative > button[data-i18n="back_home"],
+  #leaderboardView .relative > button[data-i18n="back_home"] {
+    position: static !important;
+    align-self: flex-start;
+    margin-bottom: 8px;
+    transform: none !important;
+  }
+  #shopView .relative, #leaderboardView .relative {
+    align-items: stretch !important;
+    text-align: center;
+    gap: 2px;
+  }
+  #shopView .relative > h2, #leaderboardView .relative > h2,
+  #shopView .relative > p, #leaderboardView .relative > p { width:100%; }
+}
+
+.room-player-card { transition: transform .18s ease, box-shadow .18s ease; }
+.room-player-attack { animation: roomPlayerAttack .42s ease-out; z-index:2; }
+@keyframes roomPlayerAttack { 0% { transform:translateX(0) scale(1); box-shadow:0 0 0 transparent; } 35% { transform:translateX(-9px) scale(1.04); box-shadow:0 0 18px #34d39988; } 100% { transform:translateX(0) scale(1); box-shadow:0 0 0 transparent; } }
+
+/* Improved light-mode contrast, responsive room layout, and battle HUD */
+html.light #roomsView .bg-slate-900\/90,
+html.light #roomsView .bg-slate-900\/95,
+html.light #roomsView .bg-slate-950\/60,
+html.light #roomsView .bg-slate-950\/50 {
+  background-color: #ffffff !important;
+  color: #10213d !important;
+}
+html.light #roomsView .text-slate-400,
+html.light #roomsView .text-slate-500,
+html.light #roomsView .text-slate-300 { color: #334155 !important; }
+html.light #roomsView .border-slate-800,
+html.light #roomsView .border-slate-700 { border-color: #b8c7dc !important; }
+html.light #roomsView .room-field,
+html.light #roomsView input,
+html.light #roomsView select {
+  background-color: #fff !important;
+  color: #10213d !important;
+  border-color: #9fb3ce !important;
+}
+#roomsView .room-battle-teams { direction: rtl !important; }
+#roomsView .room-battle-team {
+  min-width: 0; border-radius: 1rem; padding: .75rem; text-align: center;
+  font-weight: 800; color: #fff; box-shadow: 0 8px 24px #02061733;
+}
+#roomsView .room-battle-team.blue { background: linear-gradient(135deg,#1d4ed8,#38bdf8); }
+#roomsView .room-battle-team.red { background: linear-gradient(135deg,#be123c,#fb7185); }
+#roomsView .room-battle-team strong { display:block; overflow-wrap:anywhere; }
+#roomsView .room-battle-team div { font-size: 1.2rem; margin-top:.25rem; }
+#roomsView #roomBattlePanel { color: #fff; background-size: cover; background-position:center; }
+#roomsView #roomBattleQuestion { color: inherit; }
+html[dir="ltr"] #roomsView .room-player-card { text-align:left; }
+html[dir="ltr"] #roomsView #roomLobbyTeams { direction:ltr; }
+html[dir="ltr"] #roomsView .room-battle-teams { direction:rtl !important; }
+@media (max-width: 640px) {
+  #roomsView .room-battle-team { padding:.55rem; font-size:.85rem; }
+  #roomsView .room-battle-team div { font-size:1rem; }
+  #roomsView #activeRoomLobby { padding:.75rem; }
+  #roomsView .room-player-card { flex-wrap:wrap; }
+  #roomsView .room-player-card button { min-height:2rem; }
+}
